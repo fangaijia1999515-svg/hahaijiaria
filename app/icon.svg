@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-14 -14 28 28">
+  <mask id="flower-center-hole">
+    <rect x="-14" y="-14" width="28" height="28" fill="white"/>
+    <circle cx="0" cy="0" r="4.2" fill="black"/>
+  </mask>
+  <g mask="url(#flower-center-hole)">
+    <circle cx="0" cy="-7.2" r="6.8" fill="#FFC973"/>
+    <circle cx="6.85" cy="-2.22" r="6.8" fill="#7AFEA7"/>
+    <circle cx="4.23" cy="5.82" r="6.8" fill="#96C1FF"/>
+    <circle cx="-4.23" cy="5.82" r="6.8" fill="#FF9992"/>
+    <circle cx="-6.85" cy="-2.22" r="6.8" fill="#E692FF"/>
+  </g>
+</svg>

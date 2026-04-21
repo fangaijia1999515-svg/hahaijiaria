@@ -1,0 +1,28 @@
+# Local-only directories (backup of original large assets)
+/trash/
+
+# Local binaries
+/ffmpeg
+
+# Build outputs and caches
+.next
+node_modules
+.turbo
+.cache
+
+# System and editor files
+.DS_Store
+*.swp
+.vscode
+.idea
+
+# Screenshots and temp files
+/截屏*.png
+/*.mov
+/*.mp4
+!/public/**/*.mp4
+!/public/**/*.mov
+
+# Git
+.git
+.gitignore
