@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import Image from "next/image"
@@ -38,6 +38,18 @@ const selectedProjects = [
 
 export function BentoGrid() {
   const [hoveredProject, setHoveredProject] = useState<string | null>(null)
+  // Touch / no-hover devices (phones, most tablets) should always show cards at full brightness,
+  // since the dimmed "idle" state relies on being revealed by hover.
+  const [canHover, setCanHover] = useState(true)
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    const mql = window.matchMedia("(hover: hover) and (pointer: fine)")
+    setCanHover(mql.matches)
+    const onChange = (e: MediaQueryListEvent) => setCanHover(e.matches)
+    mql.addEventListener("change", onChange)
+    return () => mql.removeEventListener("change", onChange)
+  }, [])
 
   return (
     <section
@@ -62,6 +74,10 @@ export function BentoGrid() {
           {selectedProjects.map((project, index) => {
             const projectColor = PROJECT_COLORS[project.id] || "#7AFEA7"
             const isHovered = hoveredProject === project.id
+            // On touch devices there is no hover, so treat every card as "active"
+            // (full brightness, accent bar revealed). Flex-grow stays neutral since
+            // mobile uses a stacked column layout.
+            const isActive = !canHover || isHovered
 
             return (
               <Link
@@ -72,7 +88,7 @@ export function BentoGrid() {
                 onMouseEnter={() => setHoveredProject(project.id)}
                 className="relative overflow-hidden rounded-xl group w-full aspect-[4/5] md:w-auto md:aspect-auto md:h-full transition-[flex-grow,box-shadow] duration-[700ms] ease-[cubic-bezier(0.22,1,0.36,1)]"
                 style={{
-                  flexGrow: isHovered ? 2.6 : 1,
+                  flexGrow: canHover ? (isHovered ? 2.6 : 1) : 1,
                   flexBasis: 0,
                   boxShadow: isHovered
                     ? "0 20px 40px -20px rgba(0,0,0,0.5)"
@@ -85,7 +101,7 @@ export function BentoGrid() {
                   fill
                   className="object-cover transition-all duration-[800ms] ease-out group-hover:scale-[1.04]"
                   style={{
-                    filter: isHovered
+                    filter: isActive
                       ? "brightness(1) saturate(1)"
                       : "brightness(0.55) saturate(0.8)",
                   }}
@@ -106,7 +122,7 @@ export function BentoGrid() {
                   style={{
                     height: "8px",
                     backgroundColor: projectColor,
-                    transform: isHovered ? "translateY(0)" : "translateY(100%)",
+                    transform: isActive ? "translateY(0)" : "translateY(100%)",
                   }}
                 />
 
@@ -130,7 +146,7 @@ export function BentoGrid() {
                           <span
                             className="transition-colors duration-500"
                             style={{
-                              color: isHovered ? projectColor : "rgba(255,255,255,0.8)",
+                              color: isActive ? projectColor : "rgba(255,255,255,0.8)",
                             }}
                           >
                             {tag}
@@ -141,7 +157,7 @@ export function BentoGrid() {
                       <span
                         className="ml-auto transition-colors duration-500"
                         style={{
-                          color: isHovered ? projectColor : "rgba(255,255,255,0.6)",
+                          color: isActive ? projectColor : "rgba(255,255,255,0.6)",
                         }}
                       >
                         {project.year}
