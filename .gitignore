@@ -47,7 +47,13 @@ ffmpeg
 # quarantined files awaiting manual cleanup (move out of project manually)
 /trash/
 
-# unused large assets (raw .mov masters; site uses .webm/.mp4 versions)
+# raw .mov masters are too large to commit (200MB+ each).
+# Step videos DO need their HEVC+alpha .mov variants for Safari support,
+# so we allow specifically those (they are ~1-3MB each, not the raw masters).
 public/video/skya/*.mov
+!public/video/skya/step1.mov
+!public/video/skya/step2.mov
+!public/video/skya/step3-1.mov
+!public/video/skya/step4.mov
 public/home/reference.png
 

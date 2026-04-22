@@ -9,7 +9,11 @@ interface Step {
   title: string
   description: string
   image: string
-  video?: string
+  // Safari needs HEVC+alpha (.mov with hvc1 codec); Chrome/Firefox/Edge use
+  // VP9+alpha (.webm). Listing both lets each browser pick the format it can
+  // decode with transparency preserved.
+  videoMov?: string
+  videoWebm?: string
 }
 
 const steps: Step[] = [
@@ -18,28 +22,32 @@ const steps: Step[] = [
     title: "Pod Retrieval",
     description: "The autonomous chassis arrives at the apartment complex to pick up the used locker pod (containing processed returns) to transport it back to the hub.",
     image: "/image/skya/step1.webp",
-    video: "/video/skya/step1.webm",
+    videoMov: "/video/skya/step1.mov",
+    videoWebm: "/video/skya/step1.webm",
   },
   {
     number: "02",
     title: "Hub Processing",
     description: "At the logistics hub, the pod is removed. Robotic arms process the returns and load a fresh pod with new packages, ensuring 100% sorting accuracy.",
     image: "/image/skya/step2.webp",
-    video: "/video/skya/step2.webm",
+    videoMov: "/video/skya/step2.mov",
+    videoWebm: "/video/skya/step2.webm",
   },
   {
     number: "03",
     title: "Autonomous Transit",
     description: "The Skya chassis attaches to the newly loaded pod and navigates through the city using optimized routes to minimize delivery time.",
     image: "/image/skya/step3.webp",
-    video: "/video/skya/step3-1.webm",
+    videoMov: "/video/skya/step3-1.mov",
+    videoWebm: "/video/skya/step3-1.webm",
   },
   {
     number: "04",
     title: "Docking & Separation",
     description: "The vehicle docks at the apartment station and releases the pod. The chassis then detaches and departs to serve the next location, leaving the locker behind.",
     image: "/image/skya/step4.webp",
-    video: "/video/skya/step4.webm",
+    videoMov: "/video/skya/step4.mov",
+    videoWebm: "/video/skya/step4.webm",
   },
   {
     number: "05",
@@ -103,16 +111,22 @@ export function SkyaHowItWorks() {
           transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
           className="absolute inset-0"
         >
-          {currentStepData.video ? (
+          {currentStepData.videoWebm || currentStepData.videoMov ? (
             <video
-              key={currentStepData.video}
-              src={currentStepData.video}
+              key={currentStepData.videoWebm ?? currentStepData.videoMov}
               autoPlay
               loop
               muted
               playsInline
               className="w-full h-full object-contain"
-            />
+            >
+              {currentStepData.videoMov && (
+                <source src={currentStepData.videoMov} type='video/mp4; codecs="hvc1"' />
+              )}
+              {currentStepData.videoWebm && (
+                <source src={currentStepData.videoWebm} type="video/webm" />
+              )}
+            </video>
           ) : (
             <Image
               src={currentStepData.image}
