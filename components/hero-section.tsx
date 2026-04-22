@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -107,6 +107,35 @@ const HERO_CLIPS: Clip[] = [
 function FlowerFrame({ clip }: { clip: Clip }) {
   const videoRef = useRef<HTMLVideoElement>(null)
 
+  // Warm up the video once the browser is idle: decode the first frame and
+  // buffer a bit of data so hover starts playback instantly instead of waiting
+  // for the network/decoder. Without this, the first hover can freeze for
+  // 1–3s on slower connections.
+  useEffect(() => {
+    const v = videoRef.current
+    if (!v) return
+    const warm = () => {
+      try {
+        v.load()
+        // Force the first frame to be decoded by nudging currentTime.
+        const onLoadedMeta = () => {
+          v.currentTime = 0.01
+          v.removeEventListener("loadedmetadata", onLoadedMeta)
+        }
+        v.addEventListener("loadedmetadata", onLoadedMeta)
+      } catch {}
+    }
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number
+    }
+    if (typeof w.requestIdleCallback === "function") {
+      w.requestIdleCallback(warm, { timeout: 1500 })
+    } else {
+      const id = window.setTimeout(warm, 400)
+      return () => window.clearTimeout(id)
+    }
+  }, [])
+
   const handleEnter = () => {
     const v = videoRef.current
     if (!v) return
@@ -150,7 +179,7 @@ function FlowerFrame({ clip }: { clip: Clip }) {
         loop
         muted
         playsInline
-        preload="metadata"
+        preload="auto"
       />
       <div
         aria-hidden
