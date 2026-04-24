@@ -38,22 +38,24 @@ function WordFadeText({ text, color }: { text: string; color: string }) {
   )
 }
 
-// Rotating taglines for the hero headline — each paired with one accent color
+// Rotating taglines for the hero headline — each paired with one accent color.
+// Prefix is "I design end-to-end ecosystems that bridge…" (fixed above).
 const rotatingPhrases = [
-  { text: "actually want to use.", color: "var(--proj-yellow)" },
-  { text: "keep coming back to.", color: "var(--proj-green)" },
-  { text: "quietly depend on.", color: "var(--proj-blue)" },
-  { text: "genuinely love.", color: "var(--proj-pink)" },
-  { text: "can't stop talking about.", color: "var(--proj-purple)" },
+  { text: "human needs with AI capabilities.", color: "var(--proj-yellow)" },
+  { text: "physical spaces with digital interfaces.", color: "var(--proj-green)" },
+  { text: "user behavior with business strategy.", color: "var(--proj-blue)" },
+  { text: "invisible systems with tangible details.", color: "var(--proj-pink)" },
 ]
 
 // ──────────────────────────────────────────────────────────────────────────
 // Data
 // ──────────────────────────────────────────────────────────────────────────
 
-// Inline emphasis — dark brown at rest, white on hover (matches body).
+// Inline emphasis — dark brown at rest; on hover, takes on the card's own
+// accent color (wired up via the `--card-accent` CSS variable set on the
+// parent article).
 const Em = ({ children }: { children: React.ReactNode }) => (
-  <strong className="font-semibold text-[#1E1510] group-hover:text-white">
+  <strong className="font-semibold text-[#1E1510] group-hover:text-[var(--card-accent)] transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
     {children}
   </strong>
 )
@@ -172,7 +174,7 @@ export function ExperienceTimeline() {
       className="scroll-mt-16 overflow-x-hidden pt-32 pb-24 md:pt-48 md:pb-32 px-6 md:px-12 lg:px-16 border-t-section"
     >
       {/* ────────────────────  HERO  ──────────────────── */}
-      <div className="max-w-4xl mx-auto text-center mb-14 md:mb-20">
+      <div className="max-w-5xl mx-auto text-center mb-14 md:mb-20">
         <motion.span
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -188,12 +190,12 @@ export function ExperienceTimeline() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mb-5 md:mb-6"
+          className="mb-10 md:mb-12"
         >
           <LiveStatusWidget />
         </motion.div>
 
-        <h2 className="font-sans font-extrabold tracking-[-0.025em] leading-[1] text-foreground mb-14 md:mb-16">
+        <h2 className="font-sans font-extrabold tracking-[-0.025em] leading-[1.05] text-foreground mb-14 md:mb-16">
           <motion.span
             className="block text-[clamp(1.75rem,4.5vw,3.75rem)]"
             initial={{ opacity: 0, y: 28 }}
@@ -201,7 +203,7 @@ export function ExperienceTimeline() {
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.75, ease: EASE }}
           >
-            I transform complex research
+            I design end-to-end
           </motion.span>
           <motion.span
             className="block text-[clamp(1.75rem,4.5vw,3.75rem)]"
@@ -210,10 +212,11 @@ export function ExperienceTimeline() {
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.75, delay: 0.12, ease: EASE }}
           >
-            into experiences people
+            ecosystems that bridge
           </motion.span>
           <motion.span
-            className="relative inline-block text-[clamp(1.75rem,4.5vw,3.75rem)] align-baseline"
+            className="relative block text-[clamp(1.65rem,3.6vw,3rem)] mt-5 md:mt-6 italic font-normal tracking-[-0.01em] leading-[1.1]"
+            style={{ fontFamily: "var(--font-dm-serif)" }}
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
@@ -247,18 +250,23 @@ export function ExperienceTimeline() {
               whileHover={{
                 y: -5,
                 boxShadow: `
-                  inset 0 1px 0 rgba(255,255,255,0.6),
-                  inset 0 0 0 1px rgba(255,255,255,0.18),
-                  0 2px 4px rgba(0,0,0,0.1),
-                  0 26px 42px -22px rgba(0,0,0,0.5)
+                  inset 0 1px 0 rgba(255,255,255,0.08),
+                  inset 0 0 0 1px rgba(255,255,255,0.06),
+                  0 4px 10px rgba(0,0,0,0.22),
+                  0 22px 36px -14px rgba(0,0,0,0.55),
+                  0 50px 70px -30px rgba(0,0,0,0.55)
                 `,
                 transition: { duration: 0.3, ease: EASE },
               }}
               data-cursor-hover
-              data-cursor-color={m.cursorHex}
+              data-cursor-color={m.hex}
               data-cursor-no-magnet
               className="group relative overflow-hidden rounded-3xl px-10 py-9 md:px-12 md:py-11 h-[260px] md:h-[275px] flex flex-col justify-center will-change-transform transition-[padding] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:p-3 md:group-hover:p-4"
               style={{
+                // `--card-accent` is consumed by <Em> + body text via
+                // group-hover:text-[var(--card-accent)] so each card can
+                // flip text to its OWN accent color on hover.
+                ["--card-accent" as string]: m.hex,
                 background: `linear-gradient(155deg, ${m.color} 0%, ${m.color} 55%, color-mix(in oklab, ${m.color} 78%, #1E1510) 100%)`,
                 boxShadow: `
                   inset 0 1px 0 rgba(255,255,255,0.55),
@@ -268,23 +276,29 @@ export function ExperienceTimeline() {
                 `,
               }}
             >
+              {/* Soft top-left highlight — only on the color resting state. */}
               <div
-                className="pointer-events-none absolute inset-0"
+                className="pointer-events-none absolute inset-0 opacity-100 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:opacity-0"
                 style={{
                   background:
                     "radial-gradient(140% 100% at 10% -10%, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0) 45%)",
                 }}
               />
 
+              {/* Brown overlay — fades in on hover, turning the whole card dark. */}
+              <div className="pointer-events-none absolute inset-0 bg-[#1E1510] opacity-0 transition-opacity duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:opacity-100" />
+
               {/* Title + divider — collapse entirely on hover (height + margin → 0) */}
               <div className="relative overflow-hidden max-h-[120px] mb-4 md:mb-5 opacity-100 transition-[max-height,margin,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:max-h-0 group-hover:mb-0 group-hover:opacity-0">
-                <h3 className="font-sans font-semibold tracking-[-0.015em] leading-[1.05] uppercase text-white text-lg md:text-xl mb-4 md:mb-5">
+                <h3 className="font-sans font-semibold tracking-[-0.015em] leading-[1.05] uppercase text-[#1E1510] text-lg md:text-xl mb-4 md:mb-5">
                   {m.label}
                 </h3>
-                <div className="h-px bg-[#1E1510]/20" />
+                <div className="h-px bg-[#1E1510]/25" />
               </div>
 
-              <p className="relative text-sm md:text-[15px] leading-[1.6] text-[#1E1510]/70 max-w-[52ch] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-base md:group-hover:text-[22px] group-hover:leading-[1.35] group-hover:font-normal group-hover:text-white group-hover:max-w-none">
+              <p
+                className="relative text-sm md:text-[15px] leading-[1.6] text-[#1E1510]/70 max-w-[52ch] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:text-[17px] md:group-hover:text-[22px] group-hover:leading-[1.55] group-hover:tracking-[-0.005em] group-hover:font-normal group-hover:text-[var(--card-accent)] group-hover:max-w-none"
+              >
                 {m.body}
               </p>
             </motion.article>

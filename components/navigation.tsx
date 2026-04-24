@@ -4,10 +4,11 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { useRouter, usePathname } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { Menu, X } from "lucide-react"
 import { useChameleonColor } from "@/lib/chameleon-context"
+import { easedScrollTo, useTransition as usePageTransition } from "@/lib/transition-context"
 
 const NAV_COLORS = {
   work: "var(--proj-yellow)",
@@ -27,8 +28,8 @@ export function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [hoveredItem, setHoveredItem] = useState<string | null>(null)
   const { setActiveColor } = useChameleonColor()
-  const router = useRouter()
   const pathname = usePathname()
+  const { navigate, smoothScrollTo } = usePageTransition()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -48,29 +49,40 @@ export function Navigation() {
     setActiveColor(null)
   }
 
+  // Same-page anchor scrolls use the eased scroller (soft deceleration).
+  // Cross-page links use the slide-up overlay so returning "home" feels
+  // intentional rather than instant.
   const handleContactClick = (e: React.MouseEvent) => {
     e.preventDefault()
-    const contactElement = document.getElementById("contact")
-    if (contactElement) {
-      contactElement.scrollIntoView({ behavior: "smooth" })
-    }
+    // #contact (the footer) is rendered on every page, so we never need to
+    // leave the current page — just glide down to it.
+    smoothScrollTo("contact")
   }
 
   const handleWorkClick = (e: React.MouseEvent) => {
     e.preventDefault()
     if (pathname === "/") {
-      document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })
+      smoothScrollTo("work")
     } else {
-      router.push("/#work")
+      navigate("/", { transition: "slide-up", anchor: "work" })
+    }
+  }
+
+  const handleAboutClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (pathname === "/") {
+      smoothScrollTo("about")
+    } else {
+      navigate("/", { transition: "slide-up", anchor: "about" })
     }
   }
 
   const handleNameClick = (e: React.MouseEvent) => {
     e.preventDefault()
     if (pathname === "/") {
-      window.scrollTo({ top: 0, behavior: "smooth" })
+      easedScrollTo(0)
     } else {
-      router.push("/")
+      navigate("/", { transition: "slide-up" })
     }
   }
 
@@ -116,6 +128,7 @@ export function Navigation() {
             </Link>
             <Link
               href="/#about"
+              onClick={handleAboutClick}
               className="text-sm uppercase tracking-[0.15em] transition-all duration-300 ease-out"
               style={{
                 color: hoveredItem === "about" ? NAV_COLORS_HEX.about : undefined,
@@ -211,7 +224,10 @@ export function Navigation() {
                 </Link>
                 <Link
                   href="/#about"
-                  onClick={() => setIsMobileMenuOpen(false)}
+                  onClick={(e) => {
+                    setIsMobileMenuOpen(false)
+                    handleAboutClick(e)
+                  }}
                   className="font-sans text-5xl font-bold tracking-tight text-foreground transition-all duration-300 ease-out hover:scale-105"
                   style={{
                     color: hoveredItem === "mobile-about" ? NAV_COLORS_HEX.about : undefined,

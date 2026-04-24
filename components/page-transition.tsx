@@ -2,45 +2,12 @@
 
 import type React from "react"
 
-import { useState, useEffect, useRef } from "react"
-import { usePathname } from "next/navigation"
-import { motion, AnimatePresence } from "framer-motion"
-
+/**
+ * Page transitions (overlay + eased scrolling) are now orchestrated by
+ * <TransitionProvider> in `lib/transition-context.tsx`. This component is kept
+ * as a thin passthrough so existing layouts that wrap with <PageTransition>
+ * keep working, but it no longer performs any side-effects of its own.
+ */
 export function PageTransition({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const [displayChildren, setDisplayChildren] = useState(children)
-  const previousPathname = useRef(pathname)
-
-  // Always update children when pathname changes - no delay
-  useEffect(() => {
-    if (pathname !== previousPathname.current) {
-      previousPathname.current = pathname
-      // Update children immediately
-      setDisplayChildren(children)
-
-      // Handle scroll
-    const hash = window.location.hash
-    if (hash) {
-      setTimeout(() => {
-        const element = document.querySelector(hash)
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" })
-        }
-      }, 100)
-    } else {
-      window.scrollTo({ top: 0, behavior: "auto" })
-    }
-  }
-  }, [pathname, children])
-
-  // Always sync children
-  useEffect(() => {
-      setDisplayChildren(children)
-  }, [children])
-
-  return (
-    <div style={{ opacity: 1, visibility: 'visible' }}>
-        {displayChildren}
-    </div>
-  )
+  return <>{children}</>
 }

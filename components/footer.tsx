@@ -4,19 +4,38 @@ import type React from "react"
 
 import { motion } from "framer-motion"
 import Link from "next/link"
-import { useRouter, usePathname } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { ArrowUpRight } from "lucide-react"
+import { easedScrollTo, useTransition as usePageTransition } from "@/lib/transition-context"
 
 export function Footer() {
-  const router = useRouter()
   const pathname = usePathname()
+  const { navigate, smoothScrollTo } = usePageTransition()
 
   const handleNameClick = (e: React.MouseEvent) => {
     e.preventDefault()
     if (pathname === "/") {
-      window.scrollTo({ top: 0, behavior: "smooth" })
+      easedScrollTo(0)
     } else {
-      router.push("/")
+      navigate("/", { transition: "slide-up" })
+    }
+  }
+
+  const handleWorkClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (pathname === "/") {
+      smoothScrollTo("work")
+    } else {
+      navigate("/", { transition: "slide-up", anchor: "work" })
+    }
+  }
+
+  const handleAboutClick = (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (pathname === "/") {
+      smoothScrollTo("about")
+    } else {
+      navigate("/", { transition: "slide-up", anchor: "about" })
     }
   }
 
@@ -76,6 +95,7 @@ export function Footer() {
             <nav className="flex gap-6 text-sm text-muted-foreground">
               <Link
                 href="/#work"
+                onClick={handleWorkClick}
                 className="hover:text-[var(--proj-yellow)] transition-colors"
                 data-cursor-hover
                 data-cursor-color="#FFC973"
@@ -84,6 +104,7 @@ export function Footer() {
               </Link>
               <Link
                 href="/#about"
+                onClick={handleAboutClick}
                 className="hover:text-[var(--proj-pink)] transition-colors"
                 data-cursor-hover
                 data-cursor-color="#FF9992"

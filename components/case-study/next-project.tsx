@@ -1,9 +1,11 @@
 "use client"
 
+import type React from "react"
 import { motion } from "framer-motion"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { getProjectThemeColor } from "@/lib/projects"
+import { useTransition as usePageTransition } from "@/lib/transition-context"
 
 interface NextProjectProps {
   title: string
@@ -14,6 +16,13 @@ interface NextProjectProps {
 export function NextProject({ title, href, image }: NextProjectProps) {
   const projectId = href.split("/").pop() || ""
   const nextProjectColor = getProjectThemeColor(projectId)
+  const { navigate } = usePageTransition()
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    e.preventDefault()
+    navigate(href, { transition: "curtain", accentColor: nextProjectColor })
+  }
 
   return (
     <section className="py-16">
@@ -27,6 +36,7 @@ export function NextProject({ title, href, image }: NextProjectProps) {
           <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground mb-2">Next Project</p>
           <Link
             href={href}
+            onClick={handleClick}
             className="group inline-flex items-center gap-3"
             data-cursor-hover
             data-cursor-color={nextProjectColor}
@@ -44,7 +54,13 @@ export function NextProject({ title, href, image }: NextProjectProps) {
           </Link>
         </div>
 
-        <Link href={href} className="group block" data-cursor-hover data-cursor-color={nextProjectColor}>
+        <Link
+          href={href}
+          onClick={handleClick}
+          className="group block"
+          data-cursor-hover
+          data-cursor-color={nextProjectColor}
+        >
           <div className="aspect-[21/9] bg-muted rounded-2xl overflow-hidden transition-all duration-500">
             <div
               className="w-full h-full relative"

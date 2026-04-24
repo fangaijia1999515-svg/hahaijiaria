@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import Link from "next/link"
 import Image from "next/image"
 import { getProjectUrl } from "@/lib/projects"
+import { useTransition as usePageTransition } from "@/lib/transition-context"
 
 const PROJECT_COLORS: Record<string, string> = {
   skya: "#E692FF", // Purple
@@ -41,6 +42,7 @@ export function BentoGrid() {
   // Touch / no-hover devices (phones, most tablets) should always show cards at full brightness,
   // since the dimmed "idle" state relies on being revealed by hover.
   const [canHover, setCanHover] = useState(true)
+  const { navigate } = usePageTransition()
 
   useEffect(() => {
     if (typeof window === "undefined") return
@@ -79,10 +81,18 @@ export function BentoGrid() {
             // mobile uses a stacked column layout.
             const isActive = !canHover || isHovered
 
+            const href = getProjectUrl(project.id)
             return (
               <Link
                 key={project.id}
-                href={getProjectUrl(project.id)}
+                href={href}
+                onClick={(e) => {
+                  // Intercept for the curtain wipe in the project's accent color.
+                  // Skip modifier-clicks so cmd/ctrl/middle-click still open in a new tab.
+                  if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+                  e.preventDefault()
+                  navigate(href, { transition: "curtain", accentColor: projectColor })
+                }}
                 data-cursor-hover
                 data-cursor-color={projectColor}
                 onMouseEnter={() => setHoveredProject(project.id)}

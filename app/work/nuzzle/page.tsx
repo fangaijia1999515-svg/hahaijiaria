@@ -294,13 +294,15 @@ export default function NuzzlePage() {
             {/* Left Column: Sticky Context Rail (3 cols) */}
             <div className="lg:col-span-3">
               <ContextSidebar
-                role="Lead Service Designer (Solo Project)"
-                timeline="10 Weeks (M.A. Thesis)"
+                role="Lead Service Designer"
+                timeline="10 Weeks"
                 team="Solo Project"
                 tools={[
                   "Figma",
-                  "Cursor (AI Coding)",
+                  "Cursor (Vibe Coding)",
+                  "LLM",
                   "User Research",
+                  "Affinity Mapping",
                   "Service Blueprinting",
                   "Journey Mapping",
                   "System Thinking",
