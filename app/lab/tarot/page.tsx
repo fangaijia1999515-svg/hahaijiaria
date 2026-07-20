@@ -710,9 +710,9 @@ const SUITS: { key: Suit; en: string; zh: string; line: string }[] = [
 ]
 
 /** one suit glyph, centered on (x,y), ~76 tall at s=1 — designed ONCE, reused 56× */
-function Glyph({ suit, x, y, s }: { suit: Suit; x: number; y: number; s: number }) {
+function Glyph({ suit, x, y, s, r = 0 }: { suit: Suit; x: number; y: number; s: number; r?: number }) {
   return (
-    <g transform={`translate(${x},${y}) scale(${s})`}>
+    <g transform={`translate(${x},${y}) rotate(${r}) scale(${s})`}>
       {suit === "cups" && (
         <g>
           <path d="M-26,-24 C -26,8 26,8 26,-24 Z" fill={P.cream} stroke={P.tealDeep} strokeWidth={2.6} />
@@ -736,42 +736,388 @@ function Glyph({ suit, x, y, s }: { suit: Suit; x: number; y: number; s: number 
         </g>
       )}
       {suit === "swords" && (
-        <g>
-          <path d="M0,-32 C -11,-8 -11,16 0,34 C 10,16 10,-8 0,-32 Z" fill={P.cream} stroke={P.ink} strokeWidth={1.9} />
-          <path d="M0,-26 L 0,28 M0,-6 C -6,-10 -9,-14 -10,-19 M0,10 C 6,6 9,2 10,-3" fill="none" stroke={P.ink} strokeWidth={1.4} opacity={0.75} strokeLinecap="round" />
+        <g transform="rotate(9)">
+          {/* a wind-feather: leaning vane, bare quill tip, combed barbs */}
+          <path d="M1,-36 C -13,-18 -15,8 -5,26 C 4,12 6,-16 1,-36 Z" fill={P.cream} stroke={P.ink} strokeWidth={1.9} />
+          <path d="M1,-31 C -1,-10 -2,10 -8,37" fill="none" stroke={P.ink} strokeWidth={1.7} strokeLinecap="round" />
+          <path d="M-2,-17 C -7,-19 -10,-22 -11,-26 M-3,-3 C -8,-5 -11,-8 -12,-12 M-4,11 C -9,9 -11,6 -12,3" fill="none" stroke={P.ink} strokeWidth={1.1} opacity={0.7} strokeLinecap="round" />
         </g>
       )}
     </g>
   )
 }
 
-/* classic pip arrangements, tuned to the 600×900 face */
-const PIP_POS: [number, number][][] = [
-  [],
-  [[300, 430]],
-  [[300, 315], [300, 545]],
-  [[300, 295], [236, 530], [364, 530]],
-  [[236, 320], [364, 320], [236, 545], [364, 545]],
-  [[236, 320], [364, 320], [236, 545], [364, 545], [300, 432]],
-  [[236, 290], [364, 290], [236, 432], [364, 432], [236, 574], [364, 574]],
-  [[236, 290], [364, 290], [236, 432], [364, 432], [236, 574], [364, 574], [300, 362]],
-  [[236, 268], [364, 268], [236, 398], [364, 398], [236, 528], [364, 528], [236, 658], [364, 658]],
-  [[210, 300], [300, 300], [390, 300], [210, 432], [300, 432], [390, 432], [210, 564], [300, 564], [390, 564]],
-  [[210, 300], [300, 300], [390, 300], [210, 432], [300, 432], [390, 432], [210, 564], [300, 564], [390, 564], [300, 672]],
-]
-const PIP_S = [0, 2.1, 1.4, 1.3, 1.15, 1.1, 1.02, 0.98, 0.9, 0.88, 0.84]
 const NUM_EN = ["", "Ace", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten"]
 const NUM_RO = ["", "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"]
+
+/**
+ * Every number card is its own small composition that carries the card's
+ * meaning (her note: "不能一个就放一个、两个就放两个 — 每张要有意义").
+ * Same furniture, same glyphs — but arranged to TELL the number's story.
+ */
+const PIP_SCENES: Record<Suit, { zh: string; render: (id: string) => React.ReactNode }[]> = {
+  cups: [
+    { zh: "心动初至", render: (id) => (<g>
+      <circle cx={300} cy={400} r={150} fill={`url(#halo-${id})`} />
+      <Glyph suit="cups" x={300} y={392} s={2.1} />
+      <path d="M262,430 C 222,468 212,516 228,556 M338,430 C 378,468 388,516 372,556" fill="none" stroke={P.teal} strokeWidth={6} strokeLinecap="round" opacity={0.85} />
+      <ellipse cx={300} cy={596} rx={84} ry={16} fill={`url(#waterfade-${id})`} />
+      <Ripples cx={300} cy={596} base={30} n={2} squash={0.22} step={18} />
+    </g>) },
+    { zh: "相遇", render: (id) => (<g>
+      <circle cx={300} cy={400} r={130} fill={`url(#halo-${id})`} />
+      <Glyph suit="cups" x={222} y={430} s={1.35} />
+      <Glyph suit="cups" x={378} y={430} s={1.35} />
+      <path d="M252,404 C 280,376 320,376 348,404" fill="none" stroke={P.teal} strokeWidth={5} strokeLinecap="round" opacity={0.9} />
+      <Star8 cx={300} cy={370} r={10} tone={P.gold} />
+      <ellipse cx={300} cy={588} rx={120} ry={16} fill={P.mist} opacity={0.5} />
+    </g>) },
+    { zh: "举杯同庆", render: (id) => (<g>
+      <circle cx={300} cy={410} r={140} fill={`url(#halo-${id})`} />
+      <Glyph suit="cups" x={300} y={322} s={1.25} r={0} />
+      <Glyph suit="cups" x={214} y={468} s={1.25} r={-14} />
+      <Glyph suit="cups" x={386} y={468} s={1.25} r={14} />
+      <Star8 cx={300} cy={430} r={9} tone={P.goldDeep} o={0.85} />
+      <Dust pts={[[262, 396], [340, 392], [300, 470]]} />
+    </g>) },
+    { zh: "小小的倦怠", render: (id) => (<g>
+      <Glyph suit="cups" x={200} y={568} s={1.1} />
+      <Glyph suit="cups" x={300} y={568} s={1.1} />
+      <Glyph suit="cups" x={400} y={568} s={1.1} />
+      <ellipse cx={300} cy={438} rx={160} ry={18} fill={P.mist} opacity={0.55} />
+      <circle cx={300} cy={306} r={92} fill={`url(#halo-${id})`} opacity={0.6} />
+      <Glyph suit="cups" x={300} y={306} s={1.05} />
+    </g>) },
+    { zh: "洒了三杯,还有两杯", render: (id) => (<g>
+      <circle cx={300} cy={378} r={110} fill={`url(#halo-${id})`} />
+      <Glyph suit="cups" x={250} y={382} s={1.05} />
+      <Glyph suit="cups" x={350} y={382} s={1.05} />
+      <Glyph suit="cups" x={206} y={566} s={1.05} r={-96} />
+      <Glyph suit="cups" x={300} y={584} s={1.05} r={102} />
+      <Glyph suit="cups" x={394} y={566} s={1.05} r={96} />
+      <ellipse cx={206} cy={612} rx={34} ry={8} fill={P.mist} opacity={0.8} />
+      <ellipse cx={300} cy={630} rx={36} ry={8} fill={P.mist} opacity={0.8} />
+      <ellipse cx={394} cy={612} rx={34} ry={8} fill={P.mist} opacity={0.8} />
+    </g>) },
+    { zh: "温柔的回忆", render: (id) => (<g>
+      <circle cx={296} cy={440} r={140} fill={`url(#halo-${id})`} />
+      <Glyph suit="cups" x={238} y={500} s={1.5} />
+      <Glyph suit="cups" x={382} y={520} s={1.0} />
+      <Bloom x={238} y={432} s={1.15} tone={P.glow} />
+      <Bloom x={382} y={472} s={0.8} />
+      <Hill y={640} h={44} tone={P.mist} o={0.5} />
+    </g>) },
+    { zh: "太多的选择", render: (id) => (<g>
+      <ellipse cx={300} cy={356} rx={180} ry={20} fill={P.mist} opacity={0.5} />
+      <ellipse cx={300} cy={480} rx={200} ry={22} fill={P.mist} opacity={0.4} />
+      <circle cx={300} cy={262} r={84} fill={`url(#halo-${id})`} />
+      <Glyph suit="cups" x={300} y={258} s={1.05} />
+      <Glyph suit="cups" x={190} y={300} s={0.9} />
+      <Glyph suit="cups" x={410} y={300} s={0.9} />
+      <Glyph suit="cups" x={235} y={424} s={0.9} />
+      <Glyph suit="cups" x={365} y={424} s={0.9} />
+      <Glyph suit="cups" x={190} y={548} s={0.9} />
+      <Glyph suit="cups" x={410} y={548} s={0.9} />
+    </g>) },
+    { zh: "转身去寻找", render: (id) => (<g>
+      {[180, 260, 340, 420].map((x, i) => <Glyph key={i} suit="cups" x={x} y={572} s={0.8} />)}
+      {[220, 300, 380].map((x, i) => <Glyph key={i} suit="cups" x={x} y={648} s={0.8} />)}
+      <Glyph suit="cups" x={460} y={648} s={0.8} />
+      <path d="M300,520 C 320,440 370,360 424,300" fill="none" stroke={P.goldDeep} strokeWidth={2.4} strokeDasharray="1 13" strokeLinecap="round" opacity={0.9} />
+      <circle cx={444} cy={264} r={64} fill={`url(#halo-${id})`} />
+      <circle cx={444} cy={264} r={24} fill={`url(#moonface-${id})`} />
+    </g>) },
+    { zh: "心满意足", render: (id) => (<g>
+      <circle cx={300} cy={430} r={130} fill={`url(#halo-${id})`} />
+      {[[136, 470], [163, 392], [206, 330], [252, 296], [300, 286], [348, 296], [394, 330], [437, 392], [464, 470]].map(([x, y], i) => (
+        <Glyph key={i} suit="cups" x={x} y={y} s={0.82} />
+      ))}
+      <Star8 cx={300} cy={430} r={11} tone={P.gold} />
+      <Dust pts={[[240, 400], [360, 400], [300, 480]]} />
+    </g>) },
+    { zh: "圆满的一家", render: (id) => (<g>
+      {[[132, 548], [158, 456], [200, 380], [252, 330], [287, 310], [313, 310], [348, 330], [400, 380], [442, 456], [468, 548]].map(([x, y], i) => (
+        <Glyph key={i} suit="cups" x={x} y={y} s={0.78} />
+      ))}
+      <circle cx={300} cy={470} r={110} fill={`url(#halo-${id})`} />
+      <Hill y={636} h={54} tone={P.teal} o={0.45} />
+      <Tree x={300} y={594} s={0.95} tone={P.tealDeep} />
+    </g>) },
+  ],
+  wands: [
+    { zh: "灵感发芽", render: (id) => (<g>
+      <circle cx={300} cy={410} r={150} fill={`url(#halo-${id})`} />
+      <Glyph suit="wands" x={300} y={410} s={2.3} />
+      <ellipse cx={330} cy={330} rx={15} ry={7} fill={P.gold} transform="rotate(-30 330 330)" />
+      <ellipse cx={272} cy={476} rx={13} ry={6} fill={P.gold} transform="rotate(24 272 476)" />
+      <g fill={P.goldDeep}>{[[300, 268, 2.6], [318, 232, 2.2], [292, 200, 1.8]].map(([x, y, r], i) => <circle key={i} cx={x} cy={y} r={r} opacity={0.85} />)}</g>
+    </g>) },
+    { zh: "凭窗眺望", render: (id) => (<g>
+      <Glyph suit="wands" x={228} y={430} s={1.55} />
+      <Glyph suit="wands" x={372} y={430} s={1.55} />
+      <circle cx={300} cy={342} r={80} fill={`url(#halo-${id})`} />
+      <circle cx={300} cy={342} r={24} fill={`url(#moonface-${id})`} />
+      <Hill y={560} h={36} tone={P.mist} o={0.45} />
+    </g>) },
+    { zh: "眺望成果", render: (id) => (<g>
+      <Hill y={500} h={90} tone={P.teal} o={0.5} />
+      <Glyph suit="wands" x={222} y={428} s={1.2} />
+      <Glyph suit="wands" x={300} y={398} s={1.3} />
+      <Glyph suit="wands" x={378} y={428} s={1.2} />
+      <ellipse cx={300} cy={612} rx={170} ry={26} fill={`url(#waterfade-${id})`} />
+      <Ripples cx={300} cy={612} base={44} n={2} squash={0.18} />
+      <circle cx={300} cy={330} r={100} fill={`url(#halo-${id})`} opacity={0.7} />
+    </g>) },
+    { zh: "搭起花棚", render: (id) => (<g>
+      <circle cx={300} cy={380} r={120} fill={`url(#halo-${id})`} opacity={0.8} />
+      {[180, 260, 340, 420].map((x, i) => <Glyph key={i} suit="wands" x={x} y={520} s={1.1} />)}
+      <path d="M180,468 C 220,498 260,498 300,470 C 340,498 380,498 420,468" fill="none" stroke={P.ink} strokeWidth={2.2} opacity={0.75} />
+      <Bloom x={240} y={488} s={0.62} tone={P.glow} />
+      <Bloom x={360} y={488} s={0.62} tone={P.glow} />
+      <Hill y={640} h={40} tone={P.mist} o={0.5} />
+    </g>) },
+    { zh: "小小的切磋", render: (id) => (<g>
+      <Glyph suit="wands" x={252} y={408} s={1.15} r={24} />
+      <Glyph suit="wands" x={352} y={402} s={1.15} r={-28} />
+      <Glyph suit="wands" x={300} y={478} s={1.15} r={64} />
+      <Glyph suit="wands" x={232} y={528} s={1.15} r={-52} />
+      <Glyph suit="wands" x={372} y={528} s={1.15} r={42} />
+      <Star8 cx={300} cy={432} r={7} tone={P.goldDeep} o={0.8} />
+      <Dust pts={[[262, 360], [346, 356], [300, 570]]} />
+    </g>) },
+    { zh: "被看见", render: (id) => (<g>
+      <circle cx={300} cy={368} r={120} fill={`url(#halo-${id})`} />
+      <Glyph suit="wands" x={300} y={380} s={1.5} />
+      {Array.from({ length: 6 }, (_, i) => {
+        const a = (Math.PI * 2 * i) / 6 - Math.PI / 2
+        return <circle key={i} cx={300 + Math.cos(a) * 74} cy={352 + Math.sin(a) * 74} r={4.6} fill={P.gold} />
+      })}
+      <Glyph suit="wands" x={186} y={580} s={0.95} r={16} />
+      <Glyph suit="wands" x={244} y={600} s={0.95} r={8} />
+      <Glyph suit="wands" x={300} y={606} s={0.95} />
+      <Glyph suit="wands" x={356} y={600} s={0.95} r={-8} />
+      <Glyph suit="wands" x={414} y={580} s={0.95} r={-16} />
+    </g>) },
+    { zh: "站稳高处", render: (id) => (<g>
+      <Hill y={500} h={110} tone={P.teal} o={0.5} />
+      <circle cx={300} cy={360} r={100} fill={`url(#halo-${id})`} />
+      <Glyph suit="wands" x={300} y={392} s={1.35} />
+      {[[196, 574], [266, 596], [336, 600], [404, 578], [232, 646], [368, 648]].map(([x, y], i) => (
+        <Glyph key={i} suit="wands" x={x} y={y} s={0.92} r={74} />
+      ))}
+    </g>) },
+    { zh: "疾风而至", render: (id) => (<g>
+      <path d="M110,330 C 220,300 380,360 500,322 M100,470 C 230,438 390,498 504,458" fill="none" stroke={P.tealDeep} strokeWidth={2.6} opacity={0.4} strokeLinecap="round" />
+      {[[176, 516], [244, 462], [312, 408], [380, 354], [204, 600], [272, 546], [340, 492], [408, 438]].map(([x, y], i) => (
+        <Glyph key={i} suit="wands" x={x} y={y} s={1.0} r={-38} />
+      ))}
+      <Dust pts={[[448, 320], [472, 380], [420, 280]]} />
+    </g>) },
+    { zh: "疲惫,但还立着", render: (id) => (<g>
+      <circle cx={262} cy={470} r={90} fill={`url(#halo-${id})`} opacity={0.6} />
+      {[140, 180, 220, 300, 340, 380, 420, 460].map((x, i) => <Glyph key={i} suit="wands" x={x} y={520} s={1.02} />)}
+      <Glyph suit="wands" x={262} y={532} s={1.02} r={10} />
+      <Hill y={624} h={34} tone={P.mist} o={0.5} />
+    </g>) },
+    { zh: "负重前行", render: (id) => (<g>
+      <g transform="rotate(9 300 470)">
+        {[-36, -28, -20, -12, -4, 4, 12, 20, 28, 36].map((dx, i) => (
+          <Glyph key={i} suit="wands" x={300 + dx} y={470 + (i % 2 ? 6 : -4)} s={1.1} r={12} />
+        ))}
+        <path d="M252,432 C 288,420 324,420 350,436 M252,506 C 288,518 324,518 350,502" fill="none" stroke={P.goldDeep} strokeWidth={3} strokeLinecap="round" />
+      </g>
+      <Hill y={630} h={56} tone={P.teal} o={0.45} />
+      <circle cx={300} cy={330} r={90} fill={`url(#halo-${id})`} opacity={0.5} />
+    </g>) },
+  ],
+  pentacles: [
+    { zh: "种下一颗机会", render: (id) => (<g>
+      <circle cx={300} cy={460} r={140} fill={`url(#halo-${id})`} />
+      <Glyph suit="pentacles" x={300} y={510} s={2.0} />
+      <Hill y={584} h={70} tone={P.gold} o={0.5} />
+      <g fill={P.goldDeep}>{[[300, 360, 2.6], [322, 318, 2.2], [286, 282, 1.8]].map(([x, y, r], i) => <circle key={i} cx={x} cy={y} r={r} opacity={0.85} />)}</g>
+    </g>) },
+    { zh: "两头都要顾", render: (id) => (<g>
+      <Glyph suit="pentacles" x={238} y={396} s={1.2} />
+      <Glyph suit="pentacles" x={362} y={478} s={1.2} />
+      <path d="M176,420 C 226,336 306,344 330,432 C 352,516 424,522 442,452" fill="none" stroke={P.goldDeep} strokeWidth={2.6} opacity={0.75} strokeLinecap="round" />
+      <circle cx={300} cy={430} r={120} fill={`url(#halo-${id})`} opacity={0.55} />
+      <ellipse cx={300} cy={606} rx={130} ry={14} fill={P.mist} opacity={0.5} />
+    </g>) },
+    { zh: "一起打磨", render: (id) => (<g>
+      <circle cx={300} cy={400} r={120} fill={`url(#halo-${id})`} />
+      <Glyph suit="pentacles" x={300} y={352} s={1.15} />
+      <Glyph suit="pentacles" x={244} y={452} s={1.1} />
+      <Glyph suit="pentacles" x={356} y={452} s={1.1} />
+      <rect x={196} y={540} width={208} height={22} rx={11} fill={P.tealDeep} opacity={0.55} />
+      <rect x={230} y={562} width={140} height={42} rx={11} fill={P.teal} opacity={0.35} />
+    </g>) },
+    { zh: "紧紧握住", render: (id) => (<g>
+      <Glyph suit="pentacles" x={252} y={392} s={1.05} />
+      <Glyph suit="pentacles" x={348} y={392} s={1.05} />
+      <Glyph suit="pentacles" x={252} y={488} s={1.05} />
+      <Glyph suit="pentacles" x={348} y={488} s={1.05} />
+      <circle cx={300} cy={440} r={122} fill="none" stroke={P.goldDeep} strokeWidth={2.8} opacity={0.75} />
+      <circle cx={300} cy={440} r={122} fill={`url(#halo-${id})`} opacity={0.4} />
+    </g>) },
+    { zh: "匮乏中有一扇亮窗", render: (id) => (<g>
+      <g opacity={0.55}>
+        <Glyph suit="pentacles" x={206} y={566} s={0.95} />
+        <Glyph suit="pentacles" x={278} y={594} s={0.95} />
+        <Glyph suit="pentacles" x={352} y={592} s={0.95} />
+        <Glyph suit="pentacles" x={422} y={562} s={0.95} />
+        <Glyph suit="pentacles" x={300} y={520} s={0.95} />
+      </g>
+      <circle cx={300} cy={330} r={110} fill={`url(#halo-${id})`} />
+      <path d="M258,384 L 258,344 C 258,290 342,290 342,344 L 342,384" fill="none" stroke={P.gold} strokeWidth={4} strokeLinecap="round" />
+      <path d="M258,384 L 342,384" stroke={P.gold} strokeWidth={4} strokeLinecap="round" />
+      <ellipse cx={300} cy={452} rx={150} ry={16} fill={P.mist} opacity={0.5} />
+    </g>) },
+    { zh: "给予与流动", render: (id) => (<g>
+      <circle cx={300} cy={420} r={130} fill={`url(#halo-${id})`} opacity={0.7} />
+      <Glyph suit="pentacles" x={232} y={320} s={1.0} />
+      <Glyph suit="pentacles" x={300} y={292} s={1.0} />
+      <Glyph suit="pentacles" x={368} y={320} s={1.0} />
+      {[[232, 372, 232, 500], [300, 344, 300, 528], [368, 372, 368, 500]].map(([x1, y1, x2, y2], i) => (
+        <path key={i} d={`M${x1},${y1} L ${x2},${y2}`} stroke={P.goldDeep} strokeWidth={2} strokeDasharray="1 10" strokeLinecap="round" opacity={0.85} />
+      ))}
+      <Glyph suit="pentacles" x={232} y={552} s={1.0} />
+      <Glyph suit="pentacles" x={300} y={580} s={1.0} />
+      <Glyph suit="pentacles" x={368} y={552} s={1.0} />
+    </g>) },
+    { zh: "耐心等果实", render: (id) => (<g>
+      <path d="M300,662 C 288,570 306,478 296,396" fill="none" stroke={P.ink} strokeWidth={2.8} strokeLinecap="round" opacity={0.8} />
+      <ellipse cx={268} cy={560} rx={16} ry={7} fill={P.teal} transform="rotate(-24 268 560)" />
+      <ellipse cx={330} cy={470} rx={16} ry={7} fill={P.teal} transform="rotate(22 330 470)" />
+      {[[248, 428, 0.85], [352, 414, 0.85], [226, 508, 0.8], [372, 498, 0.8], [258, 578, 0.78], [344, 570, 0.78], [298, 368, 0.9]].map(([x, y, s], i) => (
+        <Glyph key={i} suit="pentacles" x={x} y={y} s={s} />
+      ))}
+      <circle cx={300} cy={420} r={130} fill={`url(#halo-${id})`} opacity={0.45} />
+      <Hill y={676} h={30} tone={P.mist} o={0.55} />
+    </g>) },
+    { zh: "手艺日进", render: (id) => (<g>
+      {[[220, 360], [300, 360], [380, 360], [220, 458], [300, 458], [380, 458], [260, 556]].map(([x, y], i) => (
+        <Glyph key={i} suit="pentacles" x={x} y={y} s={0.92} />
+      ))}
+      <circle cx={344} cy={556} r={58} fill={`url(#halo-${id})`} />
+      <Glyph suit="pentacles" x={344} y={556} s={1.05} />
+      <circle cx={344} cy={556} r={36} fill="none" stroke={P.goldDeep} strokeWidth={1.8} strokeDasharray="2 8" opacity={0.8} />
+    </g>) },
+    { zh: "自足的花园", render: (id) => (<g>
+      <circle cx={300} cy={430} r={140} fill={`url(#halo-${id})`} />
+      <Bloom x={300} y={428} s={2.1} tone={P.glow} />
+      {Array.from({ length: 9 }, (_, i) => {
+        const a = (Math.PI * 2 * i) / 9 - Math.PI / 2
+        return <Glyph key={i} suit="pentacles" x={300 + Math.cos(a) * 138} y={430 + Math.sin(a) * 138} s={0.76} />
+      })}
+    </g>) },
+    { zh: "丰盛的传承", render: (id) => (<g>
+      <Hill y={636} h={64} tone={P.teal} o={0.45} />
+      <Tree x={300} y={560} s={1.7} tone={P.tealDeep} />
+      {[[255, 452, 0.7], [300, 432, 0.72], [345, 452, 0.7], [230, 486, 0.66], [370, 486, 0.66], [300, 486, 0.68]].map(([x, y, s], i) => (
+        <Glyph key={i} suit="pentacles" x={x} y={y} s={s} />
+      ))}
+      {[[206, 614, 0.7], [394, 614, 0.7], [258, 646, 0.7], [342, 646, 0.7]].map(([x, y, s], i) => (
+        <Glyph key={i} suit="pentacles" x={x} y={y} s={s} />
+      ))}
+      <circle cx={300} cy={420} r={140} fill={`url(#halo-${id})`} opacity={0.5} />
+    </g>) },
+  ],
+  swords: [
+    { zh: "清明的一念", render: (id) => (<g>
+      <path d={`M266,150 L 334,150 L 320,560 L 280,560 Z`} fill={P.glow} opacity={0.35} />
+      <circle cx={300} cy={400} r={130} fill={`url(#halo-${id})`} />
+      <Glyph suit="swords" x={300} y={408} s={2.1} />
+      <Star8 cx={300} cy={250} r={10} tone={P.gold} />
+    </g>) },
+    { zh: "悬而未决", render: (id) => (<g>
+      <ellipse cx={300} cy={320} rx={140} ry={18} fill={P.mist} opacity={0.5} />
+      <Glyph suit="swords" x={258} y={430} s={1.5} r={-32} />
+      <Glyph suit="swords" x={342} y={430} s={1.5} r={32} />
+      <ellipse cx={300} cy={600} rx={160} ry={28} fill={`url(#waterfade-${id})`} />
+      <circle cx={300} cy={420} r={110} fill={`url(#halo-${id})`} opacity={0.5} />
+    </g>) },
+    { zh: "轻轻的痛", render: (id) => (<g>
+      <ellipse cx={300} cy={310} rx={90} ry={26} fill={P.mist} opacity={0.75} />
+      <ellipse cx={252} cy={328} rx={56} ry={18} fill={P.mist} opacity={0.6} />
+      {[[268, 386], [300, 398], [332, 386]].map(([x, y], i) => (
+        <path key={i} d={`M${x},${y} L ${x - 6},${y + 34}`} stroke={P.tealDeep} strokeWidth={1.8} opacity={0.6} strokeLinecap="round" />
+      ))}
+      <Glyph suit="swords" x={232} y={500} s={1.1} r={28} />
+      <Glyph suit="swords" x={312} y={528} s={1.1} r={-18} />
+      <Glyph suit="swords" x={382} y={478} s={1.1} r={14} />
+      <Hill y={650} h={36} tone={P.mist} o={0.5} />
+    </g>) },
+    { zh: "好好休息", render: (id) => (<g>
+      <circle cx={300} cy={400} r={110} fill={`url(#halo-${id})`} opacity={0.5} />
+      {[[276, 396], [322, 440], [270, 484], [318, 528]].map(([x, y], i) => (
+        <Glyph key={i} suit="swords" x={x} y={y} s={1.05} r={86} />
+      ))}
+      <ellipse cx={300} cy={600} rx={190} ry={30} fill={P.mist} opacity={0.6} />
+    </g>) },
+    { zh: "放手离场", render: (id) => (<g>
+      <Glyph suit="swords" x={222} y={586} s={1.0} r={72} />
+      <Glyph suit="swords" x={306} y={604} s={1.0} r={84} />
+      <Glyph suit="swords" x={388} y={582} s={1.0} r={-70} />
+      <path d="M300,470 C 350,430 400,392 452,362 M280,410 C 330,372 378,338 428,310" fill="none" stroke={P.tealDeep} strokeWidth={2.2} opacity={0.45} strokeLinecap="round" />
+      <Glyph suit="swords" x={402} y={330} s={0.95} r={-28} />
+      <Glyph suit="swords" x={462} y={276} s={0.9} r={-24} />
+      <circle cx={440} cy={300} r={90} fill={`url(#halo-${id})`} opacity={0.5} />
+    </g>) },
+    { zh: "摆渡向前", render: (id) => (<g>
+      <path d="M196,560 C 238,606 362,606 404,560 C 362,582 238,582 196,560 Z" fill={P.tealDeep} opacity={0.65} />
+      {[232, 260, 288, 316, 344, 372].map((x, i) => (
+        <Glyph key={i} suit="swords" x={x} y={518} s={0.78} r={i % 2 ? 4 : -4} />
+      ))}
+      <Ripples cx={300} cy={592} base={50} n={2} squash={0.16} step={26} />
+      <circle cx={446} cy={300} r={70} fill={`url(#halo-${id})`} />
+      <circle cx={446} cy={300} r={20} fill={`url(#moonface-${id})`} />
+      <path d="M226,640 C 270,652 330,652 374,640" fill="none" stroke={P.tealDeep} strokeWidth={1.8} opacity={0.4} />
+    </g>) },
+    { zh: "独自上路", render: (id) => (<g>
+      {[[196, 500], [252, 486], [200, 566], [258, 556], [214, 632], [268, 620]].map(([x, y], i) => (
+        <Glyph key={i} suit="swords" x={x} y={y} s={0.9} r={6} />
+      ))}
+      <path d="M310,470 C 350,432 390,404 430,384" fill="none" stroke={P.goldDeep} strokeWidth={2.2} strokeDasharray="1 12" strokeLinecap="round" opacity={0.9} />
+      <circle cx={428} cy={370} r={84} fill={`url(#halo-${id})`} />
+      <Glyph suit="swords" x={428} y={368} s={1.15} r={-24} />
+    </g>) },
+    { zh: "出口一直都在", render: (id) => (<g>
+      <Bloom x={300} y={452} s={1.05} tone={P.glow} />
+      {[[404, 452, 104], [372, 532, 148], [300, 564, 187], [228, 532, 227], [196, 452, 270], [228, 372, 315], [300, 340, 358], [372, 372, 44]].map(([x, y, rr], i) => (
+        <Glyph key={i} suit="swords" x={x} y={y} s={0.85} r={rr} />
+      ))}
+      <path d="M382,330 C 412,296 444,268 478,248" fill="none" stroke={P.goldDeep} strokeWidth={2} strokeDasharray="1 10" opacity={0.85} strokeLinecap="round" />
+      <Dust pts={[[452, 268], [478, 240]]} />
+    </g>) },
+    { zh: "深夜的思绪", render: (id) => (<g>
+      {[[220, 300], [300, 288], [380, 300], [244, 396], [356, 396], [220, 492], [300, 480], [380, 492], [300, 384]].map(([x, y], i) => (
+        <Glyph key={i} suit="swords" x={x} y={y} s={0.85} r={176 + (i % 3) * 4} />
+      ))}
+      <ellipse cx={300} cy={614} rx={190} ry={26} fill={P.mist} opacity={0.6} />
+      <circle cx={186} cy={210} r={54} fill={`url(#halo-${id})`} opacity={0.6} />
+    </g>) },
+    { zh: "长夜将明", render: (id) => (<g>
+      <ellipse cx={300} cy={560} rx={240} ry={44} fill={`url(#dawn-${id})`} opacity={0.7} />
+      <path d="M120,560 L 480,560" stroke={P.goldDeep} strokeWidth={1.8} opacity={0.6} />
+      {[[160, 606], [216, 618], [272, 626], [328, 626], [384, 618], [440, 606]].map(([x, y], i) => (
+        <Glyph key={i} suit="swords" x={x} y={y} s={0.85} r={i < 3 ? 80 : -80} />
+      ))}
+      {[[236, 668], [300, 674], [364, 668], [300, 616]].map(([x, y], i) => (
+        <Glyph key={i} suit="swords" x={x} y={y} s={0.85} r={i % 2 ? 84 : -84} />
+      ))}
+      <Star8 cx={300} cy={520} r={8} tone={P.gold} o={0.9} />
+      <Dust pts={[[180, 300], [420, 280]]} />
+    </g>) },
+  ],
+}
 
 function PipCard({ suit, count }: { suit: (typeof SUITS)[number]; count: number }) {
   const id = `${suit.key}-${count}`
   return (
     <Card id={id} n={`${suit.en.toUpperCase()} · ${NUM_RO[count]}`} name={`${NUM_EN[count]} of ${suit.en}`}>
-      {count === 1 && <circle cx={300} cy={430} r={150} fill={`url(#halo-${id})`} />}
-      {PIP_POS[count].map(([x, y], i) => (
-        <Glyph key={i} suit={suit.key} x={x} y={y} s={PIP_S[count]} />
-      ))}
-      <Dust pts={[[150, 210], [450, 214], [156, 690], [444, 686]]} />
+      {PIP_SCENES[suit.key][count - 1].render(id)}
+      <Dust pts={[[150, 210], [450, 214]]} />
     </Card>
   )
 }
@@ -896,7 +1242,7 @@ export default function TarotLab() {
               <figure key={i} style={{ margin: 0 }}>
                 <PipCard suit={suit} count={i + 1} />
                 <figcaption style={{ fontSize: 12.5, marginTop: 8, opacity: 0.7, textAlign: "center" }}>
-                  {suit.zh} {NUM_RO[i + 1]}
+                  {suit.zh} {NUM_RO[i + 1]} · {PIP_SCENES[suit.key][i].zh}
                 </figcaption>
               </figure>
             ))}
