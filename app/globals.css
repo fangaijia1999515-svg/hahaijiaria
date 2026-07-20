@@ -1,0 +1,374 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+
+@custom-variant dark (&:is(.dark *));
+
+/* Added semantic theme variables */
+:root {
+  /* Core Layout Colors — clean near-black (neutral), warm cream text */
+  --bg-primary: #0c0a08;
+  --cream: #f4ecdd;
+  --text-primary: #f4ecdd;
+  --border-subtle: #262626;
+  --hairline: rgba(255, 255, 255, 0.09);
+
+  /* Spacing / layout system — one container + one horizontal pad everywhere */
+  --pad: clamp(20px, 4.5vw, 72px);
+  --maxw: 1440px;
+
+  /* Project Accent Colors (Animation Source) */
+  --proj-yellow: #ffc973;
+  --proj-green: #c9a2ff; /* lilac — kept name; green retired for brand cohesion */
+  --proj-blue: #96c1ff;
+  --proj-pink: #ff9992;
+  --proj-purple: #e692ff;
+
+  /* Existing variables - updated to use semantic naming */
+  --background: var(--bg-primary);
+  --foreground: #f4ecdd;
+  --card: #141414;
+  --card-foreground: #ffffff;
+  --popover: #141414;
+  --popover-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: var(--bg-primary);
+  --secondary: var(--border-subtle);
+  --secondary-foreground: #ffffff;
+  --muted: #161616;
+  --muted-foreground: #8f8f8a;
+  /* BRAND ACCENT (dark surfaces) — single source of truth. Swap this line +
+     lib/brand.ts ACCENT to rebrand (e.g. blue #7AA2FF). 9.50:1 on warm-black. */
+  --accent: #c9a2ff;
+  --accent-yellow: var(--proj-yellow);
+  --accent-pink: var(--proj-pink);
+  --accent-blue: var(--proj-blue);
+  --accent-foreground: var(--bg-primary);
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: var(--border-subtle);
+  --input: var(--border-subtle);
+  --ring: var(--accent);
+  --radius: 1rem;
+  --glow: rgba(201, 162, 255, 0.18);
+  /* Section rules — slightly soft white hairlines (Skya/Nuzzle/home aligned) */
+  --section-divider: rgba(255, 255, 255, 0.065);
+  --section-divider-soft: rgba(255, 255, 255, 0.05);
+  /* Slightly brighter — e.g. above “Next project” on case study pages */
+  --section-divider-next: rgba(255, 255, 255, 0.1);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --bg-primary: #1e1510;
+  --text-primary: #f3e3ce;
+  --border-subtle: #513624;
+  --hairline: rgba(243,227,206,0.12);
+  --proj-yellow: #ffc973;
+  --proj-green: #c9a2ff; /* lilac — kept name; green retired for brand cohesion */
+  --proj-blue: #96c1ff;
+  --proj-pink: #ff9992;
+  --proj-purple: #e692ff;
+
+  --background: var(--bg-primary);
+  --foreground: #f4ecdd;
+  --card: #141414;
+  --card-foreground: #ffffff;
+  --popover: #141414;
+  --popover-foreground: #ffffff;
+  --primary: #ffffff;
+  --primary-foreground: var(--bg-primary);
+  --secondary: var(--border-subtle);
+  --secondary-foreground: #ffffff;
+  --muted: #161616;
+  --muted-foreground: #8f8f8a;
+  /* BRAND ACCENT (dark surfaces) — keep in sync with :root --accent. */
+  --accent: #c9a2ff;
+  --accent-yellow: var(--proj-yellow);
+  --accent-pink: var(--proj-pink);
+  --accent-blue: var(--proj-blue);
+  --accent-foreground: var(--bg-primary);
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.637 0.237 25.331);
+  --border: var(--border-subtle);
+  --input: var(--border-subtle);
+  --ring: var(--accent);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(0.269 0 0);
+  --sidebar-ring: oklch(0.439 0 0);
+}
+
+/* ── Inverted (CREAM) section theme ──────────────────────────────────────
+   Any section wrapped in `.section-cream` flips the page tokens to a warm,
+   light surface (#f4ecdd) with warm-black text. Because the design system
+   consumes everything through CSS variables, overriding the tokens here
+   cascades to every Tailwind utility (text-foreground, text-muted-foreground,
+   border-[var(--hairline)], bg-card, text-[var(--cream)], var(--accent)…)
+   used inside the wrapper — no per-component rewrites needed.
+
+   Lilac stays the single accent, tonally DEEPENED to violet (#6D28D9) so it
+   reads on a light surface (6.05:1) while remaining in the lilac hue-family. */
+.section-cream {
+  --bg-primary: #f4ecdd;
+  --background: #f4ecdd;
+  /* `--cream` is used as the heading color across components — invert it to
+     warm-black so those headings stay legible on the light surface. */
+  --cream: #14110d;
+  --text-primary: #14110d;
+  --foreground: #1a1611;
+  --color-foreground: #1a1611;
+  --muted-foreground: #6f6452;
+  --color-muted-foreground: #6f6452;
+  --card: #ece1cd;
+  --color-card: #ece1cd;
+  --card-foreground: #14110d;
+  --border-subtle: rgba(20, 17, 13, 0.14);
+  --border: rgba(20, 17, 13, 0.14);
+  --color-border: rgba(20, 17, 13, 0.14);
+  --hairline: rgba(20, 17, 13, 0.13);
+  --section-divider: rgba(20, 17, 13, 0.11);
+  --section-divider-soft: rgba(20, 17, 13, 0.08);
+  /* BRAND ACCENT (cream surfaces) — deep violet, 6.05:1 on cream. */
+  --accent: #6d28d9;
+  --color-accent: #6d28d9;
+  --ring: #6d28d9;
+  --glow: rgba(109, 40, 217, 0.16);
+  background-color: var(--bg-primary);
+  color: var(--foreground);
+}
+
+@theme inline {
+  --font-sans: var(--font-hanken), system-ui, -apple-system, sans-serif;
+  --font-serif: var(--font-syne), var(--font-hanken), sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-display: var(--font-syne), var(--font-hanken), sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* --- Design-system custom utilities (Tailwind v4 @utility API) --- */
+/* One horizontal padding + one max-width container for the whole site */
+@utility px-page {
+  padding-inline: var(--pad);
+}
+@utility container-page {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+/* Faint structural grid backbone (haoqi-style), 6 columns, accent-neutral */
+@utility grid-backbone {
+  background-image: linear-gradient(
+    90deg,
+    var(--hairline) 1px,
+    transparent 1px
+  );
+  background-size: calc((min(100vw, var(--maxw)) - 2 * var(--pad)) / 6) 100%;
+  background-position: var(--pad) 0;
+  background-repeat: repeat-x;
+}
+@utility font-display {
+  font-family: var(--font-display);
+}
+
+@layer utilities {
+  .border-t-section {
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: var(--section-divider);
+  }
+  .border-b-section {
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: var(--section-divider);
+  }
+  .border-t-section-soft {
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: var(--section-divider-soft);
+  }
+  .border-t-section-next {
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: var(--section-divider-next);
+  }
+  .border-y-section {
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-color: var(--section-divider);
+  }
+
+  .project-detail-tail-fade {
+    background-color: transparent;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    line-height: 1.7;
+  }
+  html {
+    /* Lenis drives smooth scrolling in JS; native smooth would double up. */
+    scroll-behavior: auto;
+  }
+  /* Native cursor is the default. It is hidden ONLY while the quiet cursor
+     (components/quiet-cursor.tsx) is actually mounted (fine pointer + motion-OK),
+     so touch / reduced-motion / no-JS users always keep a real cursor. Text
+     fields keep the native I-beam for caret placement. */
+  body.custom-cursor-active,
+  body.custom-cursor-active * {
+    cursor: none;
+  }
+  body.custom-cursor-active :where(input, textarea, select, [contenteditable="true"]) {
+    cursor: text;
+  }
+  /* Visible keyboard focus ring (accessibility) */
+  :where(a, button, [role="button"], input, textarea, select):focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--background);
+}
+
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-1920px);
+  }
+}
+
+.animate-scroll-left {
+  animation: scroll-left 40s linear infinite;
+}
+
+/* Added Neon Color Cycle Animation */
+@keyframes color-cycle {
+  0%,
+  100% {
+    color: var(--proj-yellow);
+  }
+  33% {
+    color: var(--proj-green);
+  }
+  66% {
+    color: var(--proj-blue);
+  }
+  100% {
+    color: var(--proj-pink);
+  }
+}
+
+@keyframes color-cycle-smooth {
+  0% {
+    color: var(--proj-yellow);
+  }
+  20% {
+    color: var(--proj-green);
+  }
+  40% {
+    color: var(--proj-blue);
+  }
+  60% {
+    color: var(--proj-pink);
+  }
+  80% {
+    color: var(--proj-purple);
+  }
+  100% {
+    color: var(--proj-yellow);
+  }
+}
+
+.animate-color-cycle {
+  animation: color-cycle-smooth 8s ease-in-out infinite;
+}
+
+.animate-color-cycle:hover {
+  filter: brightness(1.25);
+  animation-duration: 4s;
+}
+
+
+.animate-color-cycle-fast {
+  animation: color-cycle-smooth 4s ease-in-out infinite;
+}

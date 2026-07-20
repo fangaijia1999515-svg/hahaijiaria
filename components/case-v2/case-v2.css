@@ -1,0 +1,468 @@
+/* ============================================================================
+   CASE V2 — work-detail anatomy (reference-analysis/CASE-ANATOMY-SPEC.md).
+   Consumes ONLY tokens from styles/design-tokens.css; every class is prefixed
+   `.cv2-` and lives inside the `.ds` scope.
+
+   ANATOMY: full-bleed edge grid (2.2% margins, NOT the 1440 box) —
+   sticky dossier (HEAD identity / BODY tabs + swapping lead / FOOT links) |
+   1px green divider riding the gutter (= reading progress) |
+   board stream: MIXED-DENSITY editorial rhythm. True presentation boards run
+   full; working diagrams/charts drop to --wide (78%) or share a DUO row;
+   phone screens run as a QUAD register; some text rides a TEXTCARD beside an
+   image. Wells stay contain / native-aspect / 16px radius / hairline / elev-1
+   / 86vh cap. Set-pieces (KPI / STATEMENT / QUOTE / PROP / SUB) stay full
+   width. Rhythm is contrast-based, three tiers (see RHYTHM below); equal
+   spacing regardless of relationship is the banned smell. NO scroll-snap.
+
+   STAGE: `.cv2-stage.ds-dark` = warm charcoal #2D2D2D gallery (her .ds-dark
+   token remap; wells sit one notch deeper on near-black). Cream is a one-class
+   toggle: drop `ds-dark` and every token flips back. On dark, green = sage
+   (--cv2-green); forest green is a light-context-only accent.
+
+   CSS default = assembled END state (no-JS / reduced-motion readable);
+   the GSAP layer in case-frame.tsx sets initial states and animates.
+   ============================================================================ */
+
+.cv2 { min-height: 100vh; }
+.cv2 [id] { scroll-margin-top: clamp(24px, 4vh, 48px); }
+
+/* ---- THE STAGE: dark gallery by default; cream = drop `ds-dark` ----------- */
+.cv2-stage { background: var(--ds-bg); min-height: 100vh;
+  --cv2-green: var(--ds-accent); }
+.cv2-stage.ds-dark { --cv2-green: var(--ds-accent-soft); }
+
+/* ---- top chrome: wordmark left, talk right (full-bleed margins) ----------- */
+.cv2-top { display: flex; align-items: center; justify-content: space-between;
+  padding: clamp(18px, 2.6svh, 28px) clamp(28px, 2.2vw, 44px); }
+.cv2-top__brand { text-decoration: none; color: var(--ds-text); }
+.cv2-top__talk { font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls); text-transform: uppercase;
+  color: var(--ds-text-secondary); text-decoration: none;
+  transition: color var(--ds-dur-hover) var(--ds-ease-standard); }
+.cv2-top__talk:hover { color: var(--ds-text); }
+
+/* ---- THE FRAME: dossier | one green line | stream — full-bleed edge grid --
+   margins 32px @1440 / 44px @2000; dossier 374px @1440 / 480px @2000;
+   visual gutter = gap + 1px + gap (73px @1440 / 101px @2000);
+   stream lands 929px (64.5%) @1440 / 1332px (66.6%) @2000. ------------------ */
+.cv2-frame { width: 100%; max-width: none;
+  padding-inline: clamp(28px, 2.2vw, 44px);
+  display: grid;
+  grid-template-columns: clamp(340px, 26vw, 480px) 1px minmax(0, 1fr);
+  column-gap: clamp(28px, 2.5vw, 50px); }
+
+/* ---- DOSSIER — CSS sticky pin for the whole page; three flex clusters ----- */
+.cv2-dossier { position: sticky; top: 0; align-self: start;
+  height: 100vh; display: flex; flex-direction: column;
+  padding: clamp(20px, 3svh, 32px) 0; }
+
+.cv2-dossier__rule { display: block; height: 1px; background: var(--ds-border); }
+
+/* HEAD cluster: back / rule / name / one-liner / meta / services row */
+.cv2-dossier__back { display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls); text-transform: uppercase;
+  color: var(--ds-text-muted); text-decoration: none; width: fit-content;
+  transition: color var(--ds-dur-hover) var(--ds-ease-standard); }
+.cv2-dossier__back:hover { color: var(--ds-text); }
+.cv2-dossier__back span { transition: transform var(--ds-dur-hover) var(--ds-ease-out); }
+.cv2-dossier__back:hover span { transform: translateX(-3px); }
+.cv2-dossier__head .cv2-dossier__rule { margin-top: clamp(12px, 2svh, 18px); }
+
+.cv2-dossier__name { margin: clamp(20px, 3.4svh, 34px) 0 0;
+  font-family: var(--ds-font-display); font-weight: var(--ds-w-display);
+  font-size: clamp(2.4rem, 2.2vw + 1rem, 3.2rem); line-height: 1.04;
+  letter-spacing: -0.01em; color: var(--ds-text); }
+.cv2-dossier__line { margin: clamp(12px, 1.8svh, 18px) 0 0;
+  font-family: var(--ds-font-body); font-size: 0.9375rem;
+  line-height: 1.5; color: var(--ds-text-secondary); max-width: 30ch; }
+
+.cv2-dossier__meta { margin: clamp(16px, 2.6svh, 26px) 0 0; padding: 0;
+  list-style: none; display: grid; gap: 7px; }
+.cv2-dossier__meta li { display: flex; align-items: baseline; gap: 14px; }
+.cv2-dossier__meta .k { font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size); letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ds-text-muted); min-width: 76px; }
+.cv2-dossier__meta .v { font-family: var(--ds-font-body);
+  font-size: var(--ds-body-sm-size); color: var(--ds-text-secondary); }
+
+/* services (+ optional award credential): one mono row separated by middots */
+.cv2-dossier__services { margin: clamp(14px, 2.2svh, 20px) 0 0;
+  font-family: var(--ds-font-mono); font-size: 0.75rem;
+  letter-spacing: 0.1em; line-height: 1.8; color: var(--ds-text-muted);
+  max-width: 44ch; }
+
+/* BODY cluster: TAB ROW (the section nav) + the SWAPPING LEAD --------------- */
+.cv2-dossier__body { margin-top: clamp(28px, 5svh, 56px); }
+
+.cv2-tabs { display: flex; flex-wrap: wrap; row-gap: 12px; column-gap: 18px; }
+.cv2-tab { position: relative; font-family: var(--ds-font-mono);
+  font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ds-text-muted); text-decoration: none;
+  transition: color var(--ds-dur-hover) var(--ds-ease-standard); }
+.cv2-tab:hover { color: var(--ds-text-secondary); }
+.cv2-tab::after { content: ""; position: absolute; left: 0; right: 0;
+  bottom: -6px; height: 1px; background: var(--ds-accent-soft);
+  transform: scaleX(0); transform-origin: left center;
+  transition: transform var(--ds-dur-hover) var(--ds-ease-standard); }
+.cv2-tab.is-active { color: var(--ds-text); }
+.cv2-tab.is-active::after { transform: scaleX(1); }
+
+/* the swapping lead: body sans, small — the serif voice is retired from the
+   left and lives in the dossier name + the stream's STATEMENT/QUOTE beats.
+   min-height reserves the swap area so the FOOT never reflows. */
+.cv2-lead { margin: clamp(20px, 3.4svh, 32px) 0 0;
+  font-family: var(--ds-font-body); font-size: var(--ds-body-size);
+  line-height: 1.6; color: var(--ds-text-secondary);
+  max-width: 46ch; min-height: 8.5em; }
+
+/* FOOT cluster: VIEW LIVE / rule / BACK + NEXT ------------------------------ */
+.cv2-dossier__foot { margin-top: auto; padding-top: clamp(14px, 2.2svh, 22px); }
+.cv2-live { display: inline-flex; align-items: baseline; gap: 10px;
+  font-family: var(--ds-font-mono); font-size: 0.75rem;
+  letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--ds-text); text-decoration: none;
+  border-bottom: 1px solid var(--ds-accent-soft); padding-bottom: 6px;
+  margin-bottom: clamp(14px, 2.2svh, 20px);
+  transition: color var(--ds-dur-hover) var(--ds-ease-standard); }
+.cv2-live:hover { color: var(--ds-text-secondary); }
+.cv2-live .arrow { display: inline-block;
+  transition: transform var(--ds-dur-hover) var(--ds-ease-out); }
+.cv2-live:hover .arrow { transform: translateX(6px); }
+
+.cv2-dossier__next { margin-top: clamp(12px, 1.8svh, 18px);
+  display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.cv2-dossier__next a { font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size); letter-spacing: var(--ds-overline-ls);
+  text-transform: uppercase; color: var(--ds-text-secondary);
+  text-decoration: none;
+  transition: color var(--ds-dur-hover) var(--ds-ease-standard); }
+.cv2-dossier__next a:hover { color: var(--ds-text); }
+.cv2-dossier__next a span { display: inline-block;
+  transition: transform var(--ds-dur-hover) var(--ds-ease-out); }
+.cv2-dossier__next a:hover span { transform: translateX(4px); }
+
+/* ---- THE one green line: divider = reading progress (sage on dark) -------- */
+.cv2-divider { position: relative; }
+.cv2-divider__track { position: absolute; inset: 0; width: 1px;
+  background: var(--ds-border); }
+.cv2-divider__progress { position: absolute; inset: 0; width: 1px;
+  background: var(--cv2-green); opacity: 0.85; transform-origin: top center; }
+
+/* ---- STREAM (right column): the grid gap owns the gutter ------------------ */
+.cv2-narrative { min-width: 0; padding: clamp(20px, 3svh, 32px) 0 0; }
+
+/* ---- HERO — board 0: clip-flood arrival, native-aspect well ---------------- */
+.cv2-hero { margin: 0; }
+.cv2-hero__well { position: relative; overflow: hidden; width: 100%;
+  border-radius: var(--ds-radius-lg); border: 1px solid var(--ds-border);
+  background: var(--ds-near-black); box-shadow: var(--ds-elev-1);
+  aspect-ratio: 21 / 10; max-height: 86vh; }
+.cv2-hero__well img { width: 100%; height: 100%; object-fit: cover;
+  object-position: center 70%; display: block; will-change: transform; }
+.cv2-hero figcaption { display: flex; justify-content: space-between;
+  gap: 24px; margin-top: 12px;
+  font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ds-text-muted); }
+
+/* ---- CHAPTER: seam row (index + label + drawing hairline) ------------------
+   New chapter = the widest breath in the rhythm. The framing lead is NOT here
+   on desktop (it swaps in the dossier); mobile renders it inline (below). */
+.cv2-chapter { margin-top: clamp(112px, 15vh, 192px); }
+.cv2-chapter__head { display: flex; align-items: center; gap: 18px; }
+.cv2-chapter__index { font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size); letter-spacing: 0.14em;
+  color: var(--ds-text-muted); font-variant-numeric: tabular-nums; }
+.cv2-chapter__label { font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size); letter-spacing: var(--ds-overline-ls);
+  text-transform: uppercase; color: var(--ds-text); white-space: nowrap; }
+.cv2-chapter__rule { flex: 1; height: 1px; background: var(--ds-border);
+  transform-origin: left center; }
+
+/* inline chapter lead — the MOBILE mount point of the single-source lead */
+.cv2-chapter__mlead { display: none; }
+
+/* ---- RHYTHM: contrast-based, three tiers -----------------------------------
+   chapter-to-chapter  clamp(112px, 15vh, 192px)  (on .cv2-chapter, above)
+   module-to-module    clamp(56px,   8vh, 112px)  (default beat in a chapter)
+   related group       clamp(16px,   3vh,  32px)  (--tight: a sub and the
+   board it frames, a fact register pair, a continuing duo set). Never give
+   unrelated neighbors the tight gap or related ones the module gap. */
+.cv2-module { margin-top: clamp(56px, 8vh, 112px); }
+.cv2-module--tight { margin-top: clamp(16px, 3vh, 32px); }
+
+/* ---- SUB set-piece: quiet second tier between boards ----------------------- */
+.cv2-sub { max-width: 62ch; }
+.cv2-sub h3 { margin: 0; font-family: var(--ds-font-display);
+  font-weight: var(--ds-w-display); font-size: var(--ds-h3-size);
+  line-height: var(--ds-h3-lh); color: var(--ds-text); }
+.cv2-sub p { margin: 12px 0 0; font-family: var(--ds-font-body);
+  font-size: var(--ds-body-lg-size); line-height: var(--ds-body-lh);
+  color: var(--ds-text-secondary); }
+
+/* ---- STATEMENT set-piece: one serif line, alone on the stage --------------- */
+.cv2-statement { margin: 0; font-family: var(--ds-font-display);
+  font-weight: var(--ds-w-display);
+  font-size: clamp(2.1rem, 3.1vw, 3.2rem); line-height: 1.14;
+  letter-spacing: -0.01em; color: var(--ds-text); max-width: 24ch;
+  text-wrap: balance; }
+
+/* slim sub under a board (step descriptions): body voice on the stage */
+.cv2-boardsub { margin: 18px 0 0; font-family: var(--ds-font-body);
+  font-size: var(--ds-body-size); line-height: 1.6;
+  color: var(--ds-text-secondary); max-width: 52ch; }
+
+/* ---- KPI REGISTER set-piece: big serif numerals on hairline rails ---------- */
+.cv2-stats { display: grid; gap: clamp(14px, 1.7vw, 22px); margin: 0; padding: 0;
+  list-style: none; grid-template-columns: repeat(var(--cv2-cols, 3), 1fr); }
+.cv2-stat { border-top: 1px solid var(--ds-border-strong);
+  padding-top: clamp(8px, 1.2svh, 12px); }
+.cv2-stat__value { display: block; font-family: var(--ds-font-display);
+  font-weight: var(--ds-w-display); color: var(--ds-text); line-height: 1;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(2.3rem, 3.2vw, 3.4rem); }
+.cv2-stats--loud .cv2-stat__value { font-size: clamp(2.7rem, 4.2vw, 4.5rem); }
+.cv2-stat__label { display: block; margin-top: 10px;
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size); letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ds-text-muted); }
+.cv2-stat__detail { display: block; margin-top: 6px;
+  font-family: var(--ds-font-body);
+  font-size: var(--ds-body-sm-size); line-height: 1.5;
+  color: var(--ds-text-secondary); max-width: 30ch; }
+
+/* ---- PROP REGISTER set-piece: mono head + body on hairline rails ----------- */
+.cv2-props { display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(14px, 1.7vw, 22px); margin: 0; padding: 0; list-style: none; }
+.cv2-prop { border-top: 1px solid var(--ds-border-strong);
+  padding-top: clamp(8px, 1.2svh, 12px); }
+.cv2-prop h4 { margin: 0; font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size); letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ds-text); font-weight: 500; }
+.cv2-prop p { margin: 10px 0 0; font-family: var(--ds-font-body);
+  font-size: var(--ds-body-size); line-height: 1.55;
+  color: var(--ds-text-secondary); }
+
+/* ---- QUOTE set-piece: one serif voice, alone on a screen ------------------- */
+.cv2-quote { margin: 0; max-width: 50ch; }
+.cv2-quote p { margin: 0; font-family: var(--ds-font-display);
+  font-style: italic; font-weight: var(--ds-w-display);
+  font-size: clamp(1.4rem, 1.9vw, 1.9rem); line-height: 1.35;
+  color: var(--ds-text); }
+.cv2-quote footer { margin-top: 12px; font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size); letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ds-text-muted); }
+
+/* ---- PLATES: one board per screen ------------------------------------------
+   contain (never cover) in a native-aspect well so the whole board shows with
+   no letterbox; light wells stay parchment-bright on the dark stage (gallery
+   pop), dark wells sit one notch deeper than the charcoal ground. ----------- */
+.cv2-plate { margin: 0; min-width: 0; }
+.cv2-plate__well { position: relative; overflow: hidden; width: 100%;
+  max-height: 86vh;
+  border-radius: var(--ds-radius-lg); border: 1px solid var(--ds-border);
+  background: var(--ds-soft-parchment); box-shadow: var(--ds-elev-1);
+  transition: transform var(--ds-dur-hover) var(--ds-ease-standard),
+    box-shadow var(--ds-dur-hover) var(--ds-ease-standard); }
+.cv2-plate--dark .cv2-plate__well { background: var(--ds-near-black); }
+.cv2-plate__well > img, .cv2-plate__well > video, .cv2-plate__well > iframe {
+  width: 100%; height: 100%; object-fit: contain; display: block; border: 0; }
+/* legacy diagram mat: a small breathing pad inside the well */
+.cv2-plate--contain .cv2-plate__well > img,
+.cv2-plate--contain .cv2-plate__well > video { padding: clamp(8px, 1.2vw, 18px); }
+
+/* image plates breathe on hover (never video/iframe) */
+@media (hover: hover) {
+  .cv2-plate__well:has(img):not(:has(video)):not(:has(iframe)):hover {
+    transform: scale(1.008); box-shadow: var(--ds-elev-2); }
+}
+
+/* SIZE variants: full (default) / wide / half.
+   --wide (~78%, centered): working diagrams and minor charts that do not earn
+   the full-bleed board. --half: a marker for cells inside a DUO row (the grid
+   track owns the width). TRUE presentation boards stay full. */
+.cv2-plate--wide { width: 78%; margin-inline: auto; }
+.cv2-plate--half { width: 100%; }
+
+/* PORTRAIT boards: height-driven, centered — the stage becomes a gallery mat */
+.cv2-plate--portrait .cv2-plate__well { width: auto;
+  height: min(86vh, 88svh); max-width: 100%; margin-inline: auto; }
+
+/* PANORAMA well: ultra-wide blueprints keep native height and drag sideways */
+.cv2-plate--pano .cv2-plate__well { height: clamp(420px, 62vh, 640px);
+  max-height: none; overflow-x: auto; overflow-y: hidden;
+  overscroll-behavior-x: contain; scrollbar-width: thin; }
+.cv2-plate--pano .cv2-plate__well > img { width: auto; height: 100%;
+  max-width: none; }
+
+/* caption: two-part mono row on the stage (LEFT what it is / RIGHT the scope) */
+.cv2-plate figcaption { display: flex; justify-content: space-between;
+  align-items: baseline; gap: 24px; margin-top: 12px;
+  font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.6;
+  color: var(--ds-text-muted); }
+.cv2-plate__capright { margin-left: auto; display: inline-flex;
+  align-items: baseline; gap: 18px; text-align: right; }
+.cv2-plate__hint { opacity: 0.75; }
+
+/* compact sub-caption (per-step / per-screen descriptions): the mono
+   annotation voice under a cell, small, never a full body paragraph */
+.cv2-plate__sub { margin: 8px 0 0; font-family: var(--ds-font-mono);
+  font-size: 0.75rem; letter-spacing: 0.01em; line-height: 1.55;
+  text-transform: none; color: var(--ds-text-secondary); max-width: 62ch; }
+
+/* dev-only tag for boards she has not sent yet (placeholder rule) */
+.cv2-plate__tag { position: absolute; top: 10px; right: 12px;
+  font-family: var(--ds-font-mono); font-size: 0.625rem;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ds-text-muted); opacity: 0.45; pointer-events: none; }
+
+/* ---- DUO: a 2-up row — cells are plates (size="half") or text-cards --------
+   Ratio variants keep pages from card-grid monotony; vary them per page. */
+.cv2-duo { display: grid; gap: clamp(20px, 2vw, 28px); align-items: center; }
+.cv2-duo--11 { grid-template-columns: 1fr 1fr; }
+.cv2-duo--32 { grid-template-columns: 3fr 2fr; }
+.cv2-duo--23 { grid-template-columns: 2fr 3fr; }
+
+/* ---- TEXTCARD: a framed text block (beside an image, or a standing plaque) —
+   hairline 1px, radius 16, generous internal pad, measure-hugging width ----- */
+.cv2-textcard { border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-lg);
+  padding: clamp(24px, 2.5vw, 40px); min-width: 0;
+  max-width: calc(62ch + 2 * clamp(24px, 2.5vw, 40px)); }
+.cv2-textcard__overline { margin: 0; font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size); letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ds-text-muted); }
+.cv2-textcard__title { margin: 0; font-family: var(--ds-font-display);
+  font-weight: var(--ds-w-display); font-size: var(--ds-h3-size);
+  line-height: var(--ds-h3-lh); color: var(--ds-text); }
+.cv2-textcard__overline + .cv2-textcard__title { margin-top: 12px; }
+.cv2-textcard__body { font-family: var(--ds-font-body);
+  font-size: var(--ds-body-size); line-height: var(--ds-body-lh);
+  color: var(--ds-text-secondary); max-width: 62ch; }
+.cv2-textcard__overline + .cv2-textcard__body,
+.cv2-textcard__title + .cv2-textcard__body { margin-top: 12px; }
+.cv2-textcard__body p { margin: 0; }
+.cv2-textcard__body p + p { margin-top: 10px; }
+
+/* ---- QUAD: 4-up register for app/phone screens (2x2 under 1024) ------------
+   Wells run natural portrait height; descriptions ride the compact sub. */
+.cv2-quad { display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: clamp(20px, 3vh, 28px) clamp(16px, 1.5vw, 20px); align-items: start; }
+.cv2-quad .cv2-plate__well { aspect-ratio: auto; max-height: none; }
+.cv2-quad .cv2-plate__well > video,
+.cv2-quad .cv2-plate__well > img { height: auto; }
+
+/* device plate (app demos): natural portrait, never height-capped */
+.cv2-phone { max-width: 272px; justify-self: center; width: 100%; }
+.cv2-phone .cv2-plate__well { aspect-ratio: auto; max-height: none; }
+.cv2-phone .cv2-plate__well > video { height: auto; }
+
+/* under 1024 the stream track narrows: quad folds 2x2 (her "two over two"),
+   wide boards take the full track again */
+@media (max-width: 1023px) {
+  .cv2-quad { grid-template-columns: 1fr 1fr; }
+  .cv2-plate--wide { width: 100%; }
+}
+
+/* ---- LEGACY MODULES (nuzzle / edt until their full de-fragmentation) ------ */
+.cv2-grid2 { display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(20px, 2.6vw, 36px); align-items: start; }
+
+.cv2-step { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(28px, 3.6vw, 60px); align-items: center; }
+.cv2-step + .cv2-step { margin-top: clamp(48px, 7svh, 80px); }
+.cv2-step__index { font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size); letter-spacing: 0.14em;
+  color: var(--ds-text-muted); font-variant-numeric: tabular-nums; }
+.cv2-step__title { margin: 14px 0 0; font-family: var(--ds-font-display);
+  font-weight: var(--ds-w-display); font-size: var(--ds-h3-size);
+  line-height: var(--ds-h3-lh); color: var(--ds-text); }
+.cv2-step__desc { margin: 12px 0 0; font-family: var(--ds-font-body);
+  font-size: var(--ds-body-size); line-height: var(--ds-body-lh);
+  color: var(--ds-text-secondary); max-width: 40ch; }
+
+/* ---- close band: BACK TO WORK / NEXT (full-bleed margins) ------------------ */
+.cv2-close { width: 100%; max-width: none;
+  margin-top: clamp(110px, 16svh, 180px);
+  padding: clamp(40px, 6svh, 64px) clamp(28px, 2.2vw, 44px)
+    clamp(56px, 9svh, 96px); border-top: 1px solid var(--ds-border);
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 32px; }
+.cv2-close__back { display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls); text-transform: uppercase;
+  color: var(--ds-text-secondary); text-decoration: none;
+  transition: color var(--ds-dur-hover) var(--ds-ease-standard); }
+.cv2-close__back:hover { color: var(--ds-text); }
+.cv2-close__next { text-align: right; }
+.cv2-close__overline { font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size); letter-spacing: var(--ds-overline-ls);
+  text-transform: uppercase; color: var(--ds-text-muted); }
+.cv2-close__title { display: inline-block; margin-top: 12px;
+  font-family: var(--ds-font-display); font-weight: var(--ds-w-display);
+  font-size: clamp(2.3rem, 4vw, 3.9rem); line-height: 1.05;
+  color: var(--ds-text); text-decoration: none;
+  background-image: linear-gradient(var(--cv2-green), var(--cv2-green));
+  background-repeat: no-repeat; background-size: 0% 1.25px;
+  background-position: 0 96%;
+  transition: background-size var(--ds-dur-hover) var(--ds-ease-out); }
+.cv2-close__title:hover { background-size: 100% 1.25px; }
+.cv2-close__title .arrow { display: inline-block; margin-left: 0.18em;
+  transition: transform var(--ds-dur-hover) var(--ds-ease-out); }
+.cv2-close__title:hover .arrow { transform: translateX(6px); }
+
+/* ============================================================================
+   TABLET (768-1023): keep the anatomy, relax the tracks
+   ============================================================================ */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .cv2-frame { grid-template-columns: clamp(260px, 31vw, 340px) 1px minmax(0, 1fr);
+    column-gap: clamp(20px, 2.6vw, 32px); }
+  .cv2-stats { grid-template-columns: repeat(2, 1fr); }
+  .cv2-props { grid-template-columns: 1fr 1fr; }
+}
+
+/* ============================================================================
+   MOBILE (<768): single column; dossier static on top (no pin, no tabs/lead —
+   chapters render their framing lead inline); the green line retires.
+   ============================================================================ */
+@media (max-width: 767px) {
+  .cv2-top { padding-inline: var(--ds-space-5); }
+  .cv2-frame { display: block; padding-inline: var(--ds-space-5); }
+  .cv2-divider { display: none; }
+  .cv2-dossier { position: static; height: auto; padding: 4px 0 0; }
+  .cv2-dossier__name { font-size: clamp(2.4rem, 11vw, 3rem); }
+  .cv2-dossier__line { max-width: none; }
+  .cv2-dossier__services { max-width: none; }
+  .cv2-dossier__body { display: none; }
+  .cv2-dossier__foot { margin-top: clamp(20px, 4svh, 32px); }
+  .cv2-narrative { padding: clamp(36px, 6svh, 56px) 0 0; }
+  .cv2-chapter { margin-top: clamp(80px, 11svh, 112px); }
+  .cv2-chapter__mlead { display: block; margin: clamp(18px, 3svh, 26px) 0 0;
+    font-family: var(--ds-font-body); font-size: var(--ds-body-size);
+    line-height: 1.6; color: var(--ds-text-secondary); }
+  .cv2-module { margin-top: clamp(40px, 6svh, 64px); }
+  .cv2-module--tight { margin-top: clamp(14px, 2.5svh, 24px); }
+  .cv2-plate__well { max-height: none; }
+  .cv2-plate--portrait .cv2-plate__well { width: 100%; height: auto; }
+  .cv2-plate--pano .cv2-plate__well { height: clamp(300px, 48svh, 420px); }
+  .cv2-duo--11, .cv2-duo--32, .cv2-duo--23 { grid-template-columns: 1fr; }
+  .cv2-textcard { max-width: none; }
+  .cv2-stats { grid-template-columns: 1fr; gap: 18px; }
+  .cv2-stats--pair { grid-template-columns: 1fr; }
+  .cv2-props { grid-template-columns: 1fr; gap: 18px; }
+  .cv2-grid2 { grid-template-columns: 1fr; }
+  .cv2-step { grid-template-columns: 1fr; gap: 20px; }
+  .cv2-step + .cv2-step { margin-top: clamp(44px, 7svh, 64px); }
+  .cv2-phone { justify-self: start; }
+  .cv2-statement { font-size: clamp(1.8rem, 8vw, 2.4rem); }
+  .cv2-close { flex-direction: column; align-items: flex-start;
+    padding-inline: var(--ds-space-5); }
+  .cv2-close__next { text-align: left; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cv2 * { transition: none !important; }
+  .cv2 .cv2-plate__well:hover { transform: none; box-shadow: var(--ds-elev-1); }
+}

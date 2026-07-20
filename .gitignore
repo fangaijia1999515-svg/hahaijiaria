@@ -1,0 +1,21 @@
+node_modules
+.next
+.turbo
+.cache
+.vercel
+.env*
+trash/
+ffmpeg
+.DS_Store
+截屏*.png
+*.mov
+!public/**/*.mov
+.claude/settings.local.json
+
+# Dev-only material (kept local; not needed to build or serve the site)
+reference-analysis/
+_prototypes/
+.gstack/
+.cursor/
+.impeccable/
+docs/

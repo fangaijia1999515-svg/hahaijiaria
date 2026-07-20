@@ -1,0 +1,169 @@
+/* WORK GALLERY LAB — /v2/lab/work only. Token-driven, isolated from v2.css.
+   trionn cell model: the track is a row of 50vw cells split by hairlines;
+   the title owns the first cell so the divider lands at screen center. */
+
+.wl { background: var(--ds-warm-cream); color: var(--ds-text); }
+
+/* ---- intro ---------------------------------------------------------------- */
+.wl-intro { max-width: var(--ds-container-max); margin-inline: auto;
+  padding: clamp(90px, 14svh, 180px) var(--ds-margin-desktop) clamp(60px, 10svh, 120px); }
+.wl-intro__over { color: var(--ds-accent-earth); margin-bottom: var(--ds-space-4); }
+.wl-intro__title { font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(2.4rem, 1.6rem + 3vw, 4.4rem); line-height: 1.04;
+  margin-bottom: var(--ds-space-4); }
+.wl-intro__body { max-width: 62ch; color: var(--ds-text-secondary);
+  font-size: var(--ds-body-lg-size, 1.1rem); line-height: 1.65; }
+
+/* ---- stage + track -------------------------------------------------------- */
+.wl-stage { position: relative; overflow: hidden;
+  border-block: 1px solid var(--ds-border); }
+.wl-track { display: flex; flex-direction: column;
+  gap: clamp(40px, 6svh, 72px);
+  padding: clamp(40px, 7svh, 90px) var(--ds-space-5); }
+.wl-cell { min-width: 0; }
+/* variant imagery is a desktop-composition idea; the mobile stack stays plain */
+.wl-stage__bg, .wl-stage__bgwash, .wl-lead__bg, .wl-stage__grain { display: none; }
+
+/* desktop + full motion: pinned horizontal row of 50vw cells */
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .wl-stage { height: 100svh; }
+  .wl-track { flex-direction: row; height: 100%; width: max-content;
+    will-change: transform; gap: 0; padding: 0; }
+  /* projects separate through AIR, not rules — lines are trionn's grid
+     language, not ours. The center spine is now a per-variant choice. */
+  .wl-cell { flex: 0 0 auto; width: 50vw; height: 100%;
+    display: flex; align-items: center; justify-content: center; }
+  .wl-track { position: relative; z-index: 1; }
+  .wl-cell--lead { position: relative; overflow: hidden; }
+  .wl-stage--line .wl-cell--lead { border-right: 1px solid var(--ds-border); }
+
+  /* Test A: an image lives behind the whole ride; the cream lead half hides
+     it at entry, then it carries through to the last card */
+  .wl-stage--bgimg .wl-stage__bg { display: block; position: absolute;
+    inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .wl-stage--bgimg .wl-stage__bgwash { display: block; position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--ds-warm-cream) 45%, transparent); }
+  .wl-stage--bgimg .wl-cell--lead { background: var(--ds-warm-cream); }
+
+  /* Tests B and B2: the image sits under the title half only */
+  .wl-stage--leadimg .wl-lead__bg,
+  .wl-stage--leadimg2 .wl-lead__bg { display: block; position: absolute;
+    inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .wl-stage--leadimg .wl-lead,
+  .wl-stage--leadimg2 .wl-lead { position: relative; z-index: 1; }
+  .wl-stage--leadimg .wl-lead__title,
+  .wl-stage--leadimg .wl-lead__sub,
+  .wl-stage--leadimg2 .wl-lead__title,
+  .wl-stage--leadimg2 .wl-lead__sub { color: var(--ds-warm-cream);
+    text-shadow: 0 2px 40px rgba(30, 30, 28, 0.4); }
+
+  /* B2 only: the ground past the title carries a real paper grain plus a
+     soft warm tonal drift, so it reads as material rather than flat cream */
+  .wl-stage--leadimg2 .wl-stage__grain { display: block; position: absolute;
+    inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='140'%20height='140'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.7'%20numOctaves='3'%20stitchTiles='stitch'/%3E%3CfeColorMatrix%20type='saturate'%20values='0'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E"),
+      radial-gradient(120% 90% at 20% 10%,
+        color-mix(in srgb, var(--ds-amber-brown) 14%, transparent) 0%, transparent 55%),
+      radial-gradient(130% 100% at 85% 95%,
+        color-mix(in srgb, var(--ds-sage-green) 12%, transparent) 0%, transparent 60%);
+    opacity: 0.35; mix-blend-mode: multiply; }
+}
+
+/* ---- lead cell (title left half, divider = cell border at center) --------- */
+.wl-lead { display: flex; flex-direction: column; gap: var(--ds-space-3); }
+.wl-lead__title { font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(3rem, 1.6rem + 4.6vw, 6.4rem); line-height: 0.98;
+  letter-spacing: -0.01em; }
+.wl-lead__title em { font-style: italic; }
+.wl-lead__sub { color: var(--ds-text-secondary); margin-top: var(--ds-space-2);
+  line-height: 1.6; }
+
+/* ---- cards (ONE anatomy for all seven, heights locked equal) --------------- */
+.wl-card { display: flex; flex-direction: column; min-width: 0; }
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .wl-card { width: clamp(520px, 42vw, 880px); will-change: transform; }
+}
+.wl-card__plate { position: relative; border-radius: var(--ds-radius-lg);
+  overflow: hidden; box-shadow: var(--ds-elev-1); aspect-ratio: 3 / 2;
+  background: color-mix(in srgb, var(--ds-deep-charcoal) 6%, var(--ds-warm-cream)); }
+.wl-card__plate::after { content: ""; position: absolute; inset: 0;
+  border-radius: inherit; pointer-events: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ds-deep-charcoal) 14%, transparent); }
+.wl-card__img { position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform 1.2s var(--ds-ease-out); }
+.wl-card:hover .wl-card__img { transform: scale(1.04); }
+
+/* authored plates for the four self-initiated builds */
+.wl-card__art { position: absolute; inset: 0; display: grid; place-items: center; }
+.wl-card__artname { font-family: var(--ds-font-mono); font-size: 0.8rem;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--ds-warm-cream) 82%, transparent); }
+.wl-card__artname--serif { font-family: var(--ds-font-display);
+  font-size: 1.4rem; text-transform: none; letter-spacing: 0.42em; }
+.wl-card__art--sds { background:
+  linear-gradient(160deg, #262624 0%, #1b1b19 100%); }
+.wl-card__art--antara { background:
+  radial-gradient(1px 1px at 22% 30%, rgba(245,240,232,0.9) 50%, transparent 51%),
+  radial-gradient(1px 1px at 68% 22%, rgba(245,240,232,0.7) 50%, transparent 51%),
+  radial-gradient(1.5px 1.5px at 82% 58%, rgba(245,240,232,0.8) 50%, transparent 51%),
+  radial-gradient(1px 1px at 38% 72%, rgba(245,240,232,0.6) 50%, transparent 51%),
+  radial-gradient(120% 90% at 50% 110%, #232842 0%, #12141f 70%);
+}
+.wl-card__art--mood { background:
+  radial-gradient(70% 60% at 78% 24%, color-mix(in srgb, var(--ds-muted-terracotta) 42%, transparent) 0%, transparent 70%),
+  linear-gradient(165deg, color-mix(in srgb, var(--ds-warm-cream) 66%, var(--ds-sage-green)) 0%, color-mix(in srgb, var(--ds-sage-green) 58%, var(--ds-warm-cream)) 100%); }
+.wl-card__art--spectra { background:
+  linear-gradient(120deg, color-mix(in srgb, var(--ds-amber-brown) 78%, var(--ds-warm-cream)) 0%,
+    color-mix(in srgb, var(--ds-muted-terracotta) 88%, var(--ds-warm-cream)) 34%,
+    color-mix(in srgb, var(--ds-sage-green) 72%, var(--ds-warm-cream)) 68%,
+    color-mix(in srgb, var(--ds-forest-green) 46%, var(--ds-warm-cream)) 100%);
+  filter: blur(18px) saturate(1.05); transform: scale(1.2); }
+
+/* foot: fixed min-height so every plate sits on the same line, chip or not */
+.wl-card__foot { padding-top: var(--ds-space-4); }
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .wl-card__foot { min-height: 132px; }
+}
+.wl-card__name { font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(1.5rem, 1.2rem + 0.8vw, 2rem); line-height: 1.1; }
+.wl-card__row { display: flex; align-items: baseline; gap: var(--ds-space-5);
+  justify-content: space-between; margin-top: var(--ds-space-2); }
+.wl-card__line { color: var(--ds-text-secondary); max-width: 46ch;
+  line-height: 1.55; }
+.wl-card__cta { font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls); text-transform: uppercase;
+  color: var(--ds-text); white-space: nowrap; }
+.wl-card__proof { display: flex; align-items: center; gap: var(--ds-space-3);
+  margin-top: var(--ds-space-3); }
+.wl-card__chip { font-family: var(--ds-font-mono); font-size: 0.95rem;
+  padding: 7px 11px; border-radius: 8px; white-space: nowrap;
+  background: color-mix(in srgb, var(--ds-deep-charcoal) 8%, transparent); }
+.wl-card__cap { font-size: 0.85rem; color: var(--ds-text-secondary);
+  max-width: 34ch; line-height: 1.45; }
+
+/* ---- closing cell (their "Discover our complete collection" move) --------- */
+.wl-close { text-align: center; max-width: 36ch; padding: var(--ds-space-5); }
+.wl-close__text { font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem); line-height: 1.35;
+  color: var(--ds-text); }
+
+/* ---- stacked-words handoff (their work -> services move) ------------------ */
+.wl-handoff { max-width: var(--ds-container-max); margin-inline: auto;
+  padding: clamp(110px, 18svh, 220px) var(--ds-margin-desktop);
+  text-align: center; }
+.wl-handoff__over { color: var(--ds-text-secondary); margin-bottom: var(--ds-space-6); }
+.wl-handoff__words { display: flex; flex-direction: column; align-items: center;
+  gap: 0; font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(3.2rem, 2rem + 7vw, 8.5rem); line-height: 1.02;
+  letter-spacing: -0.01em; }
+.wl-handoff__words span:nth-child(2) { font-style: italic;
+  color: var(--ds-accent); }
+.wl-handoff__note { max-width: 52ch; margin: var(--ds-space-7) auto 0;
+  color: var(--ds-text-secondary); line-height: 1.65; }
+
+@media (max-width: 900px) {
+  .wl-intro, .wl-handoff { padding-inline: var(--ds-space-5); }
+}

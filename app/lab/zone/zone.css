@@ -1,0 +1,532 @@
+/* ============================================================================
+   ZONE LAB — skills-zone candidates (after Selected work, before the water
+   footer). Token-driven; the page ground stays cream. The CARDS deck ships three
+   grounds: s=dark keeps the cream ground with warm-charcoal jewels; s=night and
+   s=glass both flip the section into a deep warm-charcoal STAGE (a full-bleed
+   band) — night floats SOLID cream cards on it, glass floats liquid-glass cards
+   — while the rest of the page stays cream. Every value comes from the .ds token
+   layer; the only locals are champagne kisses from her gold family (#E4CDA6).
+   CSS default state = the readable END state (no-JS safe); GSAP sets initial
+   states then animates.
+   ============================================================================ */
+
+.zone-lab {
+  /* champagne / gold kisses (her #E4CDA6 family) — the ONLY local colors */
+  --zone-gold:      #C9A468;                    /* visible champagne gold on cream */
+  --zone-gold-hair: rgba(196, 162, 100, 0.5);   /* gold hairline */
+  --zone-engrave:   #E4CDA6;                     /* monogram engrave tone */
+  --zone-card-bg:   #FBF9F4;                     /* card face, a hair over cream */
+
+  min-height: 100svh;
+  background: var(--ds-warm-cream);
+  color: var(--ds-text);
+  overflow-x: hidden;
+}
+
+/* ---- demo switch tag (fixed, lab convenience) --------------------------- */
+.zone-tag {
+  position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+  z-index: 40; display: flex; align-items: center; gap: 4px;
+  padding: 5px 6px 5px 14px; border-radius: var(--ds-radius-pill);
+  background: color-mix(in srgb, var(--ds-warm-cream) 78%, transparent);
+  border: 1px solid var(--ds-border);
+  box-shadow: var(--ds-shadow-sm);
+  backdrop-filter: blur(8px);
+}
+.zone-tag__label {
+  font-family: var(--ds-font-mono); font-size: 0.625rem; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ds-text-muted); margin-right: 6px;
+}
+.zone-tag__link {
+  font-family: var(--ds-font-mono); font-size: 0.625rem; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--ds-text-secondary);
+  text-decoration: none; padding: 5px 10px; border-radius: var(--ds-radius-pill);
+  transition: color var(--ds-dur-hover) var(--ds-ease-out),
+              background var(--ds-dur-hover) var(--ds-ease-out);
+}
+.zone-tag__link:hover { color: var(--ds-text); }
+.zone-tag__link.is-on {
+  color: var(--ds-text); background: var(--zone-card-bg);
+  box-shadow: inset 0 0 0 1px var(--zone-gold-hair);
+}
+.zone-tag__div { width: 1px; align-self: stretch; margin: 2px 4px;
+  background: var(--ds-border); }
+
+/* ---- section shell + head ---------------------------------------------- */
+.zone-sec {
+  position: relative;
+  padding: clamp(104px, 16vh, 200px) clamp(24px, 6vw, 96px) clamp(80px, 12vh, 150px);
+}
+/* the CARDS V5 deck is one PINNED full-viewport moment. The row spans ~89vw
+   (a touch narrower than v4, more air to the screen edge). Two style versions
+   via .zone-flip--{s}; every value is token-derived, only champagne is local. */
+.zone-sec--flip {
+  position: relative;
+  padding: 0;                       /* the pin box owns the vertical rhythm */
+  background: var(--zone-fground);
+
+  /* ---- shared flip tokens (DARK defaults; overridden per style scope) ---- */
+  --zone-fground:  var(--ds-warm-cream);
+  --zone-fcard-bg: #26241F;         /* warm charcoal, not pure black */
+  --zone-back-bg:  #211F1B;
+  --zone-fborder:  rgba(228, 205, 166, 0.14);
+  --zone-ftitle:   #F3ECDD;
+  --zone-fitem:    rgba(243, 236, 221, 0.72);
+  --zone-fidx:     rgba(243, 236, 221, 0.34);
+  --zone-frule:    rgba(228, 205, 166, 0.30);
+  --zone-fdiv:     rgba(243, 236, 221, 0.11);
+  --zone-fsuit:    #E4CDA6;
+  --zone-fgold:    #E4CDA6;
+  --zone-fhair:    rgba(228, 205, 166, 0.34);  /* gold hairline on the art back */
+  --zone-fover:    var(--ds-text-muted);
+  --zone-fbig:     var(--ds-text);
+  --zone-fshadow:
+    0 2px 8px rgba(20, 16, 10, 0.30),
+    0 30px 60px -18px rgba(20, 16, 10, 0.52),
+    0 10px 22px -10px rgba(20, 16, 10, 0.38);
+}
+
+/* s=dark — the shared defaults above ARE dark: warm-charcoal jewels on her cream
+   ground, champagne type, her artwork on the backs. Premium, not heavy; gold
+   does the lifting, the ground stays cream. (s=light was deleted.) */
+
+/* s=glass — her counter-idea: a deep warm-charcoal STAGE (full-bleed band) with
+   LIQUID-GLASS cards floating on it. White translucency tuned for the dark
+   ground (~12%, reads far better than the old 30% over cream), a bright
+   rgba(255,255,255,.34) edge + inset highlight, gold hairline on the art backs.
+   Head + card type flip to light so they read on the stage. The blur lives on
+   the FRONT (the readable capability face); the back is her opaque artwork. */
+.zone-flip--glass {
+  --zone-fground:  #201E19;                     /* deep warm-charcoal stage */
+  --zone-fcard-bg: rgba(255, 255, 255, 0.14);   /* liquid glass on dark (10-16% range; 14 floats a touch more) */
+  --zone-back-bg:  #211F1B;                      /* under the art, if it fails */
+  --zone-fborder:  rgba(255, 255, 255, 0.34);
+  --zone-ftitle:   #F5EFE3;
+  --zone-fitem:    rgba(245, 239, 227, 0.78);
+  --zone-fidx:     rgba(245, 239, 227, 0.34);
+  --zone-frule:    rgba(228, 205, 166, 0.42);
+  --zone-fdiv:     rgba(245, 239, 227, 0.14);
+  --zone-fsuit:    #E4CDA6;
+  --zone-fgold:    #E4CDA6;
+  --zone-fhair:    rgba(228, 205, 166, 0.44);   /* gold hairline on the art back */
+  --zone-fover:    rgba(245, 239, 227, 0.58);   /* head overline on the stage */
+  --zone-fbig:     #F3ECDD;                       /* head serif title on the stage */
+  --zone-fshadow:
+    0 2px 10px rgba(8, 6, 4, 0.34),
+    0 30px 60px -18px rgba(8, 6, 4, 0.55);
+}
+.zone-flip--glass .zone-fcard__front {
+  -webkit-backdrop-filter: blur(15px) saturate(1.4);
+  backdrop-filter: blur(15px) saturate(1.4);
+  box-shadow: var(--zone-fshadow), inset 0 1px 0 rgba(255, 255, 255, 0.40);
+}
+
+/* s=night — glass's counter-move: the SAME deep warm-charcoal STAGE (so it shares
+   the whole-page dusk crossfade, the spacers and the light head type), but the
+   cards are SOLID — the deleted v4 "light" recipe made opaque. A warm-cream face
+   (#FEFCF8 family), ink Cormorant title, ds-text-secondary items, a gold rule and
+   gold suit, and a delicate GOLD HAIRLINE edge — a cream calling-card laid on a
+   dark walnut table. NO backdrop-filter (the whole point vs. glass). The head
+   rides LIGHT on the stage (== glass); the BACK is her artwork on the stage with
+   the champagne hairline (== glass); only the FRONT differs. The shadow turns
+   warm-black (a light card must throw a real shadow on dark; the v4 light's
+   umber shadow would vanish on charcoal). */
+.zone-flip--night {
+  --zone-fground:  #201E19;                       /* deep warm-charcoal stage (== glass, == dusk DARK) */
+  --zone-fcard-bg: #FBF7EF;                        /* SOLID warm-cream card face (v4 light family, opaque) */
+  --zone-back-bg:  #211F1B;                        /* dark fallback under the art, on the dark stage (== glass) */
+  --zone-fborder:  rgba(201, 164, 104, 0.30);      /* delicate GOLD hairline edge on the cream card */
+  --zone-ftitle:   var(--ds-text);                 /* INK serif title on the cream card (v4 light) */
+  --zone-fitem:    var(--ds-text-secondary);       /* ink secondary — the airy items (v4 light) */
+  --zone-fidx:     var(--ds-taupe-ghost);          /* the faint rotated lower echo (v4 light) */
+  --zone-frule:    rgba(176, 134, 58, 0.5);        /* GOLD rule under the title (v4 light value) */
+  --zone-fdiv:     color-mix(in srgb, var(--ds-border) 60%, transparent); /* ink item hairline (v4 light) */
+  --zone-fsuit:    #BE9857;                         /* deeper gold suit, reads on cream (v4 light) */
+  --zone-fgold:    #BE9857;
+  --zone-fhair:    rgba(228, 205, 166, 0.46);       /* champagne hairline on the ART back, on dark (== glass) */
+  --zone-fover:    rgba(245, 239, 227, 0.58);       /* HEAD overline on the dark stage — light (== glass) */
+  --zone-fbig:     #F3ECDD;                          /* HEAD serif on the dark stage — light (== glass) */
+  --zone-fshadow:
+    0 2px 10px rgba(8, 6, 4, 0.30),
+    0 34px 66px -20px rgba(8, 6, 4, 0.56),
+    0 12px 26px -12px rgba(8, 6, 4, 0.40);          /* warm-black lift — the cream card floats on the dark stage */
+}
+/* night FRONT — SOLID, explicitly NO backdrop-filter. A whisper of card stock:
+   a near-flat top-to-bottom warmth (all within the cream family, ~3% luminance,
+   still reads solid) + a crisp inset top sheen so the cream catches the stage's
+   light like paper, not a flat pastel (her 沉淀感 note). The BACK keeps the shared
+   art treatment — no override needed. */
+.zone-flip--night .zone-fcard__front {
+  background:
+    linear-gradient(178deg, #FDFBF6 0%, var(--zone-fcard-bg) 60%, #F5EFE4 100%);
+  box-shadow: var(--zone-fshadow), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+/* s=noir — her pure DARK-ON-DARK experiment. The s=dark WRITING-FACE recipe (warm
+   charcoal card, cream Cormorant title, gold hairlines + gold suit / rule) lifted
+   onto the dark STAGE (== night + glass: shares the dusk crossfade, cream spacers
+   and light head), but with NO fwash (she flagged the round warm glow behind the
+   heading — noir gets a clean stage). Contrast is ENGINEERED so the dark card never
+   mushes into the dark stage: the stage drops a STEP deeper than night/glass
+   (#191713 vs #201E19) AND the card lifts a STEP over the s=dark default (#2B2822 vs
+   #26241F), so a real tone step separates them; a stronger GOLD HAIRLINE edge, a
+   near-black drop shadow (a true vignette on the deep stage) and a champagne RIM
+   LIGHT on the top edge draw the silhouette. Head rides LIGHT on the stage; the
+   BACK keeps the shared art treatment (default back = water — a light painting that
+   luminesces on the dark). NO backdrop-filter (the card is SOLID, the point vs.
+   glass). --zone-fground MUST match the JS dusk DARK (#191713) so the pinned stage
+   and the static (reduced-motion / mobile) stage read identically. */
+.zone-flip--noir {
+  --zone-fground:  #191713;                       /* deep stage, a STEP under night/glass (== JS dusk DARK) */
+  --zone-fcard-bg: #2B2822;                        /* warm-charcoal card, a STEP over the s=dark default */
+  --zone-back-bg:  #211F1B;                        /* dark fallback under the art (== glass/night) */
+  --zone-fborder:  rgba(228, 205, 166, 0.30);      /* GOLD hairline edge — lifted so the card edge reads on the near-tone stage */
+  --zone-ftitle:   #F3ECDD;                        /* cream Cormorant title (== s=dark writing face) */
+  --zone-fitem:    rgba(243, 236, 221, 0.72);      /* airy cream items (== s=dark) */
+  --zone-fidx:     rgba(243, 236, 221, 0.30);      /* the faint rotated lower echo */
+  --zone-frule:    rgba(228, 205, 166, 0.34);      /* gold rule under the title */
+  --zone-fdiv:     rgba(243, 236, 221, 0.12);      /* item hairline */
+  --zone-fsuit:    #E4CDA6;                         /* champagne suit */
+  --zone-fgold:    #E4CDA6;
+  --zone-fhair:    rgba(228, 205, 166, 0.46);       /* champagne hairline on the ART back, on dark (== glass/night) */
+  --zone-fover:    rgba(245, 239, 227, 0.58);       /* HEAD overline — light on the dark stage (== glass/night) */
+  --zone-fbig:     #F3ECDD;                          /* HEAD serif — light on the dark stage (== glass/night) */
+  --zone-fshadow:
+    0 2px 12px rgba(0, 0, 0, 0.46),
+    0 40px 74px -22px rgba(0, 0, 0, 0.64),
+    0 16px 32px -14px rgba(0, 0, 0, 0.50);           /* near-black lift — a real vignette that separates the card from the deep stage */
+}
+/* noir FRONT — SOLID dark card, explicitly NO backdrop-filter. The deep shadow
+   plus a champagne RIM LIGHT on the top edge draw the card off the near-tone
+   stage (the edge, not a tone contrast, carries the silhouette). */
+.zone-flip--noir .zone-fcard__front {
+  box-shadow: var(--zone-fshadow), inset 0 1px 0 rgba(228, 205, 166, 0.14);
+}
+
+/* s=noir2 — noir INVERTED (her experiment). The two tones SWAP: the STAGE takes
+   noir's old CARD tone (#2B2822, warm brown-charcoal) and the CARD drops to the
+   DEEPER tone (#191713), so the card is now DARKER than the stage and reads as a
+   SILHOUETTE / VOID cut into the lighter dark ground. The same gold toolkit keeps
+   its shape legible: a GOLD HAIRLINE edge, a champagne RIM LIGHT on the top edge,
+   and a near-black vignette shadow. NO fwash (clean stage, == noir). Head rides
+   LIGHT on the stage; the BACK keeps the shared art treatment (default back =
+   water). --zone-fground MUST match the JS dusk DARK (#2B2822) so the pinned
+   (crossfade) stage and the static (reduced-motion / mobile) stage agree. */
+.zone-flip--noir2 {
+  --zone-fground:  #2B2822;                        /* stage = noir's old card tone (the lighter dark) */
+  --zone-fcard-bg: #191713;                        /* card = the DEEPER tone, now darker than the stage */
+  --zone-back-bg:  #211F1B;                         /* dark fallback under the art (== glass/night/noir) */
+  --zone-fborder:  rgba(228, 205, 166, 0.34);      /* GOLD hairline edge — the primary silhouette carrier now */
+  --zone-ftitle:   #F3ECDD;                        /* cream Cormorant title on the near-black card */
+  --zone-fitem:    rgba(243, 236, 221, 0.72);      /* airy cream items */
+  --zone-fidx:     rgba(243, 236, 221, 0.30);      /* faint rotated lower echo */
+  --zone-frule:    rgba(228, 205, 166, 0.34);      /* gold rule under the title */
+  --zone-fdiv:     rgba(243, 236, 221, 0.12);      /* item hairline */
+  --zone-fsuit:    #E4CDA6;                         /* champagne suit */
+  --zone-fgold:    #E4CDA6;
+  --zone-fhair:    rgba(228, 205, 166, 0.46);       /* champagne hairline on the ART back (== glass/night/noir) */
+  --zone-fover:    rgba(245, 239, 227, 0.58);       /* HEAD overline — light on the dark stage */
+  --zone-fbig:     #F3ECDD;                          /* HEAD serif — light on the dark stage */
+  --zone-fshadow:
+    0 2px 12px rgba(0, 0, 0, 0.5),
+    0 40px 74px -22px rgba(0, 0, 0, 0.7),
+    0 16px 32px -14px rgba(0, 0, 0, 0.55);           /* near-black vignette — the void sinks into the lighter stage */
+}
+/* noir2 FRONT — SOLID near-black card, explicitly NO backdrop-filter. A champagne
+   RIM LIGHT on the top edge (a touch stronger than noir's, since the card is now
+   the darker object) plus the gold hairline draw the silhouette off the lighter
+   dark stage — the edge, not a tone contrast, carries the shape. */
+.zone-flip--noir2 .zone-fcard__front {
+  box-shadow: var(--zone-fshadow), inset 0 1px 0 rgba(228, 205, 166, 0.18);
+}
+
+/* dusk-crossfade runway (dark-stage styles: night + glass, TRANSITION A) — empty cream bands above and
+   below the deck so the WHOLE-PAGE ground has room to dip cream→charcoal on the
+   way in and lift back on the way out. Transparent (they show the fading page
+   ground itself); present ONLY where the crossfade runs (desktop + motion), so
+   reduced-motion and mobile never see a bare gap and keep the static dark band. */
+.zone-fspacer { display: none; }
+@media (min-width: 721px) and (prefers-reduced-motion: no-preference) {
+  .zone-fspacer { display: block; height: 90vh; background: transparent; }
+  /* her 2026-07-19 calls: the cream stretches around the deck took several
+     scrolls — entry runway halved (dusk dips faster); exit runway cut to a
+     breath (dawn lifts quickly and the full-screen water footer arrives). */
+  .zone-fspacer--top { height: 42vh; }
+  .zone-fspacer--btm { height: 36vh; }
+}
+
+/* the QUIET warm drift on the dark stage (night + glass) — champagne / gold soft
+   glows only (NO pink / green). Glass's blur chews on it; for night's opaque
+   cards it warms the negative space around them like candlelight on a dark table,
+   so the stage never reads as flat black. No base fill: the charcoal shows through. */
+.zone-fwash {
+  position: absolute; inset: -8%; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(52% 50% at 22% 26%, rgba(228, 205, 166, 0.16), transparent 70%),
+    radial-gradient(46% 46% at 82% 22%, rgba(214, 180, 120, 0.12), transparent 72%),
+    radial-gradient(56% 58% at 70% 84%, rgba(228, 205, 166, 0.10), transparent 70%),
+    radial-gradient(50% 54% at 26% 82%, rgba(198, 168, 112, 0.09), transparent 72%);
+}
+
+.zone-head {
+  max-width: var(--ds-content-max); margin: 0 auto clamp(40px, 6vh, 72px);
+  display: flex; align-items: baseline; justify-content: space-between; gap: 20px;
+}
+.zone-over { margin: 0; color: var(--ds-text-muted); }
+.zone-over--meta { color: var(--ds-taupe-ghost); }
+
+/* ---- shared: skill list + tool chips ----------------------------------- */
+.zone-skills { list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: 11px; }
+.zone-skills li {
+  position: relative; padding-left: 22px;
+  font-family: var(--ds-font-body); font-size: 0.9375rem; line-height: 1.4;
+  color: var(--ds-text-secondary);
+}
+.zone-skills li::before {
+  content: ""; position: absolute; left: 0; top: 0.66em;
+  width: 11px; height: 1px; background: var(--zone-gold); opacity: 0.85;
+}
+.zone-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+.zone-chip {
+  font-family: var(--ds-font-mono); font-size: 0.6875rem; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ds-text-secondary);
+  padding: 6px 11px; border-radius: var(--ds-radius-pill);
+  border: 1px solid var(--ds-border); white-space: nowrap;
+}
+
+/* ============================================================ DEMO 1 · CARDS V4
+   Four playing-card capabilities: the title holds alone, the deck deals along
+   the alive line (dark/light) then flips L→R to its motif-backed face; settled
+   cards tilt to the pointer. CSS default = the settled, readable fronts (no-JS /
+   reduced-motion safe); GSAP sets the deck/back initial states then scrubs. */
+
+/* the pin box — natural height by default (readable, no-JS safe); the full-
+   motion media below turns it into the 100svh pinned viewport. */
+.zone-fpin {
+  position: relative;
+  padding: clamp(96px, 14vh, 150px) clamp(14px, 2.6vw, 34px) clamp(72px, 10vh, 110px);
+}
+
+/* section head — overline + a large held serif title (the first beat) */
+.zone-fhead { position: relative; z-index: 2; width: min(89vw, 1760px);
+  margin: 0 auto clamp(30px, 5vh, 60px); }
+.zone-fover { margin: 0 0 clamp(10px, 1.4vh, 16px); color: var(--zone-fover); }
+.zone-ftitle { margin: 0; font-family: var(--ds-font-display);
+  font-weight: var(--ds-w-display); font-size: clamp(2.6rem, 1.4rem + 4vw, 5.2rem);
+  line-height: 0.98; letter-spacing: -0.02em; color: var(--zone-fbig); }
+
+.zone-fstage { position: relative; z-index: 1; width: min(89vw, 1760px);
+  margin: 0 auto; }
+
+.zone-frow { position: relative; z-index: 1; display: grid;
+  grid-template-columns: repeat(4, 1fr); gap: clamp(16px, 1.6vw, 30px);
+  align-items: start; }
+
+/* one card cell — the DEAL transforms THIS node */
+.zone-fcard { position: relative; }
+/* perspective layer for the 3D flip + hover tilt (no idle sway now) */
+.zone-fcard__hang { position: relative; perspective: 1600px; }
+/* hover-tilt layer (dedicated node; only wakes when settled) */
+.zone-fcard__tilt { position: relative; transform-style: preserve-3d; }
+/* FLIP layer */
+.zone-fcard__inner { position: relative; transform-style: preserve-3d; }
+.zone-fcard__face { border-radius: var(--ds-radius-lg); overflow: hidden;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+
+/* FRONT — in flow (defines card height); the readable end state */
+.zone-fcard__front { position: relative; display: flex; flex-direction: column;
+  min-height: clamp(380px, 30vw, 520px);
+  padding: clamp(20px, 1.7vw, 34px);
+  background: var(--zone-fcard-bg); border: 1px solid var(--zone-fborder);
+  box-shadow: var(--zone-fshadow); }
+
+/* the playing-card corner index: DOMINANT title + small suit */
+.zone-fcard__idx { display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 10px; }
+.zone-fcard__title { margin: 0; font-family: var(--ds-font-display);
+  font-weight: 600; font-size: clamp(1.5rem, 0.95rem + 1.2vw, 2.2rem);
+  line-height: 1.0; letter-spacing: -0.01em; color: var(--zone-ftitle);
+  max-width: 12ch; min-height: 2em; /* reserve 2 lines so every list starts level */ }
+.zone-fcard__suit { flex: none; width: clamp(18px, 1.35vw, 24px); height: auto;
+  margin-top: 3px; fill: var(--zone-fsuit); }
+.zone-fcard__rule { display: block; height: 1px; background: var(--zone-frule);
+  margin: clamp(13px, 1.2vw, 18px) 0 0; }
+
+/* the FEW airy items — hairline-separated, no bullets, no dashes */
+.zone-fcard__list { list-style: none; margin: 0; padding: 0;
+  flex: 1 1 auto; display: flex; flex-direction: column; }
+.zone-fcard__list li { font-family: var(--ds-font-body);
+  font-size: clamp(0.84rem, 0.74rem + 0.26vw, 0.98rem); line-height: 1.3;
+  color: var(--zone-fitem); padding: clamp(12px, 1.05vw, 17px) 0;
+  border-bottom: 1px solid var(--zone-fdiv); }
+.zone-fcard__list li:last-child { border-bottom: 0; }
+
+/* the mirrored lower index — a quiet, rotated echo */
+.zone-fcard__idx--btm { transform: rotate(180deg);
+  margin-top: clamp(8px, 0.9vw, 12px); }
+.zone-fcard__idx--btm .zone-fcard__title { font-size: 0.9rem; font-weight: 500;
+  letter-spacing: 0; color: var(--zone-fidx); min-height: 0; }
+.zone-fcard__idx--btm .zone-fcard__suit { width: 15px; opacity: 0.45; }
+
+/* BACK — HER OWN tarot-style artwork, full-bleed on the card face. The face
+   clips it to the card radius (overflow:hidden on .zone-fcard__face); the 1px
+   gold hairline sits on top of the image edge. Same for every style — only the
+   FRONT changes skin. Two decks (a | b) swap the src in React. */
+.zone-fcard__back { position: absolute; inset: 0; overflow: hidden;
+  background: var(--zone-back-bg);
+  border: 1px solid var(--zone-fhair); box-shadow: var(--zone-fshadow);
+  transform: rotateY(180deg); }
+.zone-fcard__backimg { position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: center; display: block;
+  user-select: none; -webkit-user-drag: none; }
+
+/* ---- full-motion desktop: the pin box becomes the 100svh pinned viewport,
+   and the transform layers get will-change only where they actually animate. */
+@media (min-width: 721px) and (prefers-reduced-motion: no-preference) {
+  .zone-fpin { height: 100svh; padding: 0; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: center;
+    gap: clamp(20px, 3.4vh, 46px); }
+  .zone-fhead { margin-bottom: 0; }
+  .zone-fstage { padding-top: 0; }
+  .zone-ftitle,
+  .zone-fcard,
+  .zone-fcard__inner { will-change: transform; }
+  /* the warm wash drifts slowly on the dark stage — keeps glass's refraction and
+     night's candlelit negative space alive */
+  .zone-flip--glass .zone-fwash,
+  .zone-flip--night .zone-fwash {
+    animation: zone-wash-drift 26s ease-in-out infinite alternate;
+  }
+}
+@keyframes zone-wash-drift {
+  from { transform: scale(1.06) translate(-1.4%, -1%); }
+  to   { transform: scale(1.13) translate(1.8%, 1.4%); }
+}
+
+/* ============================================================ DEMO 2 · QUIET */
+.zone-cards { display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(20px, 2.5vw, 40px); max-width: var(--ds-content-max); margin: 0 auto; }
+.zone-qcard { position: relative; overflow: hidden;
+  padding: clamp(26px, 2.4vw, 40px);
+  background: var(--zone-card-bg); border: 1px solid var(--ds-border);
+  border-radius: var(--ds-radius-lg); box-shadow: var(--ds-elev-1); }
+.zone-qindex { position: absolute; top: 2px; right: 16px; pointer-events: none;
+  font-family: var(--ds-font-mono); font-weight: 500;
+  font-size: clamp(3.4rem, 7vw, 5.6rem); line-height: 1;
+  color: var(--ds-text); opacity: 0.05; }
+.zone-qcat { position: relative; margin: 0 0 20px; padding-bottom: 16px;
+  font-family: var(--ds-font-display); font-weight: var(--ds-w-display);
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 1.9rem); line-height: 1.15;
+  letter-spacing: -0.01em; color: var(--ds-text); }
+.zone-qcat::after { content: ""; position: absolute; left: 0; bottom: 0;
+  width: 40px; height: 1px; background: var(--zone-gold); }
+
+/* ========================================================== DEMO 3 · JOURNEY
+   Base (mobile / reduced motion / < 901px) = a readable vertical list with a
+   left rail. The pinned horizontal band is layered on ONLY at >= 901px + full
+   motion (below). */
+.zone-jrny { position: relative;
+  padding: clamp(80px, 12vh, 160px) clamp(24px, 6vw, 96px) clamp(96px, 14vh, 180px); }
+.zone-jrny .zone-head { margin-bottom: clamp(32px, 5vh, 56px); }
+.zone-jrny__stage { position: relative; max-width: var(--ds-content-max);
+  margin: 0 auto; }
+.zone-jrny__rail { position: absolute; left: 11px; top: 6px; bottom: 6px;
+  width: 1px; background: var(--ds-border); }
+.zone-jrny__fill { display: none; }
+.zone-jrny__track { display: flex; flex-direction: column;
+  gap: clamp(28px, 4vh, 46px); }
+.zone-jrny__station { position: relative; display: grid;
+  grid-template-columns: 24px 1fr; column-gap: 22px; align-items: start; }
+.zone-jrny__node { grid-column: 1; grid-row: 1 / span 2; justify-self: center;
+  margin-top: 7px; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--zone-gold); box-shadow: 0 0 0 5px var(--ds-warm-cream);
+  position: relative; z-index: 1; }
+.zone-jrny__n { grid-column: 2; margin: 0 0 2px;
+  font-family: var(--ds-font-mono); font-size: 0.6875rem; letter-spacing: 0.16em;
+  color: var(--ds-text-muted); }
+.zone-jrny__text { grid-column: 2; }
+.zone-jrny__kicker { margin: 0 0 6px; color: var(--zone-gold); }
+.zone-jrny__title { margin: 0; max-width: 26ch;
+  font-family: var(--ds-font-display); font-weight: var(--ds-w-display);
+  font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.1rem); line-height: 1.18;
+  letter-spacing: -0.01em; color: var(--ds-text); }
+
+.zone-tail { height: 16vh; }
+
+/* ---- DESKTOP FLIP: 4 across (grid); the deal, flip + hover tilt are JS. --- */
+
+/* ---- MOBILE (< 721px): flip deck -> horizontal swipe row (no pin, no line);
+   quiet cards stack. -------------------------------------------------------- */
+@media (max-width: 720px) {
+  .zone-fpin { padding: clamp(96px, 16vh, 140px) clamp(18px, 5vw, 26px) clamp(56px, 10vh, 90px); }
+  .zone-fhead { width: 100%; margin-bottom: clamp(24px, 5vh, 40px); }
+  .zone-ftitle { font-size: clamp(2.2rem, 1.4rem + 5vw, 3rem); }
+  .zone-fstage { width: 100%; padding-top: 0; }
+  .zone-frow { display: flex; grid-template-columns: none; gap: 14px;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch; padding: 2px 2px 14px;
+    scrollbar-width: none; }
+  .zone-frow::-webkit-scrollbar { display: none; }
+  .zone-fcard { flex: 0 0 76%; scroll-snap-align: center; }
+  .zone-fcard__front { min-height: clamp(330px, 96vw, 400px); }
+
+  .zone-cards { grid-template-columns: 1fr; gap: 22px; }
+}
+
+/* ---- HORIZONTAL JOURNEY: pinned band, >= 901px + full motion only -------- */
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .zone-jrny__stage { height: 100svh; max-width: none; overflow: hidden; }
+  .zone-jrny__rail { left: 0; right: 0; top: 54%; bottom: auto;
+    width: auto; height: 1px; }
+  .zone-jrny__fill { display: block; position: absolute; left: 0; top: 54%;
+    width: 100%; height: 2px; margin-top: -1px; background: var(--zone-gold);
+    transform-origin: left center; transform: scaleX(0); }
+
+  .zone-jrny__track { flex-direction: row; height: 100%; width: max-content;
+    gap: 0; }
+  .zone-jrny__station { display: block; position: relative; height: 100%;
+    flex: 0 0 auto; width: clamp(360px, 34vw, 560px); }
+
+  .zone-jrny__n { position: absolute; left: 50%; top: calc(54% - 104px);
+    transform: translateX(-50%); margin: 0; letter-spacing: 0;
+    font-family: var(--ds-font-display); font-weight: var(--ds-w-display);
+    font-size: clamp(2.4rem, 4vw, 3.6rem); color: var(--ds-taupe-ghost);
+    opacity: 0.55;
+    transition: color var(--ds-dur-hover) var(--ds-ease-out),
+                opacity var(--ds-dur-hover) var(--ds-ease-out); }
+  .zone-jrny__node { position: absolute; left: 50%; top: 54%;
+    transform: translate(-50%, -50%); margin: 0; width: 11px; height: 11px;
+    background: var(--ds-surface); border: 1px solid var(--ds-border-strong);
+    box-shadow: 0 0 0 6px var(--ds-warm-cream); z-index: 1;
+    transition: background var(--ds-dur-hover) var(--ds-ease-out),
+                border-color var(--ds-dur-hover) var(--ds-ease-out),
+                transform var(--ds-dur-hover) var(--ds-ease-out); }
+  .zone-jrny__text { position: absolute; left: 50%; top: calc(54% + 32px);
+    transform: translateX(-50%); width: min(90%, 32ch); text-align: center; }
+  .zone-jrny__kicker { color: var(--ds-taupe-ghost);
+    transition: color var(--ds-dur-hover) var(--ds-ease-out); }
+  .zone-jrny__title { color: var(--ds-text-muted);
+    font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem);
+    transition: color var(--ds-dur-hover) var(--ds-ease-out); }
+
+  /* the gold line reaches a node -> it lights; the centered one is active */
+  .zone-jrny__station.is-reached .zone-jrny__node {
+    background: var(--zone-gold); border-color: var(--zone-gold); }
+  .zone-jrny__station.is-reached .zone-jrny__n {
+    color: var(--ds-text-muted); opacity: 1; }
+  .zone-jrny__station.is-reached .zone-jrny__kicker { color: var(--zone-gold); }
+  .zone-jrny__station.is-reached .zone-jrny__title { color: var(--ds-text); }
+  .zone-jrny__station.is-active .zone-jrny__node {
+    transform: translate(-50%, -50%) scale(1.4); }
+  .zone-jrny__station.is-active .zone-jrny__title { color: var(--ds-text); }
+}
+
+/* ---- REDUCED MOTION: everything static + readable -----------------------
+   The flip deck already renders its settled fronts by default (GSAP's initial
+   states run only inside the no-preference matchMedia branches), so nothing
+   here needs disabling for it — just kill the journey/tag transitions. */
+@media (prefers-reduced-motion: reduce) {
+  .zone-jrny__node, .zone-jrny__n, .zone-jrny__title, .zone-jrny__kicker,
+  .zone-tag__link { transition: none; }
+}

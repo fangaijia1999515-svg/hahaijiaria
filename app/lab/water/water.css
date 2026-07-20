@@ -1,0 +1,203 @@
+/* /lab/water — full-bleed water-ripple study. Self-contained; no design-token
+   import needed beyond the mono font var applied on the page <main>. */
+
+.water-page {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background: #f5f0e8; /* warm cream, in case the canvas is a frame behind */
+  /* no custom cursor: the crosshair read as a weird square X (她的反馈) */
+}
+
+.water-root {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.water-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none; /* touch-drag ripples instead of scrolling */
+}
+
+.water-static {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.water-label {
+  position: absolute;
+  left: clamp(20px, 3vw, 44px);
+  bottom: clamp(18px, 3vw, 40px);
+  z-index: 2;
+  margin: 0;
+  font-family: var(--font-ds-plex-mono), ui-monospace, "SF Mono", monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #f5f0e8; /* cream */
+  text-shadow: 0 1px 10px rgba(30, 40, 44, 0.45); /* legible on light water */
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---- footer composition mocks (?footer=1|2|3) — SignatureClose copy on
+   water, three arrangements from her references' shared finale grammar ---- */
+.water-foot {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(40px, 6vh, 72px) clamp(24px, 4vw, 64px) clamp(20px, 3.2vh, 40px);
+  color: #2d2d2d;
+  pointer-events: none; /* the water stays touchable everywhere but the links */
+}
+
+.water-foot__overline {
+  margin: 0;
+  font-family: var(--font-ds-plex-mono), ui-monospace, monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(45, 45, 45, 0.74);
+}
+
+/* the statement is the star: monumental serif, reference-scale */
+.water-foot__line {
+  margin: 0;
+  font-family: var(--font-ds-display), serif;
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+.water-foot__line--center {
+  font-size: clamp(3rem, 7vw, 6.4rem);
+}
+
+.water-foot__line--left {
+  font-size: clamp(3rem, 6.4vw, 5.8rem);
+  max-width: 12ch;
+}
+
+.water-foot__line--narrow {
+  font-size: clamp(2.7rem, 5.4vw, 4.8rem);
+}
+
+.water-foot__gap {
+  margin-top: clamp(18px, 2.6vh, 28px);
+}
+
+.water-foot__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(24px, 3.4vw, 44px);
+}
+
+.water-foot__links--col {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: clamp(12px, 1.8vh, 18px);
+}
+
+.water-foot__links a {
+  pointer-events: auto;
+  font-family: var(--font-ds-hanken), sans-serif;
+  font-size: 16.5px;
+  color: #2d2d2d;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(45, 45, 45, 0.42);
+  padding-bottom: 2px;
+  transition: border-color 240ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.water-foot__links a:hover {
+  border-color: #2d2d2d;
+}
+
+.water-foot__mark {
+  fill: #2d2d2d;
+  height: auto;
+}
+
+.water-foot__mark--small {
+  width: clamp(34px, 3.2vw, 46px);
+  opacity: 0.92;
+}
+
+/* variant 3: the monogram is the monument, half-sunk in the water */
+.water-foot__mark--sunken {
+  position: absolute;
+  left: 50%;
+  bottom: calc(-1 * clamp(48px, 7vw, 110px));
+  transform: translateX(-50%);
+  width: clamp(300px, 36vw, 520px);
+  opacity: 0.9;
+}
+
+.water-foot__bar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.water-foot__name {
+  font-family: var(--font-ds-display), serif;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* -- variant 1 · Monument (centered, lusion grammar) -- */
+.water-foot--m .water-foot__mtop {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+  gap: clamp(20px, 3.2vh, 34px);
+  margin-top: clamp(64px, 11vh, 130px);
+}
+
+/* ink mode: the statement lives in the water at ~30% height — the DOM links
+   move down below it */
+.water-foot--ink .water-foot__mtop {
+  margin-top: 44svh;
+}
+
+/* -- variants 2/3 · Editorial top zone (statement left, info right) -- */
+.water-foot__etop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: clamp(24px, 4vw, 64px);
+  flex-wrap: wrap;
+}
+
+.water-foot__etop > div {
+  display: grid;
+  gap: clamp(14px, 2.2vh, 22px);
+}
+
+.water-foot__easide {
+  display: grid;
+  gap: clamp(12px, 1.8vh, 18px);
+  justify-items: end;
+  text-align: right;
+  margin-top: 6px;
+}
+

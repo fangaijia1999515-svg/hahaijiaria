@@ -1,0 +1,392 @@
+/* ============================================================================
+   CLASSIC-DS — scoped re-skin bridge for /work-classic/*.
+   The shared Navigation + Footer are ALSO used by app/page.tsx, so they are
+   NOT edited; instead we override, under this scope only, the runtime CSS
+   variables they consume. Values mirror styles/design-tokens.css (.ds):
+     ground  #F5F0E8 (--ds-warm-cream)   ink    #2D2D2D (--ds-deep-charcoal)
+     surface #E8E0D5 (--ds-soft-parchment) accent #3D4A3A (--ds-forest-green)
+     muted   #6E675C (--ds-charcoal-55)  hairline rgba(45,45,45,.14)
+
+   STAGES — the classic pages render in two registers of the same system:
+   · cream (default): the --cl-* semantic vars below compute to EXACTLY the
+     hex/rgba values the classic pages hardcoded before the var conversion
+     (zero visual regression is a hard requirement).
+   · dark (?stage=dark): `.classic-stage-dark` on the page wrapper (added
+     together with `.ds-dark` by ProjectThemeProvider) remaps the --cl-* vars
+     and this bridge to the system's dark register (CASE-ANATOMY-SPEC §3):
+     warm charcoal #2D2D2D stage, cream #F5F0E8 ink, darker-than-stage wells
+     (#262624 / #1C1B19), cream-alpha hairlines, and green = sage #9CAF88
+     (forest is a light-context-only accent).
+   ============================================================================ */
+
+.classic-ds,
+.classic-ds.section-cream {
+  min-height: 100vh;
+
+  /* ---- classic semantic palette (--cl-*) — LIGHT defaults ------------------
+     Every value below is byte-equal to what the classic pages hardcoded. */
+  --cl-bg: #f5f0e8;               /* stage ground (was hardcoded #F5F0E8)      */
+  --cl-grad-tail: #e8e0d5;        /* EDT page-gradient tail stop               */
+  --cl-ink: #2d2d2d;              /* primary text / active dots (was #2D2D2D)  */
+  --cl-text-soft: #4a4a47;        /* secondary body (was #4A4A47)              */
+  --cl-text-muted: #6e675c;       /* captions / labels (was #6E675C)           */
+  --cl-text-muted-a50: rgba(110, 103, 92, 0.5);
+  --cl-text-muted-a60: rgba(110, 103, 92, 0.6);
+  /* ink alpha steps (was text/bg/border/ring-[#2D2D2D]/NN) */
+  --cl-ink-a05: rgba(45, 45, 45, 0.05);
+  --cl-ink-a10: rgba(45, 45, 45, 0.1);
+  --cl-ink-a12: rgba(45, 45, 45, 0.12);
+  --cl-ink-a15: rgba(45, 45, 45, 0.15);
+  --cl-ink-a20: rgba(45, 45, 45, 0.2);
+  --cl-ink-a30: rgba(45, 45, 45, 0.3);
+  --cl-ink-a40: rgba(45, 45, 45, 0.4);
+  --cl-ink-a50: rgba(45, 45, 45, 0.5);
+  --cl-ink-a60: rgba(45, 45, 45, 0.6);
+  --cl-ink-a85: rgba(45, 45, 45, 0.85);
+  --cl-ink-a90: rgba(45, 45, 45, 0.9);
+  /* surfaces */
+  --cl-surface: #e8e0d5;          /* parchment cards (was bg-[#E8E0D5])        */
+  --cl-surface-2: #efeae0;        /* reflection wells (was bg-[#EFEAE0])       */
+  --cl-well-ring: transparent;    /* dark-only inset hairline on cards         */
+  --cl-mat: rgba(45, 45, 45, 0.04); /* blueprint mats (was bg-[#2D2D2D]/[0.04]) */
+  --cl-hairline-next: rgba(45, 45, 45, 0.22); /* next-project rule             */
+  /* accent voices (CSS-only usages; JS accents flip via theme-context) */
+  --cl-accent: #3d4a3a;
+  --cl-accent-a40: rgba(61, 74, 58, 0.4);      /* phone hover ring             */
+  --cl-phone-shadow: rgba(45, 45, 45, 0.35);   /* phone resting shadow color   */
+  --cl-phone-glow: rgba(61, 74, 58, 0.25);     /* phone hover glow color       */
+  /* solid charcoal blocks (charcoal bg + cream text on BOTH stages) */
+  --cl-block-line: rgba(255, 255, 255, 0.1);   /* was border-white/10          */
+  /* placeholder-tile gradient stops (EDT AssetPlaceholder / TestingPager) */
+  --cl-ph-accent: rgba(61, 74, 58, 0.1);
+  --cl-ph-fade: rgba(232, 224, 213, 0);
+  --cl-ph-fade2: rgba(245, 240, 232, 0);
+  --cl-ph-g1: rgba(232, 224, 213, 0.5);
+  --cl-ph-g2: rgba(245, 240, 232, 0.2);
+
+  /* --- Strategic-Pivot cards + prototype CTA: quiet-luxury re-skin ----------
+     (were hardcoded #2D2D2D dark blocks + a solid charcoal pill). Narrative
+     contrast WITHOUT black: Current State = muted taupe card that sits back;
+     Future State = warm ivory card that lifts, with a champagne hairline +
+     label. The CTA borrows the HoverBorderGradient mechanic, recoloured to a
+     soft champagne light that travels the border. */
+  --cl-champagne: #b08d57;                        /* muted brushed-gold accent   */
+  --cl-champagne-bright: #d8b877;                 /* travelling-light bright core */
+  --cl-champagne-a45: rgba(176, 141, 87, 0.45);   /* gold hairline               */
+  --cl-pivot-muted-bg: #e7ded0;                   /* taupe-tinted; sits back      */
+  --cl-pivot-muted-border: rgba(45, 45, 45, 0.12);
+  --cl-pivot-muted-shadow: inset 0 1px 2px rgba(45, 45, 45, 0.05);
+  --cl-pivot-lift-bg: #faf6ef;                    /* warm ivory; lifts            */
+  --cl-pivot-lift-shadow: 0 20px 44px -24px rgba(45, 45, 45, 0.24);
+  --cl-cta-face: #faf6ef;                         /* warm cream button face       */
+  --cl-cta-shadow: 0 12px 28px -18px rgba(45, 45, 45, 0.3);
+  --cl-cta-shadow-hover: 0 22px 46px -18px rgba(176, 141, 87, 0.42);
+
+  /* ground + ink */
+  --bg-primary: #f5f0e8;
+  --background: #f5f0e8;
+  --color-background: #f5f0e8;
+  --foreground: #2d2d2d;
+  --color-foreground: #2d2d2d;
+  --text-primary: #2d2d2d;
+  --cream: #2d2d2d; /* heading var flips to ink on light ground (same trick as .section-cream) */
+  --card: #e8e0d5;
+  --color-card: #e8e0d5;
+  --card-foreground: #2d2d2d;
+  --muted: #e8e0d5; /* old dark media wells → soft parchment */
+  --color-muted: #e8e0d5;
+  --muted-foreground: #6e675c;
+  --color-muted-foreground: #6e675c;
+
+  /* single brand accent: forest green (--ds-accent) */
+  --accent: #3d4a3a;
+  --color-accent: #3d4a3a;
+  --ring: #3d4a3a;
+  --glow: rgba(61, 74, 58, 0.16);
+
+  /* hairlines / section rules */
+  --border-subtle: rgba(45, 45, 45, 0.14);
+  --border: rgba(45, 45, 45, 0.14);
+  --color-border: rgba(45, 45, 45, 0.14);
+  --hairline: rgba(45, 45, 45, 0.12);
+  --section-divider: rgba(45, 45, 45, 0.14);
+  --section-divider-soft: rgba(45, 45, 45, 0.1);
+  --section-divider-next: rgba(45, 45, 45, 0.22);
+
+  /* fonts → the ds trio (Cormorant / Hanken Grotesk / IBM Plex Mono) */
+  --font-display: var(--ds-font-display);
+  --font-sans: var(--ds-font-body);
+  --font-mono: var(--ds-font-mono);
+
+  background-color: var(--bg-primary);
+  color: var(--foreground);
+}
+
+/* Tailwind's font utilities inline their font-var chains at build time
+   (font-mono → Geist var, font-sans → Hanken var), so remap the utilities
+   themselves inside the classic scope. */
+.classic-ds .font-mono {
+  font-family: var(--ds-font-mono);
+}
+.classic-ds .font-sans {
+  font-family: var(--ds-font-body);
+}
+
+/* The fixed nav's on-cream mode hardcodes near-black + violet through an
+   element inline style; !important custom properties out-rank inline styles. */
+.classic-ds header.fixed {
+  --foreground: #2d2d2d !important;
+  --accent: #3d4a3a !important;
+}
+/* nav's scrolled cream backing (#f4ecdd/85) → ds warm cream family */
+.classic-ds header.fixed .backdrop-blur-md {
+  background-color: rgba(245, 240, 232, 0.9) !important;
+  border-color: rgba(45, 45, 45, 0.12) !important;
+}
+
+/* ---- classic type helpers (used by the re-skinned classic pages) ---------- */
+/* display voice: Cormorant 500 — H1s, big stats, pull quotes */
+.classic-ds .classic-display {
+  font-family: var(--ds-font-display);
+  font-weight: 500;
+}
+/* label voice: IBM Plex Mono 500 — overlines, step numbers, kickers */
+.classic-ds .classic-label {
+  font-family: var(--ds-font-mono);
+  font-weight: 500;
+}
+
+/* ============================================================================
+   DARK STAGE — ?stage=dark. `.classic-stage-dark` sits on the page wrapper
+   (ProjectThemeProvider div, together with `.ds-dark` for the ds-* tokens).
+   Same classic layout, dark register of the SAME system (case-v2 rules):
+   stage #2D2D2D (warm charcoal, never pure black) · ink #F5F0E8 cream ·
+   parchment cards become darker-than-stage wells (#E8E0D5→#262624,
+   #EFEAE0→#1C1B19) with cream-alpha hairlines · accent forest→sage #9CAF88.
+   IMAGE plates / media content untouched.
+   ============================================================================ */
+.classic-ds .classic-stage-dark,
+.classic-ds.classic-stage-dark {
+  min-height: 100vh;
+
+  /* --cl-* remap (alphas mirror the light values 1:1, cream over charcoal —
+     same convention as --ds-hairline-light vs --ds-hairline-dark) */
+  --cl-bg: #2d2d2d;
+  --cl-grad-tail: #262624; /* charcoal deepening slightly (EDT tail) */
+  --cl-ink: #f5f0e8;
+  --cl-text-soft: rgba(245, 240, 232, 0.72);  /* = --ds-cream-72 */
+  --cl-text-muted: rgba(245, 240, 232, 0.55); /* = --ds-cream-55 */
+  --cl-text-muted-a50: rgba(245, 240, 232, 0.3);
+  --cl-text-muted-a60: rgba(245, 240, 232, 0.35);
+  --cl-ink-a05: rgba(245, 240, 232, 0.05);
+  --cl-ink-a10: rgba(245, 240, 232, 0.1);
+  --cl-ink-a12: rgba(245, 240, 232, 0.12);
+  --cl-ink-a15: rgba(245, 240, 232, 0.15);
+  --cl-ink-a20: rgba(245, 240, 232, 0.2);
+  --cl-ink-a30: rgba(245, 240, 232, 0.3);
+  --cl-ink-a40: rgba(245, 240, 232, 0.4);
+  --cl-ink-a50: rgba(245, 240, 232, 0.5);
+  --cl-ink-a60: rgba(245, 240, 232, 0.6);
+  --cl-ink-a85: rgba(245, 240, 232, 0.85);
+  --cl-ink-a90: rgba(245, 240, 232, 0.9);
+  --cl-surface: #262624;
+  --cl-surface-2: #1c1b19; /* = --ds-near-black */
+  --cl-well-ring: rgba(245, 240, 232, 0.1); /* cards gain a cream hairline */
+  --cl-mat: rgba(245, 240, 232, 0.05);
+  --cl-hairline-next: rgba(245, 240, 232, 0.22);
+  --cl-accent: #9caf88; /* sage — forest disappears on charcoal */
+  --cl-accent-a40: rgba(156, 175, 136, 0.4);
+  --cl-phone-shadow: rgba(0, 0, 0, 0.55);
+  --cl-phone-glow: rgba(156, 175, 136, 0.22);
+  /* charcoal blocks now sit on a charcoal stage: hairline does the reading */
+  --cl-block-line: rgba(245, 240, 232, 0.22);
+  --cl-ph-accent: rgba(156, 175, 136, 0.12);
+  --cl-ph-fade: rgba(38, 38, 36, 0);
+  --cl-ph-fade2: rgba(45, 45, 45, 0);
+  --cl-ph-g1: rgba(28, 27, 25, 0.5);
+  --cl-ph-g2: rgba(45, 45, 45, 0.2);
+
+  /* --- pivot cards + CTA, dark register. Same narrative (muted sits back /
+     warm lifts) in charcoal; champagne warms up so gold still reads on dark. */
+  --cl-champagne: #cba36a;
+  --cl-champagne-bright: #e6c98f;
+  --cl-champagne-a45: rgba(203, 163, 106, 0.45);
+  --cl-pivot-muted-bg: #232220;                   /* deeper than stage; sits back */
+  --cl-pivot-muted-border: rgba(245, 240, 232, 0.1);
+  --cl-pivot-muted-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+  --cl-pivot-lift-bg: #302e29;                    /* warm well; a hair above stage */
+  --cl-pivot-lift-shadow: 0 20px 44px -24px rgba(0, 0, 0, 0.55);
+  --cl-cta-face: #302e29;
+  --cl-cta-shadow: 0 12px 28px -18px rgba(0, 0, 0, 0.55);
+  --cl-cta-shadow-hover: 0 22px 46px -18px rgba(203, 163, 106, 0.4);
+
+  /* ---- shared Navigation/Footer bridge, dark values ----------------------- */
+  --bg-primary: #2d2d2d;
+  --background: #2d2d2d;
+  --color-background: #2d2d2d;
+  --foreground: #f5f0e8;
+  --color-foreground: #f5f0e8;
+  --text-primary: #f5f0e8;
+  --cream: #f5f0e8; /* heading var returns to cream on the dark ground */
+  --card: #262624;
+  --color-card: #262624;
+  --card-foreground: #f5f0e8;
+  --muted: #262624; /* media wells: darker than stage, never pure black */
+  --color-muted: #262624;
+  --muted-foreground: rgba(245, 240, 232, 0.55);
+  --color-muted-foreground: rgba(245, 240, 232, 0.55);
+
+  --accent: #9caf88;
+  --color-accent: #9caf88;
+  --ring: #9caf88;
+  --glow: rgba(156, 175, 136, 0.18);
+
+  --border-subtle: rgba(245, 240, 232, 0.14);
+  --border: rgba(245, 240, 232, 0.14);
+  --color-border: rgba(245, 240, 232, 0.14);
+  --hairline: rgba(245, 240, 232, 0.12);
+  --section-divider: rgba(245, 240, 232, 0.14);
+  --section-divider-soft: rgba(245, 240, 232, 0.1);
+  --section-divider-next: rgba(245, 240, 232, 0.22);
+
+  background-color: var(--cl-bg);
+  color: var(--cl-ink);
+}
+
+/* The layout wrapper keeps `section-cream` (the nav's scroll-spy needs it),
+   so the nav stays in its dark-on-light MODE and sets near-black + violet via
+   an element inline style. On the dark stage we out-rank that inline style the
+   same way the cream bridge does — cream ink + sage accent instead. This rule
+   is more specific than `.classic-ds header.fixed`, so it wins inside the
+   dark scope only. */
+.classic-ds .classic-stage-dark header.fixed,
+.classic-ds.classic-stage-dark header.fixed {
+  --foreground: #f5f0e8 !important;
+  --accent: #9caf88 !important;
+}
+/* nav's scrolled cream backing → charcoal backing with a cream hairline */
+.classic-ds .classic-stage-dark header.fixed .backdrop-blur-md,
+.classic-ds.classic-stage-dark header.fixed .backdrop-blur-md {
+  background-color: rgba(45, 45, 45, 0.92) !important;
+  border-color: rgba(245, 240, 232, 0.14) !important;
+}
+
+/* ============================================================================
+   PROTOTYPE CTA — "Experience Live Prototype". A clearly pressable pill in the
+   quiet-luxury register: warm cream face, champagne hairline, ink label + an
+   up-right arrow. It borrows the HoverBorderGradient mechanic (a soft light
+   travelling the border) recoloured off-brand-black -> champagne: subtle at
+   rest on a ~3.6s loop, blooms + scales 1.02 on hover. Colours route through
+   the --cl-* tokens above, so ?stage=dark flips it too. Reduced motion freezes
+   the light to a static gold hairline.
+   ============================================================================ */
+.classic-ds .nuz-cta {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 2px;                          /* reveals the border-ring thickness   */
+  background: var(--cl-champagne-a45);   /* static gold hairline — always reads */
+  box-shadow: var(--cl-cta-shadow);
+  overflow: hidden;                      /* clip the orbiting light to the pill */
+  isolation: isolate;
+  text-decoration: none;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.classic-ds .nuz-cta__orbit {
+  position: absolute;
+  inset: -60%;                           /* oversize so the arc sweeps corners  */
+  background: conic-gradient(
+    from 0deg,
+    var(--cl-champagne-bright) 0deg,
+    var(--cl-champagne) 26deg,
+    transparent 66deg,
+    transparent 300deg,
+    var(--cl-champagne) 334deg,
+    var(--cl-champagne-bright) 360deg
+  );
+  opacity: 0.55;                         /* subtle at rest                      */
+  animation: nuz-cta-orbit 3.6s linear infinite;
+  transition: opacity 0.5s ease;
+}
+.classic-ds .nuz-cta__face {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: 999px;
+  padding: 16px 30px;
+  background: var(--cl-cta-face);
+  color: var(--cl-ink);
+  font-family: var(--ds-font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.classic-ds .nuz-cta__arrow {
+  flex: none;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.classic-ds .nuz-cta:hover {
+  transform: scale(1.02);
+  box-shadow: var(--cl-cta-shadow-hover);
+}
+.classic-ds .nuz-cta:hover .nuz-cta__orbit {
+  opacity: 1;                            /* light blooms on hover               */
+}
+.classic-ds .nuz-cta:hover .nuz-cta__arrow {
+  transform: translate(3px, -3px);       /* gentle up-right nudge               */
+}
+.classic-ds .nuz-cta:focus-visible {
+  outline: 2px solid var(--cl-champagne);
+  outline-offset: 3px;
+}
+@keyframes nuz-cta-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .classic-ds .nuz-cta,
+  .classic-ds .nuz-cta__arrow {
+    transition: none;
+  }
+  .classic-ds .nuz-cta__orbit {
+    animation: none;
+    opacity: 0;                          /* freeze: static gold hairline only   */
+  }
+  .classic-ds .nuz-cta:hover {
+    transform: none;
+  }
+}
+
+
+/* ============================================================================
+   MOBILE POLISH (2026-07-19, her recording; <=720px ONLY — desktop must stay
+   byte-identical). Two complaints: the section gaps ran a full screen tall on
+   phones, and the hero plate arrived small. Utility overrides carry !important
+   because they must outrank Tailwind's own utilities.
+   ============================================================================ */
+@media (max-width: 720px) {
+  /* section rhythm: the desktop editorial gaps, scaled to a phone column */
+  .classic-ds .mb-40 { margin-bottom: 4.5rem !important; }
+  .classic-ds .mb-24 { margin-bottom: 3.5rem !important; }
+  .classic-ds .md\:mb-28 { margin-bottom: 3.5rem !important; }
+  .classic-ds .mb-16 { margin-bottom: 2.75rem !important; }
+  .classic-ds .pt-16 { padding-top: 2.75rem !important; }
+  .classic-ds header.pt-32 { padding-top: 5.5rem !important; }
+
+  /* the HERO plate goes BIG and full-bleed at the top of the story */
+  .classic-ds .cl-hero-media {
+    width: 100vw !important;
+    margin-left: calc(50% - 50vw) !important;
+    margin-right: calc(50% - 50vw) !important;
+    border-radius: 0 !important;
+    aspect-ratio: 4 / 3 !important;
+    margin-top: 1rem !important;
+    margin-bottom: 2.5rem !important;
+  }
+}

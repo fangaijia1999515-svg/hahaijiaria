@@ -1,0 +1,1417 @@
+/* ============================================================================
+   V2 HOMEPAGE STYLES — consume ONLY tokens from styles/design-tokens.css.
+   Every class is prefixed `.v2-` and is used only inside the `.ds` scope
+   on app/v2/page.tsx. The few raw values here are either (a) v2-local motion
+   durations declared as custom properties on .v2-root, or (b) Antara's own
+   cosmic-night brand colors, which intentionally live outside the ds palette.
+   ============================================================================ */
+
+.v2-root {
+  /* v2-local motion tokens (hero zoom is the one deliberately slow moment) */
+  --v2-dur-pivot: 600ms;   /* Designed -> Built crossfade */
+  --v2-dur-hero-zoom: 1600ms;
+  --v2-dur-draw: 700ms;    /* hairline / underline self-draw (400-900ms band) */
+  --v2-dur-luminance: 1000ms; /* Antara night-sky "coming into focus" */
+  /* Antara's own cosmic-night brand colors (local to the app, on purpose).
+     Declared once here so the plate (ch 5) and the signature afterglow (ch 7)
+     share the exact same voice. */
+  --antara-night: #14172B;
+  --antara-dusk:  #2B2F55;
+  --antara-glow:  rgba(199, 189, 255, 0.30);
+  --antara-star:  rgba(240, 238, 250, 0.92);
+
+  /* ---- AMBIENT / MATERIAL LAYER (the "richness pass") ---------------------
+     v2-local ambient tokens, documented once here. These raise the whole story
+     to the hero's fullness using her own material language (paper grain, linen
+     tooth, botanical light-shadow, a misted landscape ground) — always quiet,
+     always calm. Every motion driven off these respects reduced-motion + mobile. */
+  --v2-grain-paper:        0.02;   /* near-invisible: she killed texture (2026-07-06) */
+  --v2-grain-linen:        0.10;   /* linen-weave soft-light on the dark story  */
+  --v2-botanical:          0.50;   /* shadow-leaf / olive soft-light corners    */
+  --v2-shimmer:            0.06;   /* water-surface soft-light under the close  */
+
+  min-height: 100vh;
+}
+
+.v2-root [id] { scroll-margin-top: var(--ds-space-6); }
+
+/* ---- HERO (Demo 1 from the hero lab, her pick 2026-07-02) ------------------
+   The lake-and-tree landscape belongs to the hero ONLY. Contrast comes from
+   PLACEMENT, never effects: charcoal headline in the pale sky band, solid
+   cream sub + CTA + corners in the dark grass band, a quiet bottom scrim
+   deepening the grass under them. */
+.v2-hero { position: relative; height: 100svh; overflow: hidden;
+  /* hero furniture hugs the screen edge (~27px), tighter than the 80px margin */
+  --v2-hero-edge: clamp(20px, 2.2vw, 32px); }
+
+.v2-hero__bg { position: absolute; inset: 0; z-index: 0; }
+.v2-hero__bg img { width: 100%; height: 100%; object-fit: cover; object-position: center;
+  display: block; animation: v2-hero-zoom var(--v2-dur-hero-zoom) var(--ds-ease-out) both;
+  will-change: transform; }
+@keyframes v2-hero-zoom { from { transform: scale(1.06); } to { transform: scale(1); } }
+
+/* quiet ground shadow: deepens the grass band so solid-cream copy holds */
+.v2-hero__scrim { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(to top, rgba(32, 30, 27, 0.38), transparent 30%); }
+
+/* borderless nav hugging the screen edges: wordmark left, links + pill right */
+.v2-hero__nav { position: absolute; inset-inline: 0; top: 0; z-index: 4;
+  display: flex; align-items: center; gap: clamp(20px, 3vw, 48px);
+  padding: clamp(18px, 3svh, 32px) var(--v2-hero-edge); }
+.v2-hero__brand { display: inline-flex; margin-right: auto;
+  text-decoration: none; color: inherit; }
+.v2-hero__links { display: flex; gap: clamp(16px, 2.2vw, 36px); }
+.v2-hero__link { font-family: var(--ds-font-sans); font-size: 0.95rem;
+  color: var(--ds-text-secondary); text-decoration: none;
+  transition: color var(--ds-dur-hover) var(--ds-ease-out); }
+.v2-hero__link:hover, .v2-hero__link:focus-visible { color: var(--ds-text); }
+.v2-hero__talk { font-family: var(--ds-font-sans); font-size: 0.95rem;
+  color: var(--ds-text); text-decoration: none;
+  padding: 10px 20px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--ds-deep-charcoal) 35%, transparent);
+  transition: background-color var(--ds-dur-hover) var(--ds-ease-out),
+    color var(--ds-dur-hover) var(--ds-ease-out); }
+.v2-hero__talk:hover, .v2-hero__talk:focus-visible {
+  background: var(--ds-text); color: var(--ds-warm-cream); }
+
+/* headline alone in the pale sky band, nudged above true center */
+.v2-hero__sky { position: absolute; inset: 0; z-index: 2; display: flex;
+  align-items: center; justify-content: center; text-align: center;
+  padding-inline: var(--ds-margin-desktop); padding-bottom: 22svh; }
+.v2-hero__title { font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  /* 1.12: enough leading that organic's g clears digital's d/l (1.02 collided) */
+  font-size: clamp(3.6rem, 2rem + 7.5vw, 9rem); line-height: 1.12;
+  letter-spacing: -0.01em; display: flex; flex-direction: column;
+  color: var(--ds-text); }
+.v2-hero__it { font-style: italic; }
+
+/* sub + CTA anchored in the dark grass band: solid cream, zero effects */
+.v2-hero__ground { position: absolute; inset-inline: 0; bottom: 9svh; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  gap: var(--ds-space-4); padding-inline: var(--ds-margin-desktop);
+  text-align: center; }
+.v2-hero__sub { font-family: var(--ds-font-sans); font-size: 1.1rem;
+  line-height: 1.5; color: var(--ds-warm-cream); }
+.v2-hero__pill { font-family: var(--ds-font-sans); font-size: 0.98rem;
+  background: var(--ds-warm-cream); color: var(--ds-text);
+  padding: 14px 26px; border-radius: 999px; box-shadow: var(--ds-elev-1);
+  border: 1px solid color-mix(in srgb, var(--ds-deep-charcoal) 12%, transparent);
+  cursor: pointer;
+  transition: transform var(--ds-dur-hover) var(--ds-ease-out),
+    box-shadow var(--ds-dur-hover) var(--ds-ease-out); }
+.v2-hero__pill:hover, .v2-hero__pill:focus-visible { transform: translateY(-2px);
+  box-shadow: var(--ds-elev-2, var(--ds-elev-1)); }
+
+/* corner whispers over the dark grass: cream with a soft grounding shadow */
+.v2-hero__corner { position: absolute; z-index: 2; bottom: 5svh; margin: 0;
+  color: var(--ds-warm-cream);
+  text-shadow: 0 1px 20px rgba(43, 41, 38, 0.65), 0 0 4px rgba(43, 41, 38, 0.5); }
+.v2-hero__corner--bl { left: var(--v2-hero-edge);
+  font-family: var(--ds-font-sans); font-size: 0.95rem; line-height: 1.55; }
+.v2-hero__corner--br { right: var(--v2-hero-edge); color: var(--ds-warm-cream); }
+
+/* soft fade-up on load, gently staggered (CSS-only, so it runs without JS) */
+.v2-hero__sky, .v2-hero__ground, .v2-hero__corner {
+  animation: v2-fade-up var(--ds-dur-reveal) var(--ds-ease-out) both; }
+.v2-hero__ground { animation-delay: 160ms; }
+.v2-hero__corner { animation-delay: 320ms; }
+@keyframes v2-fade-up { from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; } }
+
+/* nav: hide the center links on small screens (wordmark + pill stay) */
+@media (max-width: 720px) {
+  .v2-hero__links { display: none; }
+  /* the sub rides higher over the bright water on phones: the grass shadow
+     reaches further up so the cream copy still holds */
+  .v2-hero__scrim { background: linear-gradient(to top,
+    rgba(32, 30, 27, 0.44), transparent 52%); }
+  /* let the sub wrap naturally in the narrow column */
+  .v2-hero__sub br { display: none; }
+  .v2-hero__sub { max-width: 30ch; }
+  .v2-hero__ground { bottom: 13svh; }
+  /* corners collide with the pill at phone widths: one centered whisper
+     below the CTA instead, the scroll cue steps aside */
+  .v2-hero__corner--bl { left: 0; right: 0; text-align: center; bottom: 4svh; }
+  .v2-hero__corner--bl br { display: none; }
+  .v2-hero__corner--br { display: none; }
+}
+
+/* ---- SCROLL REVEAL ----------------------------------------------------------- */
+.v2-reveal { opacity: 0; transform: translateY(18px);
+  transition: opacity var(--ds-dur-reveal) var(--ds-ease-out),
+              transform var(--ds-dur-reveal) var(--ds-ease-out); }
+.v2-reveal.is-in { opacity: 1; transform: none; }
+
+/* single-line mask helper (title slide-up). GSAP sets the initial off-state,
+   so with no JS / reduced motion the line just sits visible. The extra bottom
+   padding + negative margin keeps serif descenders from being clipped. */
+.v2-line-mask { display: block; overflow: hidden; padding-bottom: 0.12em;
+  margin-bottom: -0.12em; }
+.v2-line-mask__i { display: block; }
+
+/* SplitText line clips (RevealLines) — SplitText adds overflow:hidden itself
+   via mask:"lines"; this just guards descenders on the serif display face. */
+.v2-splitline { padding-bottom: 0.08em; }
+
+/* stagger children of a reveal (copy blocks) — driven off the wrapper's is-in */
+.v2-stagger > * { opacity: 0; transform: translateY(14px);
+  transition: opacity var(--ds-dur-reveal) var(--ds-ease-out),
+              transform var(--ds-dur-reveal) var(--ds-ease-out); }
+.v2-reveal.is-in .v2-stagger > * { opacity: 1; transform: none; }
+.v2-reveal.is-in .v2-stagger > *:nth-child(2) { transition-delay: 90ms; }
+.v2-reveal.is-in .v2-stagger > *:nth-child(3) { transition-delay: 180ms; }
+.v2-reveal.is-in .v2-stagger > *:nth-child(4) { transition-delay: 270ms; }
+
+/* ============================================================================
+   STORY SCROLL — full-viewport chapters below the hero.
+   Every chapter fills the screen (min-height:100svh, content centered) and each
+   seam is a directed handoff (cover-rise curtain, rising rounded panel). One
+   quiet atmosphere ground sits behind the whole story for depth.
+   ============================================================================ */
+
+/* the root is transparent so the fixed atmosphere ground (below) is the only
+   background of the light chapters; cream is kept as an ultimate fallback. */
+.v2-root { background: transparent; }
+
+/* ---- GROUND (one clean, continuous cream behind the whole light story) ----
+   AD ruling 2026-07-06: the blurred landscape + visible paper grain are GONE.
+   They only ever showed through on empty bright screens (the Statement),
+   reading as a random smudge with tree silhouettes — an inconsistency she
+   caught. The ground is now ONE static cream gradient carrying the whole
+   scroll (the refs' "same ground from hero to projects"); material comes
+   from authored type, not a texture overlay. */
+.v2-ground { position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  overflow: hidden;
+  background: linear-gradient(180deg,
+    var(--ds-warm-cream) 0%, #F2ECE2 55%, #EFE8DC 100%); }
+.v2-ground__grain { position: absolute; inset: 0; mix-blend-mode: multiply;
+  opacity: var(--v2-grain-paper);
+  background-image: url("/ds/textures/paper-fiber.png");
+  background-size: 340px 340px; background-repeat: repeat; }
+
+/* ---- PROGRESS RAIL + CHAPTER COUNTER (calm wayfinding) --------------------- */
+/* z-index sits above every chapter plate, thumbnail and pinned panel (max ch
+   z-index is 8) so the NN / 07 counter is never overlapped, in any chapter. */
+.v2-rail { position: fixed; top: 50%; right: var(--ds-space-5); z-index: 60;
+  transform: translateY(-50%); display: flex; flex-direction: column;
+  align-items: center; gap: var(--ds-space-3); pointer-events: none; }
+.v2-rail__count { font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls); color: var(--ds-text-muted);
+  font-variant-numeric: tabular-nums; }
+.v2-rail__track { position: relative; width: 1px; height: 34vh;
+  background: var(--ds-border-strong); }
+.v2-rail__fill { position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+  background: var(--ds-accent); transform: scaleY(0); transform-origin: top center; }
+.v2-rail[data-dark="true"] .v2-rail__track { background: var(--ds-hairline-light); }
+.v2-rail[data-dark="true"] .v2-rail__count { color: var(--ds-cream-72); }
+@media (max-width: 720px) { .v2-rail { display: none; } }
+
+/* ---- CHAPTER BASE --------------------------------------------------------- */
+.v2-chapter { position: relative; min-height: 100svh; display: grid;
+  align-content: center; padding-block: var(--ds-space-10); }
+/* dark chapters ride an opaque charcoal panel ABOVE the ground; a rounded top
+   flattens as the panel locks (rising-panel handoff). */
+.v2-chapter--dark { background: var(--ds-bg); color: var(--ds-text);
+  overflow: hidden; will-change: border-radius; }
+/* linen tooth on the dark story — the charcoal stops reading as flat, and it
+   pairs with the paper grain on the light story (one woven-material family).
+   Painted between the dark background and the content (z-index:-1). */
+.v2-chapter--dark::after { content: ""; position: absolute; inset: 0; z-index: -1;
+  pointer-events: none; mix-blend-mode: soft-light; opacity: var(--v2-grain-linen);
+  background-image: url("/ds/textures/linen-weave.png");
+  background-size: 300px 300px; background-repeat: repeat; }
+.v2-chapter--deep { --ds-bg: var(--ds-near-black); }
+/* the cream About chapter also arrives on a rounded panel lifting away the dark */
+.v2-chapter--panel { overflow: hidden; will-change: border-radius; }
+
+/* ---- CHAPTER 1 — THE PROOF (SCREEN-2-SPEC) -------------------------------- */
+/* No panel, no pile: a left-anchored editorial ledger over the clear valley.
+   Legibility comes from three light touches, never a box: the world veil held
+   low, a feathered bottom cream scrim, and a whisper warm text-shadow on the
+   figures. Left-anchored deliberately AGAINST screen 1's centered symmetry. */
+.v2-thesis-chapter { overflow: hidden; }
+.v2-thesis { position: relative; z-index: 2; display: flex; flex-direction: column;
+  align-items: stretch; text-align: left; width: 100%;
+  min-height: 100svh; padding-block: 22svh 12svh; }
+.v2-thesis__head { display: flex; flex-direction: column; gap: var(--ds-space-4); }
+.v2-thesis__overline { color: var(--ds-text); }
+.v2-thesis__lead { font-family: var(--ds-font-display); font-weight: var(--ds-w-display);
+  font-size: var(--ds-h2-size); line-height: var(--ds-h2-lh); color: var(--ds-text);
+  max-width: 16ch; }
+.v2-thesis__cue { position: absolute; right: var(--ds-margin-desktop); bottom: 6svh;
+  z-index: 2; margin: 0; color: var(--ds-text-muted); will-change: transform; }
+
+/* the career ledger: three true figures on one drawn hairline */
+.v2-proof { position: relative; margin-top: auto; display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--ds-space-8);
+  padding-top: var(--ds-space-6); }
+.v2-proof__rule { position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: color-mix(in srgb, var(--ds-warm-cream) 60%, var(--ds-charcoal-55)); }
+.v2-proof__stat { display: flex; flex-direction: column; align-items: flex-start;
+  min-width: 0; }
+.v2-proof__fig { font-family: var(--ds-font-display); font-weight: var(--ds-w-display);
+  font-size: clamp(3.5rem, 2.4rem + 4vw, 6rem); line-height: 1; color: var(--ds-text);
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 1px 20px color-mix(in srgb, var(--ds-warm-cream) 70%, transparent); }
+.v2-proof__cap { color: var(--ds-text-secondary); margin-top: var(--ds-space-3); }
+.v2-proof__sub { font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls); line-height: 1.6; color: var(--ds-text-secondary);
+  margin-top: var(--ds-space-2); }
+
+/* feathered cream lifts — gradients, never a box edge: one under the ledger,
+   one behind the top-left head. The artwork's grass is busy at midtones, so
+   these carry most of the legibility work while the valley stays crisp. */
+.v2-thesis__scrim { position: absolute; left: 0; right: 0; bottom: 0; height: 58svh;
+  z-index: 1; pointer-events: none;
+  background: linear-gradient(0deg,
+    color-mix(in srgb, var(--ds-warm-cream) 72%, transparent) 0%,
+    color-mix(in srgb, var(--ds-warm-cream) 38%, transparent) 55%,
+    transparent 100%); }
+.v2-thesis__scrim::before { content: ""; position: absolute; left: 0; right: 30%;
+  bottom: 100%; height: 52svh;
+  background: radial-gradient(90% 100% at 12% 30%,
+    color-mix(in srgb, var(--ds-warm-cream) 44%, transparent) 0%, transparent 70%); }
+
+@media (max-width: 720px) {
+  .v2-thesis { padding-block: 16svh 15svh; }
+  .v2-proof { grid-template-columns: 1fr; gap: var(--ds-space-6); }
+  .v2-proof__stat + .v2-proof__stat { border-top: 1px solid
+    color-mix(in srgb, var(--ds-warm-cream) 60%, var(--ds-charcoal-55));
+    padding-top: var(--ds-space-4); }
+  .v2-thesis__cue { right: 50%; transform: translateX(50%); bottom: 4svh; }
+  /* charcoal-on-valley needs more help at small sizes: the stacked ledger
+     spans most of the screen, so the lift has to reach the middle stat too */
+  .v2-proof__cap { color: var(--ds-text); }
+  .v2-thesis__scrim { height: 80svh;
+    background: linear-gradient(0deg,
+      color-mix(in srgb, var(--ds-warm-cream) 62%, transparent) 0%,
+      color-mix(in srgb, var(--ds-warm-cream) 40%, transparent) 55%,
+      transparent 100%); }
+}
+
+/* ---- BOTANICAL LIGHT-SHADOW (thesis + about corners) --------------------- */
+/* her shadow photos as soft-light corner accents, masked so only a whisper of
+   leaf-shadow lands in the corner, drifting a few px on an ultra-slow loop so
+   the light feels alive. Never a pasted photo — always light-and-shadow. */
+.v2-botanical { position: absolute; z-index: 0; pointer-events: none;
+  mix-blend-mode: soft-light; opacity: var(--v2-botanical);
+  background-repeat: no-repeat; background-size: cover; will-change: transform; }
+.v2-botanical--thesis { opacity: calc(var(--v2-botanical) * 0.6);
+  top: -8%; left: -6%; width: 46%; height: 66%;
+  background-image: url("/ds/moodboard/shadow-leaf.png"); background-position: top left;
+  -webkit-mask-image: radial-gradient(120% 120% at 8% 8%, #000 0%, transparent 62%);
+          mask-image: radial-gradient(120% 120% at 8% 8%, #000 0%, transparent 62%);
+  animation: v2-botanical-drift 86s ease-in-out infinite alternate; }
+.v2-botanical--about { top: -4%; right: -8%; width: 40%; height: 88%; z-index: 0;
+  background-image: url("/ds/moodboard/shadow-olive.png"); background-position: top right;
+  -webkit-mask-image: radial-gradient(120% 120% at 92% 12%, #000 0%, transparent 60%);
+          mask-image: radial-gradient(120% 120% at 92% 12%, #000 0%, transparent 60%);
+  animation: v2-botanical-drift 104s ease-in-out infinite alternate; }
+@keyframes v2-botanical-drift {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-6px, 8px, 0); }
+}
+@media (max-width: 720px) { .v2-botanical { opacity: calc(var(--v2-botanical) * 0.7); } }
+
+/* ---- CONTINUOUS WORLD (her pick: hero-lab V3) ------------------------------ */
+/* One landscape persists as a sticky backdrop under hero + thesis, frosting
+   deeper as you scroll (veil opacity scrubs per frame, blur only STEPS at two
+   thresholds behind a transition — honest 60fps). The hero's own bg/scrim are
+   hidden inside the flow; the world plays their role. */
+.v2-cw { position: relative; background: var(--ds-warm-cream); }
+.v2-cw__world { position: sticky; top: 0; height: 100svh; z-index: 0; overflow: hidden; }
+/* cover fallback (no pan room): oversized cover-fit, center crop */
+.v2-cw__world img { position: absolute; inset: -8% 0; width: 100%; height: 116%;
+  object-fit: cover; object-position: center;
+  filter: blur(var(--v2-frost-blur, 0px)) saturate(0.94);
+  transition: filter 500ms var(--ds-ease-out); will-change: filter, transform; }
+/* camera-pan mode (her portrait artwork is taller than the viewport): natural
+   aspect pinned to the top, JS translates it upward as you scroll, sky first,
+   grass and water by the thesis */
+.v2-cw__world[data-pan="on"] img { inset: auto; top: 0; left: 0;
+  width: 100%; height: auto; object-fit: unset; }
+.v2-cw__veil { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--ds-warm-cream) 34%, transparent) 0%,
+    color-mix(in srgb, var(--ds-warm-cream) 20%, transparent) 30%,
+    color-mix(in srgb, var(--ds-warm-cream) 52%, transparent) 100%);
+  opacity: var(--v2-frost-veil, 0.4); transition: opacity 200ms linear; }
+/* with a real camera pan the hero frame stays crisp; frost arrives later */
+.v2-cw__world[data-frost="0"] { --v2-frost-blur: 0px; }
+.v2-cw__world[data-frost="1"] { --v2-frost-blur: 6px; }
+.v2-cw__world[data-frost="2"] { --v2-frost-blur: 14px; }
+
+/* the world's last frame melts into the cream ground before the work section
+   arrives, so the handoff is a dissolve, not a cut */
+.v2-cw::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0;
+  height: clamp(140px, 24svh, 280px); z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg, transparent 0%, var(--ds-warm-cream) 100%); }
+.v2-cw__flow { position: relative; z-index: 1; margin-top: -100svh; }
+.v2-cw__flow .v2-hero__bg, .v2-cw__flow .v2-hero__scrim { display: none; }
+/* the proof screen rides the CLEAR valley: chapter ground goes transparent,
+   no panel (SCREEN-2-SPEC) — legibility comes from the low veil + local scrim */
+.v2-cw .v2-thesis-chapter { background: transparent; }
+
+/* ---- WORLD BREATHER -------------------------------------------------------- */
+/* A different landscape from the same family surfaces between sections wearing
+   the same frost treatment (soft blur + cream fade at both edges + slow drift),
+   so a new image reads as another window onto the same place. Textless. */
+
+/* ---- SECTION 1 — SELECTED WORK (header + contained bands) ----------------- */
+/* The section reads as ONE continuous gallery: a mono header, then three bands
+   that scroll naturally (no pins). z-index/stacking is set inline in story.tsx. */
+.v2-work { position: relative; }
+.v2-work__head { display: flex; flex-direction: column; gap: var(--ds-space-4);
+  padding-block: clamp(90px, 13svh, 170px) clamp(36px, 5svh, 72px); }
+.v2-work__headrow { display: flex; align-items: baseline;
+  justify-content: space-between; gap: var(--ds-space-5); flex-wrap: wrap; }
+.v2-work__label { color: var(--ds-text-secondary); }
+.v2-work__range { color: var(--ds-text-muted); font-variant-numeric: tabular-nums; }
+/* the section name at reference scale (poch/trionn presence, serif voice) */
+.v2-work__display { font-family: var(--ds-font-display);
+  font-weight: var(--ds-w-light); font-size: clamp(3.4rem, 1.8rem + 6vw, 7.5rem);
+  line-height: 0.98; letter-spacing: -0.01em; color: var(--ds-text); }
+
+/* ---- SELECTED WORK — EDITORIAL LEDGER (monolog model) --------------------- */
+/* One repeating container language for every entry: a full-width hairline draws,
+   the index row (01/07 left, discipline+year right) seats under it, then a LARGE
+   media plate (~60% width, ~74svh) with the editorial column top-aligned beside
+   it. No alternation, no vertical centering in dead cream — density and a
+   running ledger rhythm carry the section. Plates are links: cursor-follow
+   "View case" pill on desktop, image breathes on hover. NOT pinned. */
+.v2-proj { position: relative; overflow: hidden; }
+.v2-proj__inner { width: 100%;
+  max-width: var(--ds-container-max); margin-inline: auto;
+  padding-inline: var(--ds-margin-desktop);
+  padding-block: clamp(20px, 3svh, 40px) clamp(64px, 9svh, 128px); }
+.v2-proj__rule { display: block; height: 1px; background: var(--ds-border);
+  will-change: transform; }
+.v2-proj__metarow { display: flex; align-items: baseline;
+  justify-content: space-between; gap: var(--ds-space-5);
+  padding-block: var(--ds-space-3) var(--ds-space-5); }
+.v2-proj__body { display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 64px); align-items: start; }
+
+/* the whole plate is the case-study link; the pill trails the cursor inside */
+.v2-proj__platelink { position: relative; display: block; }
+.v2-proj__pill { position: absolute; top: 0; left: 0; z-index: 6;
+  pointer-events: none; display: inline-flex; align-items: center;
+  padding: 14px 22px; border-radius: 999px;
+  background: var(--ds-accent); color: var(--ds-warm-cream);
+  font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls); text-transform: uppercase;
+  white-space: nowrap; opacity: 0; will-change: transform; }
+
+/* the plate: rounded editorial frame at reference scale, image cover-fit */
+.v2-proj__plate { position: relative; margin: 0; height: clamp(500px, 74svh, 800px);
+  border-radius: var(--ds-radius-lg); overflow: hidden; box-shadow: var(--ds-elev-1);
+  will-change: clip-path; }
+.v2-proj__plate-rise { position: absolute; inset: 0; will-change: transform; }
+/* the parallax layer is oversized so a small internal drift never bares an edge */
+.v2-proj__parallax { position: absolute; inset: -6% 0; will-change: transform; }
+.v2-proj__img, .v2-proj__video { position: absolute; inset: 0; width: 100%;
+  height: 100%; object-fit: cover; object-position: center; display: block; }
+/* hover breath: the image eases up a touch while the pill trails the cursor */
+.v2-proj__img { transition: transform 1.4s var(--ds-ease-out); }
+/* Skya's cover bakes a headline into its top edge; bias the crop toward the
+   vehicle so the plate never shows half a word */
+.v2-proj[data-project="skya"] .v2-proj__img { object-position: 50% 82%; }
+.v2-proj__platelink:hover .v2-proj__img,
+.v2-proj__platelink:focus-visible .v2-proj__img { transform: scale(1.045); }
+.v2-proj__video { opacity: 0; transition: opacity var(--ds-dur-reveal) var(--ds-ease-out); }
+.v2-proj.is-playing .v2-proj__video { opacity: 1; }
+/* warm matte veil unifying her mixed imagery; lifts a touch on plate hover */
+.v2-proj__veil { position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: color-mix(in srgb, var(--ds-warm-cream) 14%, transparent);
+  transition: opacity var(--ds-dur-reveal) var(--ds-ease-out); }
+.v2-proj__plate:hover .v2-proj__veil { opacity: 0.4; }
+
+/* ONE consistent frame system across all three plates so a word baked into a
+   source image ("Move Beyond", "Nu") meeting an edge reads as a deliberate,
+   identical bleed on every plate, not an accidental clip:
+   - ::before  a soft warm-dark edge vignette that finishes all four edges;
+   - ::after   a hairline inner border (same on every plate).
+   Both inherit the plate radius and clip to it. */
+.v2-proj__plate::before { content: ""; position: absolute; inset: 0; z-index: 1;
+  pointer-events: none; border-radius: inherit;
+  background: radial-gradient(118% 118% at 50% 50%, transparent 56%,
+    color-mix(in srgb, var(--ds-deep-charcoal) 20%, transparent) 100%); }
+.v2-proj__plate::after { content: ""; position: absolute; inset: 0; z-index: 4;
+  pointer-events: none; border-radius: inherit;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ds-deep-charcoal) 14%, transparent); }
+/* Skya plate ONLY: a faint warm multiply that warms the cool violet into the
+   room (token-derived, low opacity). Rendered only for Skya (see story.tsx). */
+.v2-proj__warm { position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  mix-blend-mode: multiply; opacity: 0.32; background: var(--ds-amber-brown); }
+
+/* editorial column rides sticky beside the tall plate (monolog text column) */
+.v2-proj__editorial { display: flex; flex-direction: column; align-items: flex-start;
+  gap: var(--ds-space-3); max-width: 52ch;
+  position: sticky; top: clamp(90px, 16svh, 180px); }
+.v2-proj__index { color: var(--ds-accent-earth); }
+.v2-proj__meta { color: var(--ds-text-secondary); will-change: transform, filter; }
+/* QUIET editorial column (from her recordings of monolog: ONE loud element per
+   module, the image; the entry name is modest, the stat is a small chip). The
+   size budget is spent on the section display and the plate, never in here. */
+.v2-proj__title { font-family: var(--ds-font-display);
+  font-weight: var(--ds-w-light); font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.4rem);
+  line-height: 1.08; color: var(--ds-text); }
+.v2-proj__desc { display: block; font-family: var(--ds-font-sans);
+  font-weight: 400; font-size: var(--ds-body-size);
+  line-height: var(--ds-body-lh); color: var(--ds-text-secondary); max-width: 36ch;
+  margin-top: var(--ds-space-2); }
+.v2-proj__proof { display: flex; flex-direction: column; gap: var(--ds-space-2);
+  margin-top: var(--ds-space-5); }
+/* stat chip (monolog "$2M+" pill): quiet mono figure on a whisper of ground */
+.v2-proj__proof-num { font-family: var(--ds-font-mono); font-size: 1.05rem;
+  line-height: 1; letter-spacing: 0.02em; color: var(--ds-text);
+  font-variant-numeric: tabular-nums; width: fit-content;
+  padding: 8px 12px; border-radius: 8px;
+  background: color-mix(in srgb, var(--ds-deep-charcoal) 8%, transparent); }
+/* sentence-case caption (monolog): the chip is the label, the caption is prose */
+.v2-proj .v2-proj__proof-cap { font-family: var(--ds-font-sans);
+  text-transform: none; letter-spacing: 0; font-size: 0.9rem; line-height: 1.55;
+  color: var(--ds-text-secondary); max-width: 26ch; }
+.v2-proj__cta { margin-top: var(--ds-space-4); }
+.v2-proj__cta .ds-link { position: relative; }
+.v2-proj__cta .ds-link::after { content: ""; position: absolute; left: 0; right: 0;
+  bottom: -4px; height: 1px; background: currentColor; transform: scaleX(0);
+  transform-origin: left center; transition: transform var(--ds-dur-hover) var(--ds-ease-out); }
+.v2-proj__cta .ds-link:hover::after, .v2-proj__cta .ds-link:focus-visible::after { transform: scaleX(1); }
+/* single-line title mask */
+.v2-proj__titlemask { display: block; overflow: hidden; padding-bottom: 0.1em;
+  margin-bottom: -0.1em; }
+.v2-proj__titlemask-i { display: block; will-change: transform; }
+
+@media (max-width: 720px) {
+  /* single column: rule + index row keep the ledger rhythm; plate on top,
+     text below; entrances + count-up stay; no sticky, no pill */
+  .v2-proj__inner { padding-inline: var(--ds-space-5);
+    padding-block: clamp(16px, 2.5svh, 28px) clamp(56px, 9svh, 96px); }
+  .v2-proj__body { grid-template-columns: 1fr; gap: var(--ds-space-6); }
+  .v2-proj__plate { height: 52svh; }
+  .v2-proj__editorial { position: static; }
+  .v2-proj__pill { display: none; }
+}
+
+/* rise chapters overlap the prior chapter slightly so the rounded panel notches
+   up over it (trionn rising panel). Radius is flattened by JS on desktop. */
+.v2-chapter--rise { margin-top: calc(var(--ds-space-6) * -1); }
+/* the About panel reads as a cream sheet rising over the side-builds list,
+   while still letting a whisper of the atmosphere ground through. */
+
+/* ---- WORK ENTRIES 04-07 — CARD GRID (UNIFIED-WORK-SPEC 3.3) --------------- */
+/* Entries 04-07 continue the SAME gallery: the feature plates' frame family at
+   card scale, 2x2, on the same paper ground. The label is a whisper eyebrow in
+   the exact SELECTED WORK style, not a headline; the running index 04/07..07/07
+   does the welding. Hover shares the feature grammar: raise + art scale +
+   forest-green underline draw on the name. */
+.v2-side { position: relative;
+  padding-block: clamp(40px, 6svh, 80px) clamp(120px, 16svh, 200px); }
+/* same ledger opener as .v2-proj entries: full hairline + spaced meta row */
+.v2-side__rule { display: block; height: 1px; background: var(--ds-border); }
+.v2-side__metarow { display: flex; align-items: baseline;
+  justify-content: space-between; gap: var(--ds-space-5);
+  padding-block: var(--ds-space-3) 0; margin-bottom: var(--ds-space-7); }
+.v2-side__label { color: var(--ds-text-secondary); }
+.v2-side__sub { color: var(--ds-text-muted); }
+
+.v2-cards { list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(32px, 3vw, 44px); row-gap: clamp(44px, 5svh, 64px); }
+.v2-card { display: flex; flex-direction: column; min-width: 0; }
+.v2-card__plate { aspect-ratio: 3 / 2; }
+.v2-card__meta { display: flex; align-items: baseline; justify-content: space-between;
+  gap: var(--ds-space-4); margin-top: var(--ds-space-4); }
+.v2-card__index { color: var(--ds-accent-earth); }
+.v2-card__name { position: relative; display: inline-block; align-self: flex-start;
+  font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(24px, 2vw, 30px); line-height: 1.08; color: var(--ds-text);
+  margin-top: var(--ds-space-2);
+  transition: color var(--ds-dur-hover) var(--ds-ease-out); }
+.v2-card__name::after { content: ""; position: absolute; left: 0; right: 0;
+  bottom: -0.08em; height: 1px; background: var(--ds-accent); transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--ds-dur-hover) var(--ds-ease-out); }
+.v2-card__line { color: var(--ds-text-secondary); margin-top: var(--ds-space-1);
+  max-width: 34ch; }
+.v2-card__stack { font-family: var(--ds-font-mono); font-size: 0.7rem;
+  letter-spacing: var(--ds-overline-ls); line-height: 1.5; color: var(--ds-text-muted);
+  margin-top: var(--ds-space-2); }
+/* hover: same grammar as the feature plates */
+.v2-card:hover .v2-card__plate { transform: translateY(-4px) scale(1.01);
+  box-shadow: var(--ds-elev-2, var(--ds-elev-1)); }
+.v2-card:hover .v2-card__name { color: var(--ds-accent); }
+.v2-card:hover .v2-card__name::after { transform: scaleX(1); }
+
+/* authored roadmap plates (Mood Weather, Spectra): in-palette, always visible.
+   Colors need her 沉淀感 depth: real sage/terracotta presence, not thin pastel
+   or muddy grey. */
+.v2-card__mood { position: absolute; inset: 0;
+  background:
+    radial-gradient(60% 42% at 72% 58%,
+      color-mix(in srgb, var(--ds-accent-warm) 34%, transparent) 0%, transparent 70%),
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--ds-accent-warm) 14%, var(--ds-warm-cream)) 0%,
+      color-mix(in srgb, var(--ds-sage-green) 34%, var(--ds-warm-cream)) 58%,
+      color-mix(in srgb, var(--ds-sage-green) 58%, var(--ds-warm-cream)) 100%); }
+.v2-card__mood-horizon { position: absolute; left: 8%; right: 8%; top: 58%;
+  height: 1px; background: color-mix(in srgb, var(--ds-deep-charcoal) 34%, transparent); }
+.v2-card__spectra { position: absolute; inset: 0; filter: blur(22px);
+  transform: scale(1.2);
+  background: linear-gradient(115deg,
+    color-mix(in srgb, var(--ds-amber-brown) 78%, var(--ds-warm-cream)) 0%,
+    color-mix(in srgb, var(--ds-muted-terracotta) 88%, var(--ds-warm-cream)) 44%,
+    color-mix(in srgb, var(--ds-sage-green) 72%, var(--ds-warm-cream)) 78%,
+    color-mix(in srgb, var(--ds-forest-green) 46%, var(--ds-warm-cream)) 100%); }
+
+/* the always-visible thumbnail plate — same contained frame treatment as the
+   main plates (::before vignette + ::after hairline), landscape aspect. */
+.v2-side__plate { position: relative; aspect-ratio: 3 / 2; border-radius: var(--ds-radius-md);
+  overflow: hidden; box-shadow: var(--ds-elev-1);
+  transition: transform var(--ds-dur-hover) var(--ds-ease-out),
+              box-shadow var(--ds-dur-hover) var(--ds-ease-out); }
+.v2-side__plate::before { content: ""; position: absolute; inset: 0; z-index: 3;
+  pointer-events: none; border-radius: inherit;
+  background: radial-gradient(118% 118% at 50% 50%, transparent 56%,
+    color-mix(in srgb, var(--ds-deep-charcoal) 20%, transparent) 100%); }
+.v2-side__plate::after { content: ""; position: absolute; inset: 0; z-index: 4;
+  pointer-events: none; border-radius: inherit;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ds-deep-charcoal) 14%, transparent); }
+/* Antara thumb: fill the landscape plate with the cosmic gradient card */
+.v2-side__antara { position: absolute; inset: 0; aspect-ratio: auto;
+  width: 100%; height: 100%; border-radius: 0; }
+.v2-side__antara .v2-antara-word { font-size: var(--ds-h3-size); letter-spacing: 0.2em; }
+
+/* ShortDramaStudio placeholder: a quiet dark typographic plate (no asset yet) */
+.v2-side__sds { position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: var(--ds-space-2);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--ds-deep-charcoal) 92%, #000) 0%,
+      var(--ds-near-black) 100%); }
+.v2-side__sds-strip { position: absolute; top: 14%; left: 0; right: 0; height: 1px;
+  background: repeating-linear-gradient(90deg,
+    color-mix(in srgb, var(--ds-warm-cream) 22%, transparent) 0 6px,
+    transparent 6px 14px); opacity: 0.5; }
+.v2-side__sds-label { font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: 0.16em; color: var(--ds-warm-cream); }
+.v2-side__sds-desc { font-family: var(--ds-font-mono); font-size: 0.66rem;
+  letter-spacing: var(--ds-overline-ls); color: var(--ds-cream-72); text-transform: uppercase; }
+
+.v2-side__status { display: inline-flex; align-items: center; gap: var(--ds-space-2);
+  font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls); text-transform: uppercase;
+  color: var(--ds-text-secondary); }
+.v2-side__status::before { content: ""; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ds-accent); }
+
+@media (max-width: 720px) {
+  /* 2x2 collapses to one column; plates stay full-width and always visible */
+  .v2-cards { grid-template-columns: 1fr; row-gap: clamp(40px, 6svh, 56px); }
+  /* "ShortDramaStudio" is one unbreakable word; keep it inside the column */
+  .v2-card__name { font-size: clamp(21px, 6.8vw, 28px); }
+}
+
+/* Antara's own cosmic-night identity (palette declared on .v2-root) */
+.v2-lab-card__media--antara {
+  position: relative; aspect-ratio: 4 / 5; border-radius: var(--ds-radius-md);
+  overflow: hidden; display: grid; place-items: center;
+  background:
+    radial-gradient(1px 1px at 18% 22%, var(--antara-star), transparent 100%),
+    radial-gradient(1px 1px at 72% 14%, var(--antara-star), transparent 100%),
+    radial-gradient(1.5px 1.5px at 84% 58%, var(--antara-star), transparent 100%),
+    radial-gradient(1px 1px at 36% 70%, var(--antara-star), transparent 100%),
+    radial-gradient(1px 1px at 58% 38%, var(--antara-star), transparent 100%),
+    radial-gradient(1.5px 1.5px at 12% 82%, var(--antara-star), transparent 100%),
+    radial-gradient(70% 46% at 76% 96%, var(--antara-glow) 0%, transparent 72%),
+    radial-gradient(130% 90% at 50% 120%, var(--antara-dusk) 0%, transparent 62%),
+    var(--antara-night);
+}
+/* luminance fade: the plate starts dim + soft, like a night sky before your
+   eyes adjust, then eases up to full brightness once it enters view. Driven off
+   the wrapping reveal's is-in so no extra JS is needed. */
+.v2-lab-card__media--antara { filter: brightness(0.6) saturate(0.82); opacity: 0.82;
+  transition: filter var(--v2-dur-luminance) var(--ds-ease-out),
+              opacity var(--v2-dur-luminance) var(--ds-ease-out); }
+.v2-reveal.is-in .v2-lab-card__media--antara { filter: brightness(1) saturate(1); opacity: 1; }
+
+.v2-antara-word { position: relative; z-index: 2;
+  font-family: var(--ds-font-display); font-weight: var(--ds-w-display);
+  font-size: var(--ds-h3-size); letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ds-warm-cream); }
+
+/* tiny star points that twinkle at very low amplitude (never fully off) — CSS
+   only, no canvas. Positioned over the baked gradient stars for a little life. */
+.v2-star { position: absolute; z-index: 1; width: 2px; height: 2px; border-radius: 50%;
+  background: var(--antara-star); box-shadow: 0 0 4px var(--antara-glow);
+  opacity: 0.55; animation: v2-twinkle 4.2s ease-in-out infinite; }
+.v2-star:nth-child(1) { top: 20%; left: 24%; animation-delay: 0s; }
+.v2-star:nth-child(2) { top: 32%; left: 70%; animation-delay: 0.9s; animation-duration: 5s; }
+.v2-star:nth-child(3) { top: 58%; left: 40%; animation-delay: 1.7s; animation-duration: 4.6s; }
+.v2-star:nth-child(4) { top: 68%; left: 82%; animation-delay: 2.4s; }
+.v2-star:nth-child(5) { top: 46%; left: 14%; animation-delay: 3.1s; animation-duration: 5.4s; }
+@keyframes v2-twinkle { 0%, 100% { opacity: 0.45; } 50% { opacity: 0.9; } }
+
+/* ---- ABOUT ---------------------------------------------------------------------- */
+@media (max-width: 900px) { .v2-about { grid-template-columns: 1fr; } }
+
+/* hairline dividers DRAW left-to-right as the rows enter (staggered), instead of
+   just appearing. The rule lives on a pseudo so it can animate scaleX. */
+.v2-reveal.is-in .v2-cred li::before,
+.v2-reveal.is-in .v2-cred li:last-child::after { transform: scaleX(1); }
+.v2-reveal.is-in .v2-cred li:nth-child(1)::before { transition-delay: 120ms; }
+.v2-reveal.is-in .v2-cred li:nth-child(2)::before { transition-delay: 200ms; }
+.v2-reveal.is-in .v2-cred li:nth-child(3)::before { transition-delay: 280ms; }
+.v2-reveal.is-in .v2-cred li:nth-child(4)::before { transition-delay: 360ms; }
+.v2-reveal.is-in .v2-cred li:nth-child(5)::before { transition-delay: 440ms; }
+.v2-reveal.is-in .v2-cred li:nth-child(6)::before { transition-delay: 520ms; }
+.v2-reveal.is-in .v2-cred li:last-child::after { transition-delay: 600ms; }
+
+/* ---- CONTACT / FOOTER ------------------------------------------------------------ */
+.v2-contact__line { margin-top: var(--ds-space-4); max-width: 22ch; }
+.v2-contact__links { display: flex; flex-wrap: wrap; gap: var(--ds-space-7);
+  margin-top: var(--ds-space-7); }
+.v2-contact__links .ds-link { position: relative; text-transform: none; letter-spacing: 0.02em; }
+/* deliberate hover: the underline draws itself in (left-to-right) while the
+   arrow nudges (arrow nudge already comes from .ds-link:hover in ds-components). */
+.v2-contact__links .ds-link::after { content: ""; position: absolute; left: 0; right: 0;
+  bottom: -4px; height: 1px; background: currentColor; transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--ds-dur-hover) var(--ds-ease-out); }
+.v2-contact__links .ds-link:hover::after,
+.v2-contact__links .ds-link:focus-visible::after { transform: scaleX(1); }
+
+.v2-footer { border-top: 1px solid var(--ds-hairline-light); margin-top: var(--ds-space-8);
+  padding-top: var(--ds-space-6); display: flex; flex-wrap: wrap; gap: var(--ds-space-4);
+  align-items: center; justify-content: space-between; }
+
+/* ---- CHAPTER 7 — SIGNATURE CLOSE (dark) ----------------------------------- */
+.v2-close { position: relative; z-index: 1; display: grid;
+  align-content: space-between; gap: var(--ds-space-9);
+  min-height: 100svh; padding-block: var(--ds-space-10); }
+/* an ultra-faint water shimmer pooling under the close — organic light on the
+   deep dark, drifting very slowly. Painted below the content (z-index:-1). */
+.v2-close__shimmer { position: absolute; inset: auto 0 0 0; z-index: -1; height: 52%;
+  pointer-events: none; mix-blend-mode: soft-light; opacity: var(--v2-shimmer);
+  background-image: url("/ds/textures/water-surface.png");
+  background-size: cover; background-position: center bottom;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 78%);
+          mask-image: linear-gradient(180deg, transparent 0%, #000 78%);
+  animation: v2-shimmer-drift 120s ease-in-out infinite alternate; }
+@keyframes v2-shimmer-drift {
+  from { transform: translate3d(0, 0, 0) scale(1.04); }
+  to   { transform: translate3d(0, -10px, 0) scale(1.1); }
+}
+.v2-close__top { display: flex; flex-direction: column; align-items: flex-start;
+  gap: var(--ds-space-5); }
+.v2-close__line { max-width: 22ch; }
+.v2-avail { color: var(--ds-text-muted); }
+.v2-clock { color: var(--ds-text-muted); font-variant-numeric: tabular-nums; }
+/* the signature block: the traced monogram that draws itself, then fills
+   (glow halo removed 2026-07-06 per death list; the mark stands alone) */
+.v2-signature { position: relative; display: grid; place-items: center;
+  padding-block: var(--ds-space-8); }
+.v2-signature__mark { width: clamp(150px, 17vw, 210px); height: auto;
+  overflow: visible; }
+.v2-signature__stroke { fill: none; stroke: var(--ds-accent);
+  stroke-width: 1.5; }
+.v2-signature__fill { fill: var(--ds-accent-soft); }
+
+/* reduced motion: every loop stops; the DOM's readable end states hold */
+@media (prefers-reduced-motion: reduce) {
+  /* atmosphere ground: no parallax (JS never runs); it is static already */
+  /* thesis scroll cue: no breathing loop */
+  .v2-thesis__cue { transform: none; }
+
+  /* continuous world: static mid-frost (JS sets it once), no stepping */
+  .v2-cw__world img { transition: none; }
+  .v2-cw__veil { transition: none; }
+
+  /* work bands: plate + image static, hover veil holds */
+  .v2-proj__veil { transition: none; }
+  .v2-proj__plate-rise,
+  .v2-proj__parallax { transform: none; }
+
+  /* work cards: plates already visible; hover enliven holds still */
+  .v2-side__plate,
+  .v2-card__name,
+  .v2-card__name::after { transition: none; }
+
+  /* signature: the filled monogram is simply present, no self-draw, no glow */
+  .v2-signature__stroke { display: none; }
+  .v2-signature__fill { opacity: 1; }
+
+  /* ambient material layer: textures + botanical + shimmer hold perfectly still
+     (the scatter's parallax JS never runs, so it simply sits visible) */
+  .v2-botanical,
+  .v2-close__shimmer { animation: none; transform: none; }
+}
+
+/* ===========================================================================
+   WORK GALLERY (v2wg) — the production horizontal work section. Her pick from
+   the lab: dune image under the title, plain cream ground, no counts, air
+   between projects. Base = vertical stack (mobile + reduced motion); the
+   pinned 50vw-cell row only exists on desktop with full motion.
+   =========================================================================== */
+.v2wg-stage { position: relative; overflow: hidden; background: var(--ds-warm-cream);
+  border-block: 1px solid var(--ds-border); }
+.v2wg-track { display: flex; flex-direction: column;
+  gap: clamp(40px, 6svh, 72px);
+  padding: clamp(40px, 7svh, 90px) var(--ds-space-5); }
+.v2wg-cell { min-width: 0; }
+.v2wg-lead__bg { display: none; }
+
+.v2wg-lead { display: flex; flex-direction: column; gap: var(--ds-space-3); }
+.v2wg-lead__title { font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(3rem, 1.6rem + 4.6vw, 6.4rem); line-height: 0.98;
+  letter-spacing: -0.01em; }
+.v2wg-lead__title em { font-style: italic; }
+.v2wg-lead__sub { color: var(--ds-text-secondary); margin-top: var(--ds-space-2);
+  line-height: 1.6; }
+
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .v2wg-stage { height: 100svh; }
+  .v2wg-track { flex-direction: row; height: 100%; width: max-content;
+    will-change: transform; gap: 0; padding: 0; }
+  .v2wg-cell { flex: 0 0 auto; width: 50vw; height: 100%;
+    display: flex; align-items: center; justify-content: center; }
+  .v2wg-cell--lead { position: relative; overflow: hidden; }
+  .v2wg-lead__bg { display: block; position: absolute; inset: 0;
+    width: 100%; height: 100%; object-fit: cover; }
+  .v2wg-lead { position: relative; z-index: 1; }
+  .v2wg-lead__title, .v2wg-lead__sub { color: var(--ds-warm-cream);
+    text-shadow: 0 2px 40px rgba(30, 30, 28, 0.4); }
+  .v2wg-card { width: clamp(520px, 42vw, 880px); will-change: transform; }
+  .v2wg-card__foot { min-height: 132px; }
+}
+
+.v2wg-card { display: flex; flex-direction: column; min-width: 0; }
+.v2wg-card__platelink { display: block; }
+.v2wg-card__plate { position: relative; border-radius: var(--ds-radius-lg);
+  overflow: hidden; box-shadow: var(--ds-elev-1); aspect-ratio: 3 / 2;
+  background: color-mix(in srgb, var(--ds-deep-charcoal) 6%, var(--ds-warm-cream)); }
+.v2wg-card__plate::after { content: ""; position: absolute; inset: 0;
+  border-radius: inherit; pointer-events: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ds-deep-charcoal) 14%, transparent); }
+.v2wg-card__img { position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  transition: transform 1.2s var(--ds-ease-out); }
+.v2wg-card__platelink:hover .v2wg-card__img { transform: scale(1.04); }
+
+.v2wg-card__art { position: absolute; inset: 0; display: grid; place-items: center; }
+.v2wg-card__artname { font-family: var(--ds-font-mono); font-size: 0.8rem;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--ds-warm-cream) 82%, transparent); }
+.v2wg-card__artname--serif { font-family: var(--ds-font-display);
+  font-size: 1.4rem; text-transform: none; letter-spacing: 0.42em; }
+.v2wg-card__art--sds { background:
+  linear-gradient(160deg, #262624 0%, #1b1b19 100%); }
+.v2wg-card__art--antara { background:
+  radial-gradient(1px 1px at 22% 30%, rgba(245,240,232,0.9) 50%, transparent 51%),
+  radial-gradient(1px 1px at 68% 22%, rgba(245,240,232,0.7) 50%, transparent 51%),
+  radial-gradient(1.5px 1.5px at 82% 58%, rgba(245,240,232,0.8) 50%, transparent 51%),
+  radial-gradient(1px 1px at 38% 72%, rgba(245,240,232,0.6) 50%, transparent 51%),
+  radial-gradient(120% 90% at 50% 110%, #232842 0%, #12141f 70%);
+}
+.v2wg-card__art--mood { background:
+  radial-gradient(70% 60% at 78% 24%, color-mix(in srgb, var(--ds-muted-terracotta) 42%, transparent) 0%, transparent 70%),
+  linear-gradient(165deg, color-mix(in srgb, var(--ds-warm-cream) 66%, var(--ds-sage-green)) 0%, color-mix(in srgb, var(--ds-sage-green) 58%, var(--ds-warm-cream)) 100%); }
+.v2wg-card__art--spectra { background:
+  linear-gradient(120deg, color-mix(in srgb, var(--ds-amber-brown) 78%, var(--ds-warm-cream)) 0%,
+    color-mix(in srgb, var(--ds-muted-terracotta) 88%, var(--ds-warm-cream)) 34%,
+    color-mix(in srgb, var(--ds-sage-green) 72%, var(--ds-warm-cream)) 68%,
+    color-mix(in srgb, var(--ds-forest-green) 46%, var(--ds-warm-cream)) 100%);
+  filter: blur(18px) saturate(1.05); transform: scale(1.2); }
+
+.v2wg-card__foot { padding-top: var(--ds-space-4); }
+.v2wg-card__name { font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(1.5rem, 1.2rem + 0.8vw, 2rem); line-height: 1.1; }
+.v2wg-card__row { display: flex; align-items: baseline; gap: var(--ds-space-5);
+  justify-content: space-between; margin-top: var(--ds-space-2); }
+.v2wg-card__line { color: var(--ds-text-secondary); max-width: 46ch;
+  line-height: 1.55; }
+.v2wg-card__cta { font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls); text-transform: uppercase;
+  color: var(--ds-text); white-space: nowrap; text-decoration: none; }
+.v2wg-card__cta--quiet { color: var(--ds-text-muted); }
+/* zoomed plate art: crops a painted card's own frame edges (Moonlit) */
+.v2wg-card__img--zoom { transform: scale(1.22); }
+
+/* recruiter-scan discipline tags (replaced the stat chip 2026-07-19) */
+.v2wg-card__tags { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
+.v2wg-tag { font-family: var(--ds-font-mono); font-size: 0.62rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 5px 11px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--ds-text) 24%, transparent);
+  color: var(--ds-text-muted); white-space: nowrap; }
+
+.v2wg-card__proof { display: flex; align-items: center; gap: var(--ds-space-3);
+  margin-top: var(--ds-space-3); }
+.v2wg-card__chip { font-family: var(--ds-font-mono); font-size: 0.95rem;
+  padding: 7px 11px; border-radius: 8px; white-space: nowrap;
+  background: color-mix(in srgb, var(--ds-deep-charcoal) 8%, transparent); }
+.v2wg-card__cap { font-size: 0.85rem; color: var(--ds-text-secondary);
+  max-width: 34ch; line-height: 1.45; }
+
+.v2wg-cell--close { display: flex; align-items: center; justify-content: center; }
+.v2wg-close { text-align: center; max-width: 36ch; padding: var(--ds-space-5);
+  font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 2rem); line-height: 1.35;
+  color: var(--ds-text); }
+
+/* the "Shape. System. Software." handoff section was DELETED 2026-07-19 (her
+   verdict: dry PPT placeholder; AD ruling: the triad lives on as the Record
+   section's spine, each word owning the credentials that earned it). */
+
+/* the Three.js ambient veil: fixed behind everything after the hero */
+.v2-veil { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+.v2-veil canvas { width: 100% !important; height: 100% !important; }
+.v2-herowrap { position: relative; z-index: 2; }
+
+/* The homepage cards zone (/v2?cards=…) rides ABOVE the ambient veil, exactly
+   like the hero + statement (z-index:2) — WITHOUT this the veil's whisper-warm
+   mist composites over the deck's dark stage and reads a lighter olive on /v2
+   (#3B372E) than the clean warm-charcoal on /lab/zone (#2B281F); the deck's own
+   cream (s=dark) ground gets the same tint. Lifting the whole band (deck + cream
+   dusk spacers) over the fixed veil restores exact color parity with the lab for
+   every style, and keeps AtmosphereGround (z:-1) hidden behind the opaque stage.
+   2026-07-15 parity fix. */
+.v2-cardszone { position: relative; z-index: 2; }
+/* HERO DUSK — scroll = nightfall graded over the locked hero in code (a real
+   generated frame sequence can replace this later). Day is the default state;
+   GSAP scrubs the layers in. */
+.v2-dusk { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.v2-dusk__night { position: absolute; inset: 0; opacity: 0;
+  mix-blend-mode: multiply;
+  background: linear-gradient(180deg, #232837 0%, #1b1e2a 42%, #151412 100%); }
+.v2-dusk__ember { position: absolute; inset: 0; opacity: 0;
+  mix-blend-mode: screen;
+  background: radial-gradient(46% 30% at 50% 64%,
+    rgba(255, 168, 92, 0.5), rgba(255, 168, 92, 0.12) 55%, transparent 78%); }
+
+/* ===========================================================================
+   V2 STATEMENT v5 — "TRIONN DARK" (2026-07-08, her call). Screen 2 as a dark
+   chapter mirroring trionn.com's about block: giant indented sans statement
+   read grey->white, hairline + station, credo left / mission right, deep
+   dark air, then a cream arch rises to hand over to the bright gallery.
+   CSS default = readable end state; statement.tsx scrubs.
+   =========================================================================== */
+.v2-stmtwrap { position: relative; z-index: 2; }
+/* owns a FULL screen (min-height), with the whole content block living in
+   the upper ~62% and pure dark air below — trionn's about proportions:
+   statement top ~14%, rule ~42%, credo/mission ~48-64% of the viewport */
+.v2-stmt { position: relative; z-index: 2; overflow: hidden;
+  min-height: 100svh;
+  background: var(--ds-deep-charcoal);
+  color: var(--ds-warm-cream);
+  padding-top: clamp(110px, 13.5svh, 170px);
+  padding-bottom: clamp(160px, 22svh, 300px); }
+.v2-stmt__inner { position: relative;
+  padding-inline: clamp(24px, 9.5vw, 190px); }
+/* the chapter tag sits at the page's far-left edge, level with the lead */
+.v2-stmt__tag { position: absolute; margin: 0;
+  left: clamp(20px, 2.8vw, 44px); top: 0.55em;
+  font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--ds-warm-cream) 62%, transparent); }
+/* trionn's LAYOUT, her VOICE: the statement in her display serif */
+.v2-stmt__lead { margin: 0;
+  font-family: var(--ds-font-display); font-weight: 500;
+  font-size: clamp(2.3rem, 5vw, 4.9rem); line-height: 1.18;
+  letter-spacing: -0.01em; color: var(--ds-warm-cream); }
+.v2-stmt__indent { display: inline-block;
+  width: clamp(90px, 13vw, 250px); }
+/* full-width hairline with a small crossing station */
+.v2-stmt__rulewrap { position: relative;
+  margin-top: clamp(40px, 6svh, 75px); height: 1px; }
+.v2-stmt__rule { display: block; height: 1px; width: 100%;
+  background: color-mix(in srgb, var(--ds-warm-cream) 16%, transparent);
+  transform-origin: left center; }
+.v2-stmt__plus { position: absolute; right: 21%; top: -0.62em;
+  font-family: var(--ds-font-body); font-weight: 300; font-size: 18px;
+  color: color-mix(in srgb, var(--ds-warm-cream) 55%, transparent);
+  line-height: 1; }
+/* below the line: credo left, mission right */
+.v2-stmt__row { display: flex; justify-content: space-between;
+  align-items: flex-start; gap: clamp(32px, 6vw, 96px);
+  margin-top: clamp(44px, 6svh, 78px); }
+.v2-stmt__credo { margin: 0;
+  font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.8;
+  color: color-mix(in srgb, var(--ds-warm-cream) 60%, transparent); }
+.v2-stmt__mission { max-width: 390px; display: grid;
+  gap: clamp(28px, 4svh, 44px); }
+.v2-stmt__mission p { margin: 0;
+  font-family: var(--ds-font-body); font-size: 15.5px; line-height: 1.55;
+  color: color-mix(in srgb, var(--ds-warm-cream) 80%, transparent); }
+.v2-stmt__more { width: fit-content; display: inline-flex;
+  align-items: baseline; gap: 10px;
+  font-family: var(--ds-font-mono); font-size: 12px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ds-warm-cream); text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--ds-warm-cream) 45%, transparent);
+  padding-bottom: 7px;
+  transition: border-color 240ms ease; }
+.v2-stmt__more span { display: inline-block;
+  transition: transform 320ms cubic-bezier(0.23, 1, 0.32, 1); }
+@media (hover: hover) and (pointer: fine) {
+  .v2-stmt__more:hover { border-color: var(--ds-warm-cream); }
+  .v2-stmt__more:hover span { transform: translateX(5px); }
+}
+/* NO picture up here (photo continuation kept reading as a mismatched second
+   image). The hero hands down its LIGHT and AIR instead: __air = a warm
+   afterglow pooling at the chapter's top edge; __fog = two huge soft tonal
+   banks (her haze without the photo), drifting a few percent per half-minute.
+   The stage itself stays clean — the typography carries it, like trionn. */
+.v2-stmt__air { position: absolute; z-index: 0; top: 0; left: 0; right: 0;
+  height: clamp(340px, 58svh, 640px); pointer-events: none;
+  background: radial-gradient(130% 100% at 50% -18%,
+    rgba(216, 178, 128, 0.20), rgba(216, 178, 128, 0.07) 46%, transparent 72%); }
+/* soft edges come from eased gradient stops, NOT filter:blur — large blur
+   radii can tile/seam on Chrome's compositor and read as faint rectangles */
+.v2-stmt__fog { position: absolute; z-index: 0; pointer-events: none; }
+.v2-stmt__fog--a { left: -12%; top: clamp(40px, 9svh, 120px);
+  width: 58vw; height: clamp(200px, 30svh, 340px);
+  background: radial-gradient(closest-side,
+    rgba(120, 138, 112, 0.13), rgba(120, 138, 112, 0.09) 38%,
+    rgba(120, 138, 112, 0.04) 64%, rgba(120, 138, 112, 0.015) 82%,
+    transparent 97%); }
+.v2-stmt__fog--b { right: -10%; top: clamp(150px, 26svh, 330px);
+  width: 50vw; height: clamp(180px, 26svh, 300px);
+  background: radial-gradient(closest-side,
+    rgba(245, 240, 232, 0.05), rgba(245, 240, 232, 0.035) 40%,
+    rgba(245, 240, 232, 0.015) 66%, transparent 95%); }
+/* light variant: the same air in daylight — cream glow, taupe + sage fog */
+.v2-stmt--light .v2-stmt__air {
+  background: radial-gradient(130% 100% at 50% -18%,
+    rgba(226, 190, 142, 0.38), rgba(226, 190, 142, 0.13) 46%, transparent 72%); }
+.v2-stmt--light .v2-stmt__fog--a {
+  background: radial-gradient(closest-side,
+    rgba(199, 184, 164, 0.30), rgba(199, 184, 164, 0.20) 38%,
+    rgba(199, 184, 164, 0.09) 64%, rgba(199, 184, 164, 0.03) 82%,
+    transparent 97%); }
+.v2-stmt--light .v2-stmt__fog--b {
+  background: radial-gradient(closest-side,
+    rgba(120, 138, 112, 0.14), rgba(120, 138, 112, 0.09) 40%,
+    rgba(120, 138, 112, 0.04) 66%, transparent 95%); }
+.v2-stmt__inner { position: relative; z-index: 1; }
+/* demo badge (temporary, for her A/B comparison) */
+.v2-stmt__demo { position: absolute; z-index: 5; margin: 0;
+  top: 18px; left: 50%; transform: translateX(-50%);
+  font-family: var(--ds-font-mono); font-size: 11px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 7px 13px; border-radius: 7px;
+  background: rgba(45, 45, 45, 0.55); color: var(--ds-warm-cream);
+  backdrop-filter: blur(6px); }
+/* ---- LIGHT VARIANT: same trionn layout on her cream ground ---- */
+.v2-stmt--light { background: var(--ds-warm-cream);
+  color: var(--ds-text); }
+.v2-stmt--light .v2-stmt__tag {
+  color: color-mix(in srgb, var(--ds-text) 62%, transparent); }
+.v2-stmt--light .v2-stmt__lead { color: var(--ds-text); }
+.v2-stmt--light .v2-stmt__rule {
+  background: color-mix(in srgb, var(--ds-text) 18%, transparent); }
+.v2-stmt--light .v2-stmt__plus {
+  color: color-mix(in srgb, var(--ds-text) 55%, transparent); }
+.v2-stmt--light .v2-stmt__credo {
+  color: color-mix(in srgb, var(--ds-text) 62%, transparent); }
+.v2-stmt--light .v2-stmt__mission p {
+  color: color-mix(in srgb, var(--ds-text) 82%, transparent); }
+.v2-stmt--light .v2-stmt__more { color: var(--ds-text);
+  border-bottom-color: color-mix(in srgb, var(--ds-text) 45%, transparent); }
+@media (hover: hover) and (pointer: fine) {
+  .v2-stmt--light .v2-stmt__more:hover { border-color: var(--ds-text); }
+}
+
+/* ---- SECOND-SCREEN BG STUDY (/v2?s2=leaf|bloom) ---------------------------
+   The lab canvas mounted BEHIND the light statement copy so she can judge the
+   real hero→screen-2 handoff. It sits above the fog/air (z:0, later in DOM) and
+   below the text (.v2-stmt__inner z:1). leaf.css / bloom.css are NOT loaded on
+   /v2, so the field roots are restyled here. pointer-events:none keeps the
+   statement text + links fully interactive (leaf still sways: it listens on
+   window). Comparison plumbing; deleted once she picks. */
+.v2-stmt__bgstudy {
+  position: absolute; inset: 0; z-index: 0;
+  pointer-events: none; overflow: hidden;
+}
+.v2-stmt__bgstudy .leaf-root,
+.v2-stmt__bgstudy .bloom-root {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+}
+.v2-stmt__bgstudy .leaf-canvas {
+  position: absolute; inset: 0; display: block; width: 100%; height: 100%;
+  filter: blur(0.6px);
+}
+.v2-stmt__bgstudy .bloom-canvas {
+  position: absolute; inset: 0; display: block; width: 100%; height: 100%;
+  filter: url(#bloom-watercolor) blur(0.4px);
+}
+.v2-stmt__bgstudy .bloom-svg {
+  position: absolute; width: 0; height: 0; pointer-events: none;
+}
+.v2-stmt__bgstudy .leaf-label,
+.v2-stmt__bgstudy .bloom-label { display: none; }
+
+/* ---- DUNE GROUND (/v2 statement DEFAULT second screen, 2026-07-15) ----------
+   The dune-soft shader scoped to screen 2. A bottom gradient MASK melts the sand
+   into the cream ground over its last ~26% — a soft lower edge (never a hard cut
+   at the section boundary) that also eases the dissolve into the photographic-
+   dune gallery below. Opacity + transform are GSAP-driven on desktop (the sand
+   surfaces IN over the hero, dissolves OUT toward the gallery); the values here
+   are the no-JS / reduced-motion states. */
+.v2-stmt__bgstudy--dune {
+  opacity: 1;                 /* no-JS end state; the WebGL canvas is empty until
+                                 client init, so SSR paints cream, never a flash */
+  transform-origin: 50% 50%;
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 68%, transparent 94%);
+          mask-image: linear-gradient(to bottom, #000 0%, #000 68%, transparent 94%);
+}
+@media (min-width: 721px) and (prefers-reduced-motion: no-preference) {
+  .v2-stmt__bgstudy--dune { will-change: transform, opacity; }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* static + gentler: the sand sits quietly at half strength, no scroll tweens */
+  .v2-stmt__bgstudy--dune { opacity: 0.5; }
+}
+
+/* mobile: stack, soften the indent, keep the dark air */
+@media (max-width: 767px) {
+  .v2-stmt { padding-top: clamp(84px, 12svh, 130px);
+    padding-bottom: clamp(120px, 20svh, 220px); }
+  .v2-stmt__inner { padding-inline: var(--ds-space-5); }
+  .v2-stmt__tag { position: static; margin-bottom: 22px; }
+  .v2-stmt__lead { font-size: clamp(1.7rem, 7.4vw, 2.4rem); }
+  .v2-stmt__indent { width: clamp(48px, 16vw, 90px); }
+  .v2-stmt__row { flex-direction: column;
+    gap: clamp(36px, 7svh, 56px); }
+  .v2-stmt__mission { max-width: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .v2-stmt__more, .v2-stmt__more span { transition: none; }
+}
+
+/* ===========================================================================
+   V2 POST-WORK v2 (v2pw) — Capability / Method / Record, rebuilt 2026-07-07.
+   Her law: hero + gallery are the anchors (one solid subject, imagery WHOLE);
+   each section gets a DIFFERENT but solid presentation (monolog model); no
+   drawn-line motif, no clipped imagery. Micro-interactions follow
+   emil-design-eng: strong ease-out, <300ms UI beats, hover gated to fine
+   pointers, transform/opacity only.
+   =========================================================================== */
+.v2pw-cap, .v2bg { position: relative; z-index: 2;
+  background: var(--ds-warm-cream); }
+.v2pw-inner { max-width: var(--ds-container-max); margin-inline: auto;
+  padding-inline: var(--ds-margin-desktop); }
+.v2pw-toprow { display: flex; align-items: center; gap: var(--ds-space-4); }
+.v2pw-over { color: var(--ds-text-secondary); white-space: nowrap; }
+.v2pw-index { margin-left: auto; color: var(--ds-text-muted);
+  font-variant-numeric: tabular-nums; }
+/* the shared blinking caret: the honest "still being built" pulse */
+.v2pw-caret { display: inline-block; width: 3px; height: 0.72em;
+  margin-left: 10px; background: var(--ds-accent-soft);
+  animation: v2pw-blink 1.1s steps(2, start) infinite; }
+@keyframes v2pw-blink { 50% { opacity: 0; } }
+
+/* ------------------------------------------- capability: services list */
+.v2pw-cap { padding-block: clamp(96px, 14svh, 180px) clamp(64px, 9svh, 128px); }
+.v2pw-svc { display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: clamp(32px, 5vw, 96px);
+  margin-top: clamp(40px, 7svh, 80px); align-items: center; }
+.v2pw-svc__list { margin: 0; padding: 0; list-style: none; }
+.v2pw-svc__row { border-top: 1px solid
+  color-mix(in srgb, var(--ds-text) 13%, transparent); }
+.v2pw-svc__row:last-child { border-bottom: 1px solid
+  color-mix(in srgb, var(--ds-text) 13%, transparent); }
+.v2pw-svc__hit { display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  align-items: baseline; gap: 6px 18px;
+  padding-block: clamp(20px, 3.4svh, 34px);
+  text-decoration: none; color: inherit; }
+.v2pw-svc__num { color: var(--ds-text-muted); }
+.v2pw-svc__word { font-family: var(--ds-font-display); font-weight: 500;
+  font-size: clamp(2.6rem, 5.4vw, 4.8rem); line-height: 1;
+  letter-spacing: -0.01em; color: var(--ds-taupe-ghost);
+  transition: color 280ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 280ms cubic-bezier(0.23, 1, 0.32, 1); }
+.v2pw-svc__meta { grid-column: 2; display: grid; gap: 4px;
+  opacity: 0.55; transition: opacity 280ms ease; }
+.v2pw-svc__discipline { color: var(--ds-text-muted); }
+.v2pw-svc__line { font-family: var(--ds-font-body); font-size: 0.95rem;
+  line-height: 1.5; color: var(--ds-text-secondary); max-width: 40ch; }
+.v2pw-svc__row.is-active .v2pw-svc__word { color: var(--ds-text); }
+.v2pw-svc__row.is-active .v2pw-svc__meta { opacity: 1; }
+@media (hover: hover) and (pointer: fine) {
+  .v2pw-svc__row.is-active .v2pw-svc__word { transform: translateX(8px); }
+}
+/* the window: one WHOLE image at a time, swapping with a soft cross-zoom */
+.v2pw-svc__window { position: relative; aspect-ratio: 4 / 5;
+  border-radius: 12px; overflow: hidden;
+  box-shadow: var(--ds-elev-1, 0 18px 44px rgba(45, 45, 45, 0.10)); }
+.v2pw-svc__img, .v2pw-svc__plate { position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+  opacity: 0; transform: scale(1.045);
+  transition: opacity 420ms ease,
+    transform 720ms cubic-bezier(0.23, 1, 0.32, 1); }
+.v2pw-svc__img.is-active, .v2pw-svc__plate.is-active {
+  opacity: 1; transform: scale(1); }
+.v2pw-svc__plate { display: grid; place-content: center; gap: 8px;
+  background: var(--ds-deep-charcoal); text-align: center; }
+.v2pw-svc__platenum { margin: 0; font-family: var(--ds-font-mono);
+  font-size: clamp(2.4rem, 3.4vw, 3.6rem); line-height: 1;
+  color: var(--ds-warm-cream); display: flex; align-items: center;
+  justify-content: center; }
+.v2pw-svc__platelabel { color: color-mix(in srgb, var(--ds-warm-cream) 62%, transparent); }
+.v2pw-cap__lock { margin: clamp(56px, 9svh, 104px) 0 0; text-align: right;
+  font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: color-mix(in srgb, var(--ds-text) 72%, transparent); }
+
+/* =====================================================================
+   THROUGHLINE PANEL — "Designed to feel, built to ship." (2026-07-19, her
+   corrected brief). The panel is the work track's FINAL CELL: a full-
+   viewport DARK page that slides in HORIZONTALLY after the last project
+   (trionn's sideways page turn), in deliberate colour contrast with the
+   cream Record that follows. Once in place, the pinned scroll squeezes the
+   live window shut until the signature line closes (monolog grammar); the
+   motion lives in work-gallery.tsx. CSS default = readable CLOSED line.
+   ===================================================================== */
+/* cream panel on LIVING SAND (her 2026-07-19 calls: black broke the flow,
+   flat champagne read yellow — so the panel keeps the Background page's warm
+   cream and the dune-soft shader gives it its "own page" body; the sideways
+   turn reads through the texture edge, not a colour jump).
+   overflow:hidden is LOAD-BEARING: the open line must never widen the track
+   (the strip bug — see work-gallery.tsx). */
+.v2wg-cell--throughline { position: relative; overflow: hidden;
+  background: var(--ds-warm-cream); }
+.v2gc-ground { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .v2wg-cell--throughline { width: 100vw; display: flex; align-items: center;
+    justify-content: center; }
+}
+.v2gc-stage { position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: clamp(24px, 4.5svh, 48px);
+  padding: clamp(48px, 8svh, 96px) var(--ds-margin-desktop); width: 100%; }
+.v2gc-line { margin: 0; display: flex; align-items: center; justify-content: center;
+  white-space: nowrap;
+  font-family: var(--ds-font-display); font-weight: var(--ds-w-display);
+  font-size: clamp(2rem, 5vw, 5.2rem); line-height: 1.04;
+  letter-spacing: -0.015em; color: var(--ds-text); }
+/* the gap itself: a live window the scroll squeezes shut. Rests CLOSED
+   (width 0 / transparent) so every no-motion context reads the finished
+   sentence; the gallery's motion branch opens it. */
+.v2gc-win { display: block; flex: none; width: 0; margin-inline: 0; opacity: 0;
+  height: clamp(250px, 40svh, 430px); overflow: hidden; border-radius: 20px; }
+.v2gc-win video { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* the live code panel — PAPER skin (her 2026-07-19 call: the charcoal card
+   jarred on the sand; now it is a sheet from her own world — warm paper,
+   hairline edge, ink type, champagne strings) */
+.v2gc-code { display: flex; flex-direction: column; width: 100%; height: 100%;
+  background: rgba(250, 246, 238, 0.86); border: 1px solid rgba(45, 45, 45, 0.12);
+  border-radius: inherit; backdrop-filter: blur(2px); }
+.v2gc-code__bar { display: flex; align-items: center; gap: 6px;
+  padding: 12px 14px 10px; border-bottom: 1px solid rgba(45, 45, 45, 0.08); }
+.v2gc-code__bar span { width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(45, 45, 45, 0.14); }
+.v2gc-code__bar em { margin-left: 8px; font-style: normal;
+  font-family: var(--ds-font-mono); font-size: 0.58rem; letter-spacing: 0.08em;
+  color: rgba(45, 45, 45, 0.42); }
+.v2gc-code__body { flex: 1; margin: 0; padding: 14px 16px; overflow: hidden;
+  font-family: var(--ds-font-mono); font-size: 0.66rem; line-height: 1.75;
+  text-align: left; white-space: pre; }
+.v2gc-code__ln { min-height: 1.75em; }
+.v2gc-code__ln--ink { color: rgba(45, 45, 45, 0.82); }
+.v2gc-code__ln--mut { color: rgba(45, 45, 45, 0.4); }
+.v2gc-code__ln--gold { color: #9A7736; }
+.v2gc-caret { display: inline-block; width: 6px; height: 1em;
+  vertical-align: -0.15em; margin-left: 1px;
+  background: rgba(154, 119, 54, 0.85);
+  animation: v2gc-blink 1.05s steps(1) infinite; }
+@keyframes v2gc-blink { 50% { opacity: 0; } }
+.v2gc-sub { margin: 0; text-align: center;
+  font-family: var(--ds-font-body);
+  font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.1rem);
+  color: var(--ds-text-muted); }
+@media (max-width: 900px) {
+  /* MOBILE (2026-07-19 her recording): the tall sand slab read as a strange
+     empty stretch — on phones this becomes a QUIET QUOTE BAND: no dune
+     canvas, page-cream ground, closed line + claim, modest padding. Desktop
+     untouched. */
+  .v2gc-line { display: block; white-space: normal; text-align: center; }
+  /* one clause per line: "Designed to feel," / "built to ship." (her call —
+     the natural wrap broke mid-clause) */
+  .v2gc-line .v2gc-half { display: block; }
+  .v2gc-win { display: none; }
+  .v2gc-ground { display: none; }
+  .v2wg-cell--throughline { background: transparent; }
+  .v2gc-stage { padding: clamp(40px, 7svh, 64px) var(--ds-space-5); gap: 18px; }
+  .v2gc-sub { font-size: 0.9rem; }
+}
+
+/* =====================================================================
+   BACKGROUND — trionn Client-stories grammar in her voice (2026-07-19, her
+   recording): giant heading + short claim up top, her statement's own
+   hairline-and-plus rule, then a clickable parts list on the left
+   (Education / Experience / Honors — ghost at rest, ink + arrow when
+   chosen, square prev/next below) and the chosen part's real credentials
+   on the right. Switching is a soft blur-dissolve (postwork.tsx). The
+   champagne medal chips are the same metal as the dark deck's gold
+   hairlines below. CSS default: first panel (Education) visible.
+   ===================================================================== */
+.v2bg {
+  --bg-gold-hair: rgba(201, 164, 104, 0.5);
+  --bg-gold-ink: #9A7736;
+  /* PINNED full-viewport stage (her 2026-07-19 calls: content vertically
+     CENTERED, and each scroll notch turns the part inside — see postwork).
+     The old top/bottom padding rhythm is replaced by true centering. */
+  min-height: 100svh;
+  display: grid;
+  align-content: center;
+  padding-block: clamp(64px, 9svh, 110px) clamp(40px, 6svh, 80px);
+}
+.v2bg .v2pw-inner { max-width: var(--ds-container-max); width: 100%; }
+
+/* top row and grid below share ONE set of tracks (1.5fr | 1fr): the intro
+   sentence keeps its ORIGINAL right-side home, and every panel's content
+   left-aligns to that same edge (her 2026-07-19 refinement: both on the
+   right, one shared left edge; the too-far-left version read cramped). */
+.v2bg-top { display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 88px); align-items: end; }
+.v2bg-title { margin: 0; font-family: var(--ds-font-display);
+  font-weight: var(--ds-w-display);
+  font-size: clamp(2.8rem, 1.9rem + 4.2vw, 5.2rem); line-height: 0.95;
+  letter-spacing: -0.02em; color: var(--ds-text); }
+.v2bg-intro { margin: 0; max-width: 34ch; justify-self: start;
+  font-family: var(--ds-font-body);
+  font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.08rem); line-height: 1.55;
+  color: var(--ds-text-muted); }
+
+/* the statement's own rule + plus station, continued here (one motif) */
+.v2bg-rulewrap { position: relative; margin-top: clamp(28px, 4.5svh, 48px); }
+.v2bg-rule { display: block; height: 1px; transform-origin: left center;
+  background: color-mix(in srgb, var(--ds-text) 16%, transparent); }
+.v2bg-plus { position: absolute; top: -0.62em; left: 31%;
+  font-family: var(--ds-font-mono); font-size: 0.95rem;
+  color: color-mix(in srgb, var(--ds-text) 45%, transparent);
+  background: var(--ds-warm-cream); padding-inline: 8px; }
+
+.v2bg-grid { display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: clamp(28px, 5vw, 88px); margin-top: clamp(36px, 5.5svh, 64px);
+  align-items: start; }
+
+/* the parts list: ghost at rest, ink + arrow when chosen (trionn's list) */
+.v2bg-list { margin: 0; padding: 0; list-style: none; display: grid;
+  gap: clamp(14px, 2svh, 22px); }
+.v2bg-tab { display: inline-flex; align-items: center; gap: 10px;
+  padding: 0; border: 0; background: none; cursor: pointer;
+  font-family: var(--ds-font-mono); font-size: clamp(0.85rem, 0.8rem + 0.3vw, 1rem);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ds-taupe-ghost);
+  transition: color 0.3s cubic-bezier(0.23, 1, 0.32, 1); }
+@media (hover: hover) { .v2bg-tab:hover { color: var(--ds-text-secondary); } }
+.v2bg-tab.is-active { color: var(--ds-text); }
+.v2bg-tab__arrow { opacity: 0; transform: translateX(-6px);
+  transition: opacity 0.3s, transform 0.3s cubic-bezier(0.23, 1, 0.32, 1); }
+.v2bg-tab.is-active .v2bg-tab__arrow { opacity: 1; transform: translateX(0); }
+
+/* the square prev/next pager was cut 2026-07-19 (her call: it was trionn's
+   furniture, not our design language — the three labels are the control). */
+
+/* the chosen part: panels stacked on one grid cell; blur-dissolve between */
+.v2bg-panels { display: grid; }
+.v2bg-panel { grid-area: 1 / 1; display: grid; gap: clamp(24px, 4svh, 40px);
+  align-content: start;
+  will-change: opacity, transform, filter; }
+.v2bg-panel:not(:first-child) { opacity: 0; visibility: hidden; }
+.v2bg-entry__kicker { margin: 0 0 8px; color: var(--ds-text-muted); }
+.v2bg-entry__head { margin: 0; font-family: var(--ds-font-display);
+  font-weight: var(--ds-w-display);
+  font-size: clamp(1.4rem, 1.05rem + 1.2vw, 2.2rem); line-height: 1.12;
+  color: var(--ds-text); }
+.v2bg-entry__sub { margin: 8px 0 0; font-family: var(--ds-font-body);
+  font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.1rem); line-height: 1.5;
+  color: var(--ds-text-muted); }
+/* the concrete award lines (medal in champagne ink, exact category after) */
+.v2bg-entry__awards { margin: 12px 0 0; padding: 0; list-style: none;
+  display: grid; gap: 8px; }
+.v2bg-entry__awards li { font-family: var(--ds-font-body);
+  font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.1rem); line-height: 1.5;
+  color: var(--ds-text-muted); }
+.v2bg-medal { color: var(--bg-gold-ink); }
+
+/* ------------------------------------------------------------ mobile */
+@media (max-width: 767px) {
+  .v2pw-inner { padding-inline: var(--ds-space-5); }
+  .v2pw-svc { grid-template-columns: 1fr; gap: 32px; margin-top: 36px; }
+  .v2pw-svc__window { aspect-ratio: 4 / 3; order: -1; }
+  .v2pw-svc__word { font-size: clamp(2.1rem, 9vw, 2.8rem); }
+  .v2pw-cap__lock { text-align: left; margin-top: 48px; }
+  .v2bg-top { grid-template-columns: 1fr; gap: 20px; }
+  .v2bg { min-height: 0; display: block; }
+  .v2bg-grid { grid-template-columns: 1fr; gap: 32px; }
+  /* the three parts stand on ONE row (her recording: they wrapped
+     left/right/below and read scattered) */
+  .v2bg-list { display: flex; flex-wrap: nowrap; justify-content: space-between;
+    gap: 10px; }
+  .v2bg-tab { font-size: 0.68rem; letter-spacing: 0.1em; }
+  .v2bg-tab .v2bg-tab__arrow { display: none; }
+  /* mobile footer: HALF screen straight after the dark deck (her call — the
+     full-viewport water put a flat light stretch between them); !important
+     beats the inline desktop height, which stays untouched >=901px */
+  .v2-waterclose { height: 56svh !important; }
+  .water-foot--m .water-foot__mtop { margin-top: clamp(28px, 5svh, 48px); }
+  /* and the deck section's own cream tail goes deck-charcoal on phones, so
+     dark meets water with no light band between */
+  .zone-lab.v2-cardszone { background: #191713 !important; }
+  /* footer typography breathes on a phone (her shot: crowded): smaller
+     monument line, single-column bottom bar, no duplicate name */
+  .v2-waterclose { height: 62svh !important; }
+  .water-foot__line--center { font-size: clamp(2.1rem, 9.5vw, 2.9rem); }
+  .water-foot__links { gap: 16px; }
+  .water-foot__links a { font-size: 15px; }
+  .water-foot__bar { flex-direction: column; align-items: center; gap: 6px;
+    text-align: center; padding-bottom: 4px; }
+  .water-foot__bar .water-foot__name { display: none; }
+  .water-foot__bar .water-foot__mark--small { width: 26px; }
+}
+
+/* ---------------------------------------------------- reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .v2pw-caret { animation: none; }
+  .v2pw-svc__img, .v2pw-svc__plate, .v2pw-svc__word, .v2pw-svc__meta { transition: none; }
+}
+
+/* ===========================================================================
+   TRANSITIONS (final, default-on since 2026-07-19)
+   ---------------------------------------------------------------------------
+   hero -> statement: the 换季 ground-colour glide — GSAP tween on the
+   statement panel's OWN background (statement.tsx). No CSS here by design
+   (fix4: any separate composited layer escaped the rounded-corner clip).
+
+   statement -> gallery: the approved top dissolve. The GradualBlur rests at
+   opacity 0 (pristine page at rest) and is opacity-scrubbed in and back out
+   by WorkGallery across the pin-in (doctrine v3: a transition only HAPPENS
+   while you turn). Seam 1-6 experiments deleted 2026-07-19.
+   =========================================================================== */
+/* with the dissolve mounted, drop the gallery's 1px top hairline so nothing
+   hard-cuts under the blur */
+.v2wg-stage[data-seam] { border-top-color: transparent; }
+
+/* the approved statement->gallery blur: transparent at rest, scrubbed by
+   WorkGallery through the pin-in and back out before the pan */
+.v2-seam-blur--gallery-top { opacity: 0; }
+
+/* ---- responsive / motion trims -------------------------------------------- */
+@media (max-width: 767px) {
+  /* backdrop-filter stacks are costly on phones -- cap stacks to 4 layers */
+  .v2-gblur > div:nth-child(n + 5) { display: none; }
+}
+@media (max-width: 900px) {
+  /* no lead photo below 901px (gallery is a plain vertical stack), so the
+     gallery-top blur would only soften flat cream -- drop it */
+  .v2-seam-blur--gallery-top { display: none; }
+}

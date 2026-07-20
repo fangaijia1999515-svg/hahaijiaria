@@ -1,0 +1,133 @@
+/* HERO LAB — /v2/lab/hero only. Token-driven, isolated. Five full-viewport
+   hero candidates; the background image belongs to the hero alone. */
+
+.hl { background: var(--ds-warm-cream); color: var(--ds-text);
+  /* hero furniture hugs the screen edge (her refs sit ~24-32px in), tighter
+     than the 80px page margin the content columns use */
+  --hl-edge: clamp(20px, 2.2vw, 32px); }
+
+/* ---- intro + labels -------------------------------------------------------- */
+.hl-intro { max-width: var(--ds-container-max); margin-inline: auto;
+  padding: clamp(90px, 14svh, 180px) var(--ds-margin-desktop) clamp(40px, 6svh, 80px); }
+.hl-intro__over { color: var(--ds-accent-earth); margin-bottom: var(--ds-space-4); }
+.hl-intro__title { font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(2.4rem, 1.6rem + 3vw, 4.4rem); line-height: 1.04;
+  margin-bottom: var(--ds-space-4); }
+.hl-intro__body { max-width: 62ch; color: var(--ds-text-secondary);
+  font-size: var(--ds-body-lg-size, 1.1rem); line-height: 1.65; }
+
+.hl-label { max-width: var(--ds-container-max); margin-inline: auto;
+  padding: clamp(48px, 8svh, 110px) var(--ds-margin-desktop) var(--ds-space-5);
+  font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls); text-transform: uppercase;
+  color: var(--ds-text-secondary); }
+.hl-label span { display: inline-block; padding: 6px 12px; border-radius: 999px;
+  background: var(--ds-accent); color: var(--ds-warm-cream);
+  margin-right: var(--ds-space-3); }
+
+/* ---- shared demo shell ------------------------------------------------------ */
+.hl-demo { position: relative; height: 100svh; overflow: hidden;
+  background-size: cover; background-position: center;
+  border-block: 1px solid var(--ds-border); }
+/* a quiet ground shadow, like the ref's naturally dark valley: deepens the
+   grass band so solid-cream copy holds, no effects on the text itself */
+.hl-demo::after { content: ""; position: absolute; inset: 0; z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(32, 30, 27, 0.38), transparent 30%); }
+
+/* mock header: logo left, links center-right, pill CTA right (her ref) */
+.hl-nav { position: absolute; inset-inline: 0; top: 0; z-index: 3;
+  display: flex; align-items: center; gap: clamp(20px, 3vw, 48px);
+  padding: clamp(18px, 3svh, 32px) var(--hl-edge); }
+.hl-nav__logo { display: inline-flex; margin-right: auto; }
+.hl-nav__links { display: flex; gap: clamp(16px, 2.2vw, 36px);
+  font-family: var(--ds-font-sans); font-size: 0.95rem;
+  color: var(--ds-text-secondary); }
+.hl-nav__cta { font-family: var(--ds-font-sans); font-size: 0.95rem;
+  padding: 10px 20px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--ds-deep-charcoal) 35%, transparent); }
+
+/* ---- composition blocks ----------------------------------------------------- */
+.hl-center { position: absolute; inset: 0; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center;
+  padding-inline: var(--ds-margin-desktop); gap: var(--ds-space-5); }
+.hl-center--para { justify-content: flex-start; padding-top: 26svh; }
+
+.hl-huge { font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  /* 1.12: enough leading that descenders (organic's g) clear the next line's
+     ascenders (digital's d/l) — 1.02 made them collide */
+  font-size: clamp(3.6rem, 2rem + 7.5vw, 9rem); line-height: 1.12;
+  letter-spacing: -0.01em; display: flex; flex-direction: column; }
+.hl-huge--tight { font-size: clamp(3.2rem, 1.8rem + 6.4vw, 7.8rem); }
+.hl-huge__it { font-style: italic; }
+
+.hl-name { font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(4.2rem, 2.4rem + 9vw, 11rem); line-height: 1;
+  letter-spacing: -0.01em; }
+.hl-name em { font-style: italic; }
+
+.hl-big { font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(2.8rem, 1.6rem + 4.6vw, 6rem); line-height: 1.05;
+  display: flex; flex-direction: column; text-align: left; }
+.hl-big__it { font-style: italic; }
+
+.hl-sub { font-family: var(--ds-font-sans); font-size: 1.05rem;
+  color: var(--ds-text-secondary); }
+
+/* headline alone in the pale sky band, nudged above true center */
+.hl-center--sky { padding-bottom: 22svh; }
+
+/* sub + CTA anchored in the dark grass band: solid cream, no effects —
+   the placement carries the contrast (her call, 2026-07-02) */
+.hl-ground { position: absolute; inset-inline: 0; bottom: 9svh; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  gap: var(--ds-space-4); padding-inline: var(--ds-margin-desktop);
+  text-align: center; }
+.hl-ground__sub { font-family: var(--ds-font-sans); font-size: 1.1rem;
+  line-height: 1.5; color: var(--ds-warm-cream); }
+.hl-sub--wide { max-width: 44ch; line-height: 1.6; }
+.hl-over { color: var(--ds-text-secondary); }
+.hl-fine { font-size: 0.9rem; color: var(--ds-text-secondary); line-height: 1.55;
+  margin-top: var(--ds-space-2); }
+
+.hl-pill { font-family: var(--ds-font-sans); font-size: 0.98rem;
+  background: var(--ds-warm-cream); color: var(--ds-text);
+  padding: 14px 26px; border-radius: 999px; box-shadow: var(--ds-elev-1);
+  border: 1px solid color-mix(in srgb, var(--ds-deep-charcoal) 12%, transparent); }
+
+.hl-high { position: absolute; inset-inline: 0; top: 16svh; z-index: 2;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; gap: var(--ds-space-4);
+  padding-inline: var(--ds-margin-desktop); }
+.hl-low { position: absolute; inset-inline: 0; bottom: 9svh; z-index: 2;
+  display: flex; justify-content: center; }
+
+.hl-corner { position: absolute; z-index: 2; }
+.hl-corner--bl { left: var(--hl-edge); bottom: 5svh;
+  font-size: 0.95rem; color: var(--ds-text-secondary); line-height: 1.55; }
+.hl-corner--br { right: var(--hl-edge); bottom: 5svh;
+  color: var(--ds-text-secondary); }
+.hl-corner--bigbl { left: var(--hl-edge); bottom: 7svh; }
+.hl-corner--infobr { right: var(--hl-edge); bottom: 7svh;
+  text-align: right; }
+
+/* copy that sits on dark grass flips to warm cream with a soft grounding
+   shadow; copy on pale sand deepens to full ink instead */
+.hl-cream, .hl-cream .hl-sub, .hl-cream .hl-fine, .hl-cream span {
+  color: var(--ds-warm-cream);
+  text-shadow: 0 1px 20px rgba(43, 41, 38, 0.65), 0 0 4px rgba(43, 41, 38, 0.5);
+}
+.hl-ink { color: var(--ds-text); }
+
+@media (max-width: 900px) {
+  .hl-intro, .hl-label { padding-inline: var(--ds-space-5); }
+  .hl-nav__links { display: none; }
+  /* demo 4: the two corner blocks collide at phone widths — stack them
+     left-aligned instead, statement above the identity block */
+  .hl-corner--bigbl { left: var(--ds-space-5); right: var(--ds-space-5); bottom: 24svh; }
+  .hl-corner--infobr { left: var(--ds-space-5); right: var(--ds-space-5);
+    bottom: 7svh; text-align: left; }
+  .hl-corner--bl { left: var(--ds-space-5); }
+  .hl-corner--br { right: var(--ds-space-5); }
+}

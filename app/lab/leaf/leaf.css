@@ -1,0 +1,184 @@
+/* /lab/leaf — full-bleed particle-branch study. Self-contained; only the mono
+   font var (applied on the page <main> via dsFontVars) is borrowed. The branch
+   is a quiet grey shadow-drawing on cream; centre-left is left open for the
+   statement text that will sit on top later. */
+
+.leaf-page {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  overflow: hidden;
+  background: #f5f0e8; /* warm cream ground */
+}
+
+.leaf-root {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.leaf-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* v3: a hair of blur fuses the (now much finer, denser) grains into a drawn
+     shadow instead of a dot mosaic — GPU-composited, so it costs nothing. */
+  filter: blur(0.6px);
+  touch-action: manipulation; /* let the tap sway fire without scroll hijack */
+}
+
+.leaf-label {
+  position: absolute;
+  left: clamp(20px, 3vw, 44px);
+  bottom: clamp(18px, 3vw, 40px);
+  z-index: 2;
+  margin: 0;
+  font-family: var(--font-ds-plex-mono), ui-monospace, "SF Mono", monospace;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(45, 45, 45, 0.55); /* charcoal, quiet on cream */
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ===========================================================================
+   STATEMENT OVERLAY (Task C) — the real second-screen copy laid on top so the
+   whole composition (plant + words) can be judged. STATIC (no scroll reveal),
+   verbatim copy, mirroring components/v2 .v2-stmt--light layout. The --ds-*
+   tokens are .ds-scoped (absent here), so this uses their literal values + the
+   dsFontVars font vars. Non-interactive: the branch still sways underneath.
+   Hidden with ?bare=1. Shared block — kept identical in leaf.css and bloom.css.
+   =========================================================================== */
+.lab-stmt {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.lab-stmt__stage {
+  position: relative;
+  padding-top: clamp(110px, 13.5svh, 170px);
+}
+.lab-stmt__inner {
+  position: relative;
+  padding-inline: clamp(24px, 9.5vw, 190px);
+}
+.lab-stmt__tag {
+  position: absolute;
+  margin: 0;
+  left: clamp(20px, 2.8vw, 44px);
+  top: 0.55em;
+  font-family: var(--font-ds-plex-mono), ui-monospace, "SF Mono", monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(45, 45, 45, 0.6);
+}
+.lab-stmt__lead {
+  margin: 0;
+  font-family: var(--font-ds-display), "Cormorant", Georgia, serif;
+  font-weight: 500;
+  font-size: clamp(2.3rem, 5vw, 4.9rem);
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+  color: #2d2d2d;
+}
+.lab-stmt__indent {
+  display: inline-block;
+  width: clamp(90px, 13vw, 250px);
+}
+.lab-stmt__rulewrap {
+  position: relative;
+  margin-top: clamp(40px, 6svh, 75px);
+  height: 1px;
+}
+.lab-stmt__rule {
+  display: block;
+  height: 1px;
+  width: 100%;
+  background: rgba(45, 45, 45, 0.18);
+}
+.lab-stmt__plus {
+  position: absolute;
+  right: 21%;
+  top: -0.62em;
+  font-family: var(--font-ds-hanken), "Hanken Grotesk", -apple-system, sans-serif;
+  font-weight: 300;
+  font-size: 18px;
+  color: rgba(45, 45, 45, 0.55);
+  line-height: 1;
+}
+.lab-stmt__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: clamp(32px, 6vw, 96px);
+  margin-top: clamp(44px, 6svh, 78px);
+}
+.lab-stmt__credo {
+  margin: 0;
+  font-family: var(--font-ds-plex-mono), ui-monospace, "SF Mono", monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  line-height: 1.8;
+  color: rgba(45, 45, 45, 0.62);
+}
+.lab-stmt__mission {
+  max-width: 390px;
+  display: grid;
+  gap: clamp(28px, 4svh, 44px);
+}
+.lab-stmt__mission p {
+  margin: 0;
+  font-family: var(--font-ds-hanken), "Hanken Grotesk", -apple-system, sans-serif;
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: rgba(45, 45, 45, 0.82);
+}
+.lab-stmt__more {
+  width: fit-content;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--font-ds-plex-mono), ui-monospace, "SF Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #2d2d2d;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(45, 45, 45, 0.45);
+  padding-bottom: 7px;
+}
+@media (max-width: 767px) {
+  .lab-stmt__stage {
+    padding-top: clamp(84px, 12svh, 130px);
+  }
+  .lab-stmt__inner {
+    padding-inline: 24px;
+  }
+  .lab-stmt__tag {
+    position: static;
+    display: block;
+    margin-bottom: 22px;
+  }
+  .lab-stmt__lead {
+    font-size: clamp(1.7rem, 7.4vw, 2.4rem);
+  }
+  .lab-stmt__indent {
+    width: clamp(48px, 16vw, 90px);
+  }
+  .lab-stmt__row {
+    flex-direction: column;
+    gap: clamp(36px, 7svh, 56px);
+  }
+  .lab-stmt__mission {
+    max-width: none;
+  }
+}

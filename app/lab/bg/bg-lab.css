@@ -1,0 +1,186 @@
+/* BG LAB v2 — five background candidates for the classic (cream) case pages.
+   Round 1 was imperceptible (measured 4-13/255 vs base — she was right).
+   v2 targets a measured 15-35/255 delta: subtle but actually visible.
+   Isolated route; nothing here ships. */
+
+.bglab { background: #f5f0e8; color: #2d2d2d; }
+
+.bglab__section { position: relative; min-height: 100svh; overflow: hidden;
+  display: grid; align-content: center;
+  padding: clamp(64px, 10svh, 128px) clamp(24px, 6vw, 96px); }
+.bglab__tag { position: absolute; top: 20px; left: 50%;
+  transform: translateX(-50%); z-index: 5; margin: 0;
+  font-family: var(--font-ds-plex-mono), monospace; font-size: 11px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 7px 13px; border-radius: 7px;
+  background: rgba(45, 45, 45, 0.55); color: #f5f0e8;
+  backdrop-filter: blur(6px); white-space: nowrap; }
+
+/* the shared sample block (mimics the classic pages' anatomy) */
+.bglab__inner { position: relative; z-index: 2; max-width: 1180px;
+  margin-inline: auto; width: 100%; }
+.bglab__overline { margin: 0 0 18px;
+  font-family: var(--font-ds-plex-mono), monospace; font-size: 12px;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: #6e675c; }
+.bglab__h { margin: 0 0 20px;
+  font-family: var(--font-ds-display), serif; font-weight: 500;
+  font-size: clamp(2.2rem, 4.2vw, 3.6rem); line-height: 1.12; }
+.bglab__p { margin: 0 0 36px; max-width: 62ch;
+  font-family: var(--font-ds-hanken), sans-serif;
+  font-size: 16px; line-height: 1.6; color: #4a4a47; }
+.bglab__row { display: grid; grid-template-columns: 3fr 2fr;
+  gap: clamp(20px, 2vw, 28px); align-items: stretch; }
+.bglab__img { border-radius: 14px; border: 1px solid rgba(45, 45, 45, 0.1);
+  overflow: hidden; }
+.bglab__img img { display: block; width: 100%; height: 100%;
+  object-fit: cover; }
+.bglab__card { border: 1px solid rgba(45, 45, 45, 0.1); border-radius: 14px;
+  padding: clamp(24px, 2.5vw, 40px); background: rgba(255, 255, 255, 0.34);
+  display: grid; align-content: center; gap: 10px; }
+.bglab__stat { font-family: var(--font-ds-display), serif; font-weight: 500;
+  font-size: clamp(2.6rem, 4vw, 3.4rem); color: #3d4a3a; line-height: 1; }
+.bglab__cap { font-family: var(--font-ds-plex-mono), monospace;
+  font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: #6e675c; }
+
+@media (max-width: 767px) {
+  .bglab__row { grid-template-columns: 1fr; }
+}
+
+.bglab__bg { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+
+/* ---- 方案 1 · 纸感颗粒 PAPER GRAIN (static) ------------------------------ */
+.bg-grain::before { content: ""; position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.16 0 0 0 0 0.155 0 0 0 0 0.14 0 0 0 0.3 0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 140px 140px; }
+
+/* ---- 方案 2 · 光尘漂浮 MOTES (animated — dots you can track) -------------
+   soft warm/sage motes rising like pollen in window light; each dot is a
+   trackable edge, so the motion is actually SEEN (10-18s per traversal). */
+.bg-motes { }
+.bg-motes .mote { position: absolute; bottom: -4%; border-radius: 50%;
+  width: 10px; height: 10px;
+  background: radial-gradient(circle,
+    rgba(196, 152, 96, 0.7), rgba(196, 152, 96, 0.3) 60%, transparent 100%);
+  animation: bglab-rise 14s linear infinite; opacity: 0; }
+.bg-motes .mote:nth-child(3n) {
+  background: radial-gradient(circle,
+    rgba(120, 138, 112, 0.65), rgba(120, 138, 112, 0.28) 60%, transparent 100%); }
+.bg-motes .mote:nth-child(4n) { width: 7px; height: 7px; }
+.bg-motes .mote:nth-child(5n) { width: 16px; height: 16px; filter: blur(1.5px); }
+.bg-motes .mote:nth-child(1)  { left: 4%;  animation-duration: 15s; animation-delay: 0s; }
+.bg-motes .mote:nth-child(2)  { left: 11%; animation-duration: 12s; animation-delay: 2.4s; }
+.bg-motes .mote:nth-child(3)  { left: 18%; animation-duration: 17s; animation-delay: 5s; }
+.bg-motes .mote:nth-child(4)  { left: 26%; animation-duration: 11s; animation-delay: 1.2s; }
+.bg-motes .mote:nth-child(5)  { left: 33%; animation-duration: 16s; animation-delay: 7s; }
+.bg-motes .mote:nth-child(6)  { left: 41%; animation-duration: 13s; animation-delay: 3.6s; }
+.bg-motes .mote:nth-child(7)  { left: 48%; animation-duration: 18s; animation-delay: 0.8s; }
+.bg-motes .mote:nth-child(8)  { left: 55%; animation-duration: 12s; animation-delay: 6.2s; }
+.bg-motes .mote:nth-child(9)  { left: 62%; animation-duration: 15s; animation-delay: 2s; }
+.bg-motes .mote:nth-child(10) { left: 69%; animation-duration: 11s; animation-delay: 8.4s; }
+.bg-motes .mote:nth-child(11) { left: 76%; animation-duration: 16s; animation-delay: 4.4s; }
+.bg-motes .mote:nth-child(12) { left: 83%; animation-duration: 13s; animation-delay: 1.6s; }
+.bg-motes .mote:nth-child(13) { left: 90%; animation-duration: 17s; animation-delay: 6.8s; }
+.bg-motes .mote:nth-child(14) { left: 96%; animation-duration: 12s; animation-delay: 3s; }
+.bg-motes .mote:nth-child(15) { left: 8%;  animation-duration: 14s; animation-delay: 9.6s; }
+.bg-motes .mote:nth-child(16) { left: 22%; animation-duration: 18s; animation-delay: 11s; }
+.bg-motes .mote:nth-child(17) { left: 37%; animation-duration: 12s; animation-delay: 12.5s; }
+.bg-motes .mote:nth-child(18) { left: 52%; animation-duration: 15s; animation-delay: 10.2s; }
+.bg-motes .mote:nth-child(19) { left: 66%; animation-duration: 13s; animation-delay: 13.4s; }
+.bg-motes .mote:nth-child(20) { left: 88%; animation-duration: 16s; animation-delay: 9s; }
+@keyframes bglab-rise {
+  0%   { transform: translate(0, 0); opacity: 0; }
+  8%   { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translate(3vw, -108vh); opacity: 0; }
+}
+
+/* ---- 方案 3 · 蓝图淡格 BLUEPRINT GRID (static) --------------------------- */
+.bg-grid::before { content: ""; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(45, 45, 45, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(45, 45, 45, 0.07) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(130% 95% at 50% 40%, black 60%, transparent 100%);
+  -webkit-mask-image: radial-gradient(130% 95% at 50% 40%, black 60%, transparent 100%); }
+
+/* ---- 方案 4 · 雾丘呼吸 MIST HILLS (animated, ~30-38s) -------------------- */
+.bg-hills .hill-a, .bg-hills .hill-b { position: absolute; border-radius: 50%; }
+.bg-hills .hill-a { width: 96vw; height: 52vh; left: -20%; bottom: -18vh;
+  background: radial-gradient(closest-side,
+    rgba(184, 164, 138, 0.72), rgba(184, 164, 138, 0.42) 50%,
+    rgba(184, 164, 138, 0.16) 76%, transparent 97%);
+  animation: bglab-breathe-a 9s ease-in-out infinite alternate; }
+.bg-hills .hill-b { width: 80vw; height: 44vh; right: -16%; bottom: -14vh;
+  background: radial-gradient(closest-side,
+    rgba(114, 134, 104, 0.55), rgba(114, 134, 104, 0.3) 52%,
+    rgba(114, 134, 104, 0.1) 78%, transparent 98%);
+  animation: bglab-breathe-b 11s ease-in-out infinite alternate; }
+@keyframes bglab-breathe-a { from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(4vw, -30px) scale(1.1); } }
+@keyframes bglab-breathe-b { from { transform: translate(0, 0) scale(1); }
+  to { transform: translate(-4vw, -24px) scale(1.08); } }
+
+/* ---- 方案 5 · 水彩流动 WATERCOLOR FLOW (animated, ~13s sweep) ------------
+   an oversized wash panning across the page: a visible warm color front
+   sweeping left-right like light moving over paper. */
+.bg-wash .wash-a { position: absolute; inset: 0; width: 220%; left: -60%;
+  background: linear-gradient(100deg,
+    rgba(214, 168, 108, 0.4) 6%, rgba(214, 168, 108, 0.12) 22%,
+    transparent 36%, transparent 58%,
+    rgba(114, 134, 104, 0.3) 76%, rgba(114, 134, 104, 0.44) 94%);
+  animation: bglab-flow 13s ease-in-out infinite alternate; }
+.bg-wash .wash-b { position: absolute; inset: 0;
+  background: radial-gradient(46% 36% at 86% 8%,
+    rgba(196, 134, 96, 0.28), rgba(196, 134, 96, 0.1) 55%, transparent 85%);
+  animation: bglab-breathe-b 10s ease-in-out infinite alternate; }
+@keyframes bglab-flow { from { transform: translateX(0); }
+  to { transform: translateX(22%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-motes .mote,
+  .bg-hills .hill-a, .bg-hills .hill-b,
+  .bg-wash .wash-a, .bg-wash .wash-b { animation: none; }
+  .bg-motes .mote { opacity: 0.35; bottom: auto; }
+  .bg-motes .mote:nth-child(even) { top: 30%; }
+  .bg-motes .mote:nth-child(odd) { top: 62%; }
+}
+
+/* ---- 方案 D · LIQUID GLASS (glassmorphism per her ui-ux-pro-max recipe:
+   blur 10-20px, translucent white raised for light mode, 1px light border,
+   needs a vibrant/flowing background beneath) ------------------------------ */
+.bglab__glassbar { display: flex; justify-content: space-between;
+  align-items: center; width: min(720px, 100%); margin-inline: auto;
+  padding: 14px 22px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 8px 28px rgba(45, 45, 45, 0.08); }
+.bglab__glassbrand { font-family: var(--font-ds-display), serif;
+  font-size: 19px; color: #2d2d2d; }
+.bglab__glasslinks { display: flex; align-items: center; gap: 22px;
+  font-family: var(--font-ds-plex-mono), monospace; font-size: 12px;
+  letter-spacing: 0.14em; color: #2d2d2d; }
+.bglab__glasspill { padding: 8px 16px; border-radius: 999px;
+  background: rgba(45, 45, 45, 0.82); color: #f5f0e8; }
+.bglab__glasscard { border-radius: 20px;
+  padding: clamp(24px, 2.5vw, 40px);
+  background: rgba(255, 255, 255, 0.28);
+  backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid rgba(255, 255, 255, 0.48);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 12px 36px rgba(45, 45, 45, 0.1);
+  display: grid; align-content: center; gap: 12px; }
+.bglab__glassnote { margin: 0; font-family: var(--font-ds-hanken), sans-serif;
+  font-size: 13.5px; line-height: 1.55; color: #4a4a47; }
+.bglab__glasschip { width: fit-content; margin: 0; padding: 7px 12px;
+  border-radius: 8px; font-family: var(--font-ds-plex-mono), monospace;
+  font-size: 11px; letter-spacing: 0.14em; color: #2d2d2d;
+  background: rgba(255, 255, 255, 0.34);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.5); }

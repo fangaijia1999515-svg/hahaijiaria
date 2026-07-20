@@ -1,0 +1,371 @@
+/* LAB GLASS DEMOS (comparison plumbing; deleted once she picks).
+   The classic pages set these wrapper classes from ?glass=nav|cards|both.
+   Everything is override-only: components/navigation.tsx is shared with the
+   homepage and its source is NOT touched. */
+
+/* ============================================================================
+   LIQUID GLASS — EDGE REWORK (2026-07-17, "light on glass, not an outline")
+   ----------------------------------------------------------------------------
+   Her verdict on the last rim: the pill over Skya's dark robot hero showed a
+   GLARING uniform bright ring all around — metallic, stamped, 突兀不融合. Her
+   quality bar is liquid-glass-studio (iyinchao): the rim there is FRESNEL — it
+   is physically stronger at grazing angles / tight curvature and view-dependent,
+   never a uniform ring — plus a glare with a directional ANGLE. The rim is alive
+   and directed, not drawn.
+
+   THE INSIGHT WE BUILD ON: now that TRUE refraction works (nav-lens-filter.tsx
+   bends the REAL backdrop — purple hero included — with a Snell displacement
+   map), the refraction discontinuity at the rim IS the glass edge. So every
+   PAINTED rim retreats to a whisper; light is DIRECTIONAL, not a perimeter.
+
+   ============================================================================
+   TWO REGISTERS OF ONE MATERIAL  (her instinct: nav ≠ cards)
+   Light-stage defaults live on the wrappers; the DARK stage flips them below.
+
+   ┌ REGISTER A — NAV · "the clear lens" ───────────────────────────────────┐
+   │ strongest refraction (kept) · the LEAST tint so content reads through   │
+   │ clean · a WHISPER border · and DIRECTIONAL curvature-weighted light in   │
+   │ place of a ring: a top glare (light ~115°) that dies before the sides,   │
+   │ near-zero on the long straight edges, and a faint crescent ONLY at the   │
+   │ two tight-curvature ends (the Fresnel logic) · traveling sheen kept low. │
+   └─────────────────────────────────────────────────────────────────────────┘
+   ┌ REGISTER B — CARDS · "the calm frost" ─────────────────────────────────┐
+   │ they hold body text → MORE tint/frost + a touch MORE blur for legibility │
+   │ · NO refraction (they scroll; a per-frame lens rect-sync would jank) ·   │
+   │ a soft, EVEN, hazy rim (no bright arcs, no crescents) + a gentle         │
+   │ containment ring — a quiet slab, not a lit lens.                         │
+   └─────────────────────────────────────────────────────────────────────────┘
+   PERF: exactly ONE url() filter consumer in the whole system — the pill
+   (nav-lens-filter.tsx). Cards use only blur()+saturate(); NO url() filter is
+   added to them. A single fixed, small-area element carries the expensive optic.
+   ========================================================================== */
+.lab-glass-nav,
+.lab-glass-cards {
+  /* ---- REGISTER A · NAV (the clear lens) — LIGHT defaults ---------------- */
+  --lg-nav-tint-a: rgba(253, 250, 244, 0.48); /* top champagne (raised .42→.48, fix5: pill ground carries contrast so the halo can whisper) */
+  --lg-nav-tint-b: rgba(248, 241, 230, 0.22); /* mid (raised .16→.22): still the clearest band, refract reads through */
+  --lg-nav-tint-c: rgba(243, 234, 219, 0.40); /* base warm sand (raised .34→.40)      */
+  --lg-nav-blur: 11px;                         /* clearer than the frost               */
+  --lg-nav-sat: 1.66;                          /* matches the injected refract literal */
+  --lg-nav-glare: rgba(255, 255, 255, 0.46);      /* top-edge glare core (~115° light) */
+  --lg-nav-glare-soft: rgba(255, 253, 247, 0.16); /* its bloom                         */
+  /* --lg-nav-endcap retired (fix4): the two end crescents read as glaring white arcs
+     over bright/busy content; the Snell refraction now carries the end optics. */
+  --lg-nav-thick: rgba(120, 96, 60, 0.14);        /* faint bottom lens-thickness (no ring) */
+  --lg-nav-border: rgba(255, 255, 255, 0.1);      /* WHISPER (was .5) — refraction draws the edge */
+  --lg-nav-contact: rgba(60, 50, 35, 0.2);        /* soft cast shadow = shape, not a line */
+  --lg-nav-sheen: rgba(255, 255, 255, 0.22);      /* subtle traveling sheen            */
+  --lg-nav-sheen-blend: screen;
+
+  /* ---- REGISTER B · CARDS (the calm frost) — LIGHT defaults -------------- */
+  --lg-card-a: rgba(252, 248, 241, 0.62); /* more tint than the nav → text stays crisp */
+  --lg-card-b: rgba(247, 240, 229, 0.46);
+  --lg-card-c: rgba(242, 233, 218, 0.58);
+  --lg-card-blur: 14px;                          /* hazier than the nav (11px)         */
+  --lg-card-sat: 1.5;
+  --lg-card-border: rgba(255, 255, 255, 0.28);   /* gentle containment (no refraction to draw it) */
+  --lg-card-rim-light: rgba(255, 253, 247, 0.5); /* soft EVEN top light (no arc)       */
+  --lg-card-rim-dark: rgba(120, 96, 60, 0.12);   /* soft EVEN bottom (no crescent)     */
+  --lg-card-contact: rgba(60, 50, 35, 0.18);
+  --lg-card-sheen: rgba(255, 255, 255, 0.2);
+  --lg-card-sheen-blend: screen;
+}
+
+/* DARK stage (?stage=dark): the page paints opaque charcoal over the veil, so
+   the glass floats over #2D2D2D (or, at the top, over the purple/robot hero).
+   Rims become cream-alpha light; thickness/bottom becomes black. On refraction
+   surfaces the bend still draws the edge; on the blur fallback the tint +
+   contact + directional light carry it. `.lab-glass-*` is the OUTER wrapper and
+   `.classic-stage-dark` the inner theme layer → this descendant selector
+   out-specifies the light defaults. */
+.lab-glass-nav .classic-stage-dark,
+.lab-glass-cards .classic-stage-dark {
+  /* NAV */
+  --lg-nav-tint-a: rgba(90, 89, 85, 0.3); /* lifts above the #2D2D2D ground */
+  --lg-nav-tint-b: rgba(64, 63, 60, 0.1);
+  --lg-nav-tint-c: rgba(48, 47, 45, 0.24);
+  --lg-nav-glare: rgba(245, 240, 232, 0.5);       /* cream light catching the top curve */
+  --lg-nav-glare-soft: rgba(245, 240, 232, 0.17);
+  /* --lg-nav-endcap retired (fix4) — see the light-stage note above */
+  --lg-nav-thick: rgba(0, 0, 0, 0.3);             /* dark bottom thickness              */
+  --lg-nav-border: rgba(245, 240, 232, 0.06);     /* near-zero — this was the culprit   */
+  --lg-nav-contact: rgba(0, 0, 0, 0.44);
+  --lg-nav-sheen: rgba(245, 240, 232, 0.13);
+  /* CARDS */
+  --lg-card-a: rgba(62, 61, 58, 0.58);
+  --lg-card-b: rgba(46, 45, 43, 0.44);
+  --lg-card-c: rgba(40, 39, 37, 0.56);
+  --lg-card-border: rgba(245, 240, 232, 0.12);
+  --lg-card-rim-light: rgba(245, 240, 232, 0.2);
+  --lg-card-rim-dark: rgba(0, 0, 0, 0.3);
+  --lg-card-contact: rgba(0, 0, 0, 0.46);
+  --lg-card-sheen: rgba(245, 240, 232, 0.12);
+}
+
+/* traveling specular sweep — a slow diagonal drift, both directions (alternate) */
+@keyframes lab-glass-sheen {
+  0% {
+    background-position: 138% 0;
+  }
+  100% {
+    background-position: -38% 0;
+  }
+}
+
+/* ---- .lab-glass-nav: floating liquid-glass pill nav -----------------------
+   Answers her "big rectangle nav feels heavy" note: the fixed full-width
+   header becomes a constrained pill. The full-width scrolled backdrop
+   rectangles (LiquidGlass surface + cream backing) are removed so the pill
+   itself is the only glass. Geometry unchanged; only the optics + edge. */
+.lab-glass-nav header.fixed.top-0 {
+  top: 14px !important;
+  left: 50% !important;
+  right: auto !important;
+  width: min(1080px, calc(100% - 28px));
+  transform: translateX(-50%);
+  border-radius: 999px;
+  padding-inline: 22px;
+  /* tint lives on ::before so it sits OVER the lens canvas (a child); the
+     element background stays clear so the reduced backdrop-blur can pass the
+     veil through on no-lens surfaces */
+  background: transparent;
+  backdrop-filter: blur(var(--lg-nav-blur)) saturate(var(--lg-nav-sat));
+  -webkit-backdrop-filter: blur(var(--lg-nav-blur)) saturate(var(--lg-nav-sat));
+  /* WHISPER border — was rgba(255,255,255,.5), the uniform ring she flagged.
+     The refraction discontinuity (Chromium) + contact shadow now draw the edge. */
+  border: 1px solid var(--lg-nav-border);
+  /* NO outer bright catch-light (it read as an outline) — only a soft contact
+     shadow so the lens sits above ground as a SHAPE, not a drawn line. */
+  box-shadow:
+    0 14px 38px -14px var(--lg-nav-contact),
+    0 4px 12px -6px var(--lg-nav-contact);
+  overflow: hidden;
+  isolation: isolate; /* own stacking context: refraction backdrop < ::before z1 < ::after z2 < nav z10 */
+}
+/* ① EDGE REFRACTION (TIER-2, unchanged) — nav-lens-filter.tsx injects a runtime
+   <style> that swaps this pill's blur for `backdrop-filter: url(#lens-filter)`,
+   bending the REAL compositor backdrop (the purple Skya hero, the green Nuzzle
+   hero, cards) at the rim. Chromium + ≥901px gated; Safari/Firefox/mobile keep
+   the blur rule above. The bend is geometric only (no added brightness), so the
+   edge light below is 100% CSS — which is why softening it fixes her outline. */
+/* ②+③ tint + DIRECTIONAL curvature-weighted light (replaces the old uniform
+   meniscus ring). Light ~115°: a top glare that dies before the sides and the
+   bottom; a faint Fresnel crescent only at the two tight-curvature ends; the
+   long straight edges stay dark. Over a DARK backdrop this reads as light
+   CAUGHT by glass; over cream it is a whisper. */
+.lab-glass-nav header.fixed.top-0::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    /* top glare — bright arc hugging the upper edge, brightest left-of-centre
+       (light ~115°), faded out before the caps and before the lower half */
+    radial-gradient(
+      58% 140% at 44% -30%,
+      var(--lg-nav-glare) 0%,
+      var(--lg-nav-glare-soft) 30%,
+      transparent 62%
+    ),
+    /* base tint (clear-lens champagne, reduced so refraction reads through) */
+    linear-gradient(
+      158deg,
+      var(--lg-nav-tint-a) 0%,
+      var(--lg-nav-tint-b) 46%,
+      var(--lg-nav-tint-c) 100%
+    );
+  /* the top glare ADDS light (screen) over the tint beneath; the tint itself
+     composites normally over the refracted backdrop. THE TWO END CRESCENTS WERE
+     REMOVED (fix4, 2026-07-17): as cream radials screen-blended at the tight caps
+     they read as GLARING white arc/ring shapes over bright/busy content — a
+     standalone painted rim, exactly what "refraction-defines-the-edge" retired.
+     The Snell displacement (nav-lens-filter.tsx, strongest at the rounded ends)
+     now carries the end optics; nothing painted can glare there anymore. */
+  background-blend-mode: screen, normal;
+  /* faint bottom-only lens thickness — a whisper of the refracted underside,
+     NOT a perimeter ring */
+  box-shadow: inset 0 -9px 13px -13px var(--lg-nav-thick);
+}
+/* ④ living specular — subtle traveling sheen */
+.lab-glass-nav header.fixed.top-0::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    112deg,
+    transparent 34%,
+    var(--lg-nav-sheen) 47%,
+    rgba(255, 255, 255, 0.05) 52%,
+    transparent 66%
+  );
+  background-size: 220% 100%;
+  background-position: 138% 0;
+  mix-blend-mode: var(--lg-nav-sheen-blend);
+  animation: lab-glass-sheen 8.5s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+}
+.lab-glass-nav header.fixed.top-0:hover::after {
+  filter: brightness(1.26);
+}
+/* the scrolled backdrop rectangles are absolute inset-0 children of the
+   header (the LiquidGlass surface and the cream backing div): hide both.
+   NB: the lens canvas is injected with INLINE styles (no .absolute/.inset-0
+   classes) so it is deliberately NOT matched here. */
+.lab-glass-nav header.fixed.top-0 > .absolute.inset-0 {
+  display: none !important;
+}
+/* inside the pill the inner nav drops its page gutters */
+.lab-glass-nav header.fixed.top-0 nav {
+  padding: 10px 0 !important;
+}
+/* LABEL LEGIBILITY over dark / busy heroes (fix4, 2026-07-17) — the tint raise
+   above buys most of the contrast back; this is the guarantee. The shared nav's
+   ink labels (#2d2d2d on the light stage) lost all read over the Skya purple /
+   Nuzzle dark-green heroes once the tint was thinned for clarity. A soft WIDE
+   warm-cream halo hugs each glyph — a per-letter glow, NEVER a box: over a dark
+   backdrop it lifts the ink so WORK / ABOUT / CONTACT + the name read cleanly;
+   over cream it is the same colour as the ground and simply vanishes, so the pill
+   stays as clear as before where it already worked. On the dark stage the labels
+   are already cream, so the same halo just reinforces them harmlessly. Targets
+   the shared markup by structure only (source untouched). */
+.lab-glass-nav header.fixed.top-0 nav a,
+.lab-glass-nav header.fixed.top-0 nav button {
+  /* fix5 (2026-07-17): the old 3-layer halo BLOOMED into visible white glow
+     RINGS over dark content (her screenshot: WORK/ABOUT/CONTACT ghost-ringed
+     over the dark-brown roadmap). The 16px bloom layer is GONE; only a tight
+     1px edge + a 5px soft lift remain, both at low alpha. The contrast is now
+     carried by the raised pill tint above, so the halo is a whisper, not a ring. */
+  text-shadow:
+    0 0 1px rgba(245, 240, 232, 0.5),
+    0 0 5px rgba(245, 240, 232, 0.35);
+}
+
+/* ---- .lab-glass-cards: parchment prop cards become the CALM FROST ---------
+   Her complaint: the FOR RESIDENTS / FOR PROPERTY MANAGERS / FOR LOGISTICS
+   cards mush into the dune background; glass separates the layers. These hold
+   body text, so this register is deliberately QUIETER than the pill: more
+   tint/frost, a touch more blur, a soft EVEN rim (no directional glare, no
+   crescents) + a gentle containment ring. TIER 1 only — NO url() refraction
+   (they scroll; a per-frame lens rect-sync would jank and no filter is added
+   here, keeping the pill the system's only url() consumer). Targets the
+   compiled Tailwind arbitrary classes; radius kept from source (rounded-xl).
+   Border set via inset ring (not `border`) so the surface-2 card keeps its
+   border-l-4 accent. */
+.lab-glass-cards .bg-\[var\(--cl-surface\)\],
+.lab-glass-cards .bg-\[var\(--cl-surface-2\)\] {
+  position: relative;
+  isolation: isolate;
+  /* tint is the fill (painted behind text → body copy stays crisp) */
+  background: linear-gradient(
+    158deg,
+    var(--lg-card-a) 0%,
+    var(--lg-card-b) 50%,
+    var(--lg-card-c) 100%
+  ) !important;
+  backdrop-filter: blur(var(--lg-card-blur)) saturate(var(--lg-card-sat));
+  -webkit-backdrop-filter: blur(var(--lg-card-blur)) saturate(var(--lg-card-sat));
+  /* CALM rim: a gentle containment ring + a soft EVEN top light and bottom
+     shade, both heavily feathered and low-alpha (NO 0.95 arcs) + outer contact.
+     Reads as a quiet frosted slab, not a lit lens. */
+  box-shadow:
+    inset 0 0 0 1px var(--lg-card-border),
+    inset 0 1px 1px -0.5px var(--lg-card-rim-light),
+    inset 0 12px 20px -16px var(--lg-card-rim-light),
+    inset 0 -1px 1px -0.5px var(--lg-card-rim-dark),
+    inset 0 -13px 20px -16px var(--lg-card-rim-dark),
+    0 18px 42px -20px var(--lg-card-contact),
+    0 5px 14px -8px var(--lg-card-contact) !important;
+}
+/* living specular — z-index:-1 sits above the tint fill, below the text
+   (the card is isolated, so -1 is contained above its own background). Softer
+   and slower than the pill's sheen — this register is calm. */
+.lab-glass-cards .bg-\[var\(--cl-surface\)\]::after,
+.lab-glass-cards .bg-\[var\(--cl-surface-2\)\]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    120deg,
+    transparent 32%,
+    var(--lg-card-sheen) 48%,
+    transparent 64%
+  );
+  background-size: 210% 100%;
+  background-position: 130% 0;
+  mix-blend-mode: var(--lg-card-sheen-blend);
+  animation: lab-glass-sheen 9.5s cubic-bezier(0.4, 0, 0.2, 1) infinite alternate;
+}
+
+/* reduced motion: freeze the sheen mid-sweep (still reads as a static highlight) */
+@media (prefers-reduced-motion: reduce) {
+  .lab-glass-nav header.fixed.top-0::after,
+  .lab-glass-cards .bg-\[var\(--cl-surface\)\]::after,
+  .lab-glass-cards .bg-\[var\(--cl-surface-2\)\]::after {
+    animation: none;
+    background-position: 46% 0;
+  }
+  .lab-glass-nav header.fixed.top-0:hover::after {
+    filter: none;
+  }
+}
+
+/* ---- .lab-content-boost: content wins over the background -----------------
+   Her rule for dune-soft: the CONTENT must beat the shader. ?content=boost
+   puts this class on the page wrapper (same wiring as ?glass). Reversible
+   demo overrides only, nothing in component sources is touched. */
+
+/* (a) soft cream backing veil behind the reading column: a fixed, wide,
+   feathered horizontal gradient (center column at 0.55 cream fading to
+   nothing at the edges) so the shader recedes where text lives without
+   ever reading as a hard box. Sits above the fixed z-0 bg layer, below
+   all content (negative z inside the wrapper's stacking context). */
+.lab-content-boost::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    rgba(245, 240, 232, 0) 0%,
+    rgba(245, 240, 232, 0.3) 14%,
+    rgba(245, 240, 232, 0.55) 30%,
+    rgba(245, 240, 232, 0.55) 70%,
+    rgba(245, 240, 232, 0.3) 86%,
+    rgba(245, 240, 232, 0) 100%
+  );
+}
+
+/* (b) section headings step up 8% (zoom scales type inside the same column
+   width) and take full ink. Headings explicitly set light for dark panels
+   (text-[#F5F0E8] etc.) keep their color; !important is needed to beat the
+   inline accent color on the classic-label heads. */
+.lab-content-boost h2,
+.lab-content-boost h3,
+.lab-content-boost h4 {
+  zoom: 1.08;
+}
+.lab-content-boost h2:not([class*="text-[#F"]),
+.lab-content-boost h3:not([class*="text-[#F"]),
+.lab-content-boost h4:not([class*="text-[#F"]) {
+  color: var(--cl-ink) !important;
+}
+
+/* (c) body text returns to full ink instead of the soft/muted registers
+   (targets the compiled utility classes; dark-panel text uses literal light
+   hex classes and is untouched). In ?stage=dark --cl-ink is cream, so the
+   boost stays coherent there too. */
+.lab-content-boost .text-\[var\(--cl-text-muted\)\],
+.lab-content-boost .text-\[var\(--cl-text-soft\)\],
+.lab-content-boost .text-muted-foreground,
+.lab-content-boost .text-\[var\(--cl-ink-a85\)\],
+.lab-content-boost .text-\[var\(--cl-ink-a90\)\] {
+  color: var(--cl-ink) !important;
+}

@@ -1,0 +1,137 @@
+/* PROOF LAB — /v2/lab/proof only. ROUND 5: screen 2 on its OWN ground (her
+   grass hills, sky cropped away) with award-grade scroll choreography.
+   CSS default = readable end states (no-JS / reduced motion); GSAP pins
+   and scrubs on top. */
+
+.pl { background: var(--ds-warm-cream); color: var(--ds-text);
+  --pl-edge: clamp(20px, 2.2vw, 32px);
+  --pl-forest: var(--ds-accent, #3D4A3A); }
+
+/* ---- intro + labels -------------------------------------------------------- */
+.pl-intro { max-width: var(--ds-container-max); margin-inline: auto;
+  padding: clamp(90px, 14svh, 180px) var(--ds-margin-desktop) clamp(40px, 6svh, 80px); }
+.pl-intro__over { color: var(--ds-accent-earth); margin-bottom: var(--ds-space-4); }
+.pl-intro__title { font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(2.4rem, 1.6rem + 3vw, 4.4rem); line-height: 1.04;
+  margin-bottom: var(--ds-space-4); }
+.pl-intro__body { max-width: 62ch; color: var(--ds-text-secondary);
+  font-size: 1.1rem; line-height: 1.65; }
+
+.pl-label { max-width: var(--ds-container-max); margin-inline: auto;
+  padding: clamp(48px, 8svh, 110px) var(--ds-margin-desktop) var(--ds-space-5);
+  font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls); text-transform: uppercase;
+  color: var(--ds-text-secondary); }
+.pl-label span { display: inline-block; padding: 6px 12px; border-radius: 999px;
+  background: var(--ds-accent); color: var(--ds-warm-cream);
+  margin-right: var(--ds-space-3); }
+
+/* ---- shared scene: her grass hills, sky cropped away ------------------------ */
+.pl7-scene { position: relative; height: 100svh; overflow: hidden; }
+.pl7-scene__bg { position: absolute; inset: 0;
+  background-image: url(/image/lab/pano-c.jpg);
+  background-size: cover;
+  /* the portrait artwork is far taller than the frame: bias the crop well
+     below the horizon so NO sky shows (her call) */
+  background-position: center 76%; }
+/* narrow/portrait viewports: cover would fit the WHOLE portrait image
+   vertically and the sky comes back — force a zoom so only the lower
+   grass band (roughly 47%..85% of the artwork) is ever shown */
+@media (max-aspect-ratio: 7/5) {
+  .pl7-scene__bg { background-size: auto 260%; }
+}
+.pl7-scene__shade { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(to top,
+    rgba(32, 30, 27, 0.50) 0%,
+    rgba(32, 30, 27, 0.26) 55%,
+    rgba(32, 30, 27, 0.12) 100%); }
+.pl7-scene__inner { position: relative; z-index: 1;
+  max-width: var(--ds-container-max); margin-inline: auto;
+  height: 100%; display: flex; flex-direction: column; justify-content: center;
+  padding: clamp(70px, 10svh, 130px) var(--ds-margin-desktop); }
+.pl7-over { color: color-mix(in srgb, var(--ds-warm-cream) 80%, transparent);
+  margin-bottom: clamp(28px, 5svh, 56px); }
+
+/* ============================================================================
+   DEMO 1 — READING LIGHT (the scroll reads the manifesto word by word)
+   ============================================================================ */
+.pl7-fill__text { font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(1.9rem, 1rem + 3vw, 3.9rem); line-height: 1.34;
+  letter-spacing: 0; max-width: 26ch; color: var(--ds-warm-cream); }
+.pl7-fill__text em { font-style: italic; font-weight: inherit; }
+
+/* ============================================================================
+   DEMO 2 — KINETIC LOCKUP (giant words slide in and stack)
+   Sharpened per AD round-5 review: committed zigzag (no centered rows), the
+   three lines interlock into ONE carved lockup (negative leading), outer
+   words nearly touch the frame, notes tuck at the baseline, signature is a
+   margin-anchored mono line instead of a centered block.
+   ============================================================================ */
+.pl7-kinetic__inner { justify-content: center; gap: 0; }
+/* deeper grass at the payoff so the lower cream type reads carved against
+   the rock, contrast by shade placement, never glow */
+.pl7-kinetic .pl7-scene__shade { background: linear-gradient(to top,
+    rgba(32, 30, 27, 0.58) 0%,
+    rgba(32, 30, 27, 0.26) 55%,
+    rgba(32, 30, 27, 0.12) 100%); }
+.pl7-kinetic__lead { margin-bottom: clamp(18px, 3svh, 40px);
+  color: color-mix(in srgb, var(--ds-warm-cream) 80%, transparent); }
+.pl7-row { display: flex; align-items: baseline; gap: clamp(14px, 2vw, 32px);
+  overflow: hidden; padding-block: 0.04em; }
+.pl7-row__word { display: inline-block;
+  font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(4.4rem, 2rem + 10vw, 12rem); line-height: 1.02;
+  letter-spacing: -0.015em; color: var(--ds-warm-cream);
+  will-change: transform; }
+.pl7-row__word--it { font-style: italic; }
+.pl7-row--2 { justify-content: flex-end; margin-top: clamp(-26px, -2svh, -4px); }
+.pl7-row--2 .pl7-row__word { margin-right: -0.04em; }
+.pl7-row--3 { justify-content: flex-start; margin-top: clamp(-26px, -2svh, -4px); }
+.pl7-row--3 .pl7-row__word { margin-left: -0.06em;
+  font-size: clamp(4.8rem, 2.2rem + 11vw, 13rem); }
+.pl7-row__note { font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls); text-transform: uppercase;
+  color: color-mix(in srgb, var(--ds-warm-cream) 62%, transparent);
+  white-space: nowrap; }
+.pl7-kinetic__sig { position: absolute; left: var(--ds-margin-desktop);
+  bottom: clamp(28px, 5svh, 56px);
+  font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls); text-transform: uppercase;
+  color: color-mix(in srgb, var(--ds-warm-cream) 74%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--ds-warm-cream) 35%, transparent);
+  padding-top: 10px; }
+
+/* ============================================================================
+   DEMO 3 — INLINE WORLDS (a sentence with small windows embedded in it)
+   ============================================================================ */
+.pl7-inline__text { font-family: var(--ds-font-display); font-weight: var(--ds-w-light);
+  font-size: clamp(2.1rem, 1.1rem + 3.4vw, 4.4rem); line-height: 1.38;
+  max-width: 24ch; color: var(--ds-warm-cream); }
+.pl7-chip { display: inline-block; vertical-align: baseline;
+  width: clamp(72px, 2.4em, 190px); height: 0.86em;
+  margin-inline: 0.18em; border-radius: 999px; overflow: hidden;
+  box-shadow: 0 1px 14px rgba(32, 30, 27, 0.35),
+    inset 0 0 0 1px color-mix(in srgb, var(--ds-warm-cream) 35%, transparent);
+  transform-origin: center; will-change: transform; }
+.pl7-chip__img { display: block; width: 100%; height: 100%;
+  background-size: cover; }
+.pl7-chip__img--a { background-image: url(/image/v2/hero.jpg);
+  background-position: center 60%; }
+.pl7-chip__img--b { background-image: url(/image/lab/pano-b.png);
+  background-position: center 45%; }
+.pl7-chip__img--c { background-image: url(/image/lab/pano-a.png);
+  background-position: center 80%; }
+
+/* ---- mobile ----------------------------------------------------------------- */
+@media (max-width: 900px) {
+  .pl-intro, .pl-label { padding-inline: var(--ds-space-5); }
+  .pl7-scene__inner { padding-inline: var(--ds-space-5); }
+  .pl7-row { gap: var(--ds-space-4); }
+  .pl7-row__note { display: none; }
+  .pl7-kinetic__sig { left: var(--ds-space-5); }
+}
+
+/* ---- reduced motion: everything already sits in its readable default -------- */
+@media (prefers-reduced-motion: reduce) {
+  .pl7-scene { height: auto; min-height: 100svh; }
+}

@@ -1,0 +1,98 @@
+# Local-only directories (backup of original large assets)
+/trash/
+
+# Local binaries
+/ffmpeg
+
+# Build outputs and caches
+.next
+node_modules
+.turbo
+.cache
+
+# System and editor files
+.DS_Store
+*.swp
+.vscode
+.idea
+
+# Screenshots and temp files
+/截屏*.png
+/*.mov
+/*.mp4
+!/public/**/*.mp4
+!/public/**/*.mov
+
+# Git
+.git
+.gitignore
+
+# Dev-only material (not needed at runtime)
+/reference-analysis
+/docs
+/trash
+
+# Old-site-only / source-spec heavy assets (not referenced by the live v2 site;
+# cut to keep the deploy archive small enough for the finalize request)
+/public/home
+/public/quiet
+/public/boards-preview
+/public/design system
+
+# Never-referenced legacy assets (scan 2026-07-19) + master PNGs whose -md.jpg twins are the ones actually served + lab-only comparison videos
+/public/image/boards/nuzzle/board-14.png
+/public/image/v2/world/valley-pond.png
+/public/image/v2/world/valley-pod.png
+/public/image/boards/nuzzle/board-13.png
+/public/image/boards/nuzzle/board-06.png
+/public/image/boards/nuzzle/board-12.png
+/public/image/boards/nuzzle/board-07.png
+/public/image/v2/card/扑克牌背面设计 - 浅色沙丘.png
+/public/image/v2/card/扑克牌背面设计 - 浅色草地.png
+/public/image/v2/card/扑克牌背面设计 - 浅色水波.png
+/public/image/boards/nuzzle/board-01.png
+/public/ds/backgrounds/winding-river.png
+/public/image/boards/nuzzle/board-04.png
+/public/ds/backgrounds/abstract-landscape.png
+/public/ds/backgrounds/full-hero.png
+/public/image/boards/nuzzle/board-05.png
+/public/image/boards/nuzzle/board-02.png
+/public/image/eaudetoi/image/email01.png
+/public/ds/backgrounds/morning-hills.png
+/public/ds/backgrounds/dune-curves.png
+/public/image/boards/nuzzle/board-10.png
+/public/image/boards/nuzzle/board-08.png
+/public/image/v2/card/扑克牌背面设计 - 深色草地.png
+/public/image/boards/nuzzle/board-03.png
+/public/image/boards/nuzzle/board-11.png
+/public/ds/backgrounds/lake-reflection.png
+/public/image/boards/nuzzle/board-09.png
+/public/image/v2/card/扑克牌背面设计 - 深色沙丘.png
+/public/image/eaudetoi/image/email03.png
+/public/image/skya/how-it-works-1.jpg
+/public/image/skya/how-it-works-2.jpg
+/public/image/skya/blueoceanstrategy.png
+/public/image/eaudetoi/image/email02.png
+/public/image/skya/businessmodel2.png
+/public/image/skya/primaryresearchchart2.png
+/public/image/v2/world/valley-hills.jpg
+/public/image/v2/statement.jpg
+/public/image/skya/businessmodel.png
+/public/ds/backgrounds/portrait-lake.jpg
+/public/image/skya/serviceblueprint2.png
+/public/ds/moodboard/landscape-3d.png
+/public/image/skya/zag.png
+/public/image/skya/valueprop.png
+/public/image/skya/valueprop2.png
+/public/image/eaudetoi/image/desktop05.webp
+/public/image/lab/hero-17.jpg
+/public/image/lab/bg-zen.jpg
+/public/image/eaudetoi/image/desktop06.webp
+/public/image/Nuzzle/journey02.webp/public/image/cards/back-dune.png
+/public/image/cards/back-water.png
+/public/image/cards/back-valley.png
+/public/image/cards/back-nightgarden.png
+/public/image/cards/back-nightbloom.png
+/public/image/cards/moonlit-cover.png
+/public/video/lab/water-v1.mp4
+/public/video/lab/water-v2.mp4

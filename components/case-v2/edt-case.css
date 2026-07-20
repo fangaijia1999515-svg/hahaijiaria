@@ -1,0 +1,72 @@
+/* ============================================================================
+   EAU DE TOI — page-scoped additions on top of the case-v2 grammar.
+   Only .edt-* selectors (case-v2.css stays untouched); consumes ONLY tokens
+   from styles/design-tokens.css. Loaded by app/work/eau-de-toi/page.tsx.
+   ============================================================================ */
+
+/* hero video variant: the promo film is the cover; same crop as the img hero */
+.edt-hero .cv2-hero__well video { width: 100%; height: 100%;
+  object-fit: cover; display: block; will-change: transform; }
+
+/* mono kicker: the quiet label voice (verdict, recommendations) */
+.edt-kicker { margin: 0; font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size); letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ds-text-muted); }
+
+/* awards: linked title over the medal register */
+.edt-awards__link { display: inline-flex; align-items: baseline; gap: 8px;
+  font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls); text-transform: uppercase;
+  color: var(--ds-text-secondary); text-decoration: none;
+  transition: color var(--ds-dur-hover) var(--ds-ease-standard); }
+.edt-awards__link:hover { color: var(--ds-text); }
+
+/* a register that sits under a kicker/link line */
+.edt-register { margin-top: 18px; }
+
+/* numbered rail entries (pain points, recommendations) */
+.edt-prop-index { display: block; margin-bottom: 10px; }
+
+/* four-up registers (pain points, touchpoints): 2 x 2 like the old page */
+ul.edt-props--2col { grid-template-columns: 1fr 1fr; }
+/* stacked register (the ML rows): one column beside the data plate */
+ul.edt-props--stack { grid-template-columns: 1fr; }
+/* the ML rows ride inside the Machine Learning TextCard, under its lead */
+.cv2-textcard__body ul.edt-ml { margin-top: clamp(16px, 2svh, 24px); }
+
+/* solution features: three plates, each with its own text block below */
+.edt-grid3 { display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(20px, 2.6vw, 36px); align-items: start; }
+.edt-feature { min-width: 0; }
+.edt-feature__text { margin-top: 16px; }
+
+/* prototype contact sheets: the old pager's crop logic inside one plate
+   (one hero frame on top, supporting frames below) */
+.edt-shots { position: absolute; inset: clamp(10px, 1.4vw, 18px);
+  display: grid; gap: clamp(8px, 1vw, 12px); }
+.edt-shots > img { width: 100%; height: 100%; object-fit: cover;
+  border-radius: 10px; min-height: 0; min-width: 0; }
+.edt-shots--2 { grid-template-rows: 1fr 1fr; }
+.edt-shots--3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.edt-shots--3 > img:first-child { grid-column: 1 / -1; }
+
+/* findings lead-in inside step copy (the old pager's "Findings." voice) */
+.edt-findings__label { font-style: italic; color: var(--ds-text); }
+
+/* business ledger: mono kicker above each loud numeral */
+.edt-ledger__kicker { display: block; margin-bottom: 14px;
+  font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ds-text-muted); }
+
+/* the verdict: one serif sentence carrying the three numbers */
+.edt-verdict { margin: 18px 0 0; font-family: var(--ds-font-display);
+  font-weight: var(--ds-w-display);
+  font-size: clamp(1.5rem, 2.1vw, 2.1rem); line-height: 1.3;
+  color: var(--ds-text); max-width: 44ch; text-wrap: balance; }
+.edt-verdict em { font-style: italic; }
+
+@media (max-width: 767px) {
+  ul.edt-props--2col { grid-template-columns: 1fr; }
+  .edt-grid3 { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,324 @@
+/* ============================================================================
+   V2 EFFECTS LAB — scoped styles for the isolated candidate preview route.
+   Everything lives under `.fxlab` so it can NEVER collide with v2.css / the
+   live story. Token-driven only (ds vars). No hardcoded palette.
+   Three candidates, each a full-viewport demo with a mono numbered label.
+   ============================================================================ */
+
+.fxlab {
+  position: relative;
+  width: 100%;
+  background: var(--ds-bg);
+  color: var(--ds-text);
+}
+
+/* ---- shared section shell -------------------------------------------------- */
+.fx-section {
+  position: relative;
+  width: 100%;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* mono numbered label — top-left, IBM Plex Mono, her overline tracking */
+.fx-badge {
+  position: absolute;
+  top: clamp(20px, 4vh, 40px);
+  left: clamp(20px, 4vw, 56px);
+  z-index: 30;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls);
+  text-transform: uppercase;
+  color: var(--ds-text-muted);
+  pointer-events: none;
+}
+.fx-badge__num {
+  color: var(--ds-accent);
+  font-variant-numeric: tabular-nums;
+}
+.fx-badge__name { color: var(--ds-text); }
+.fx-badge__hint {
+  color: var(--ds-text-muted);
+  letter-spacing: 0.14em;
+}
+
+/* intro / outro plates */
+.fx-intro {
+  min-height: 60svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--ds-space-5);
+  padding: clamp(48px, 10vh, 140px) clamp(20px, 6vw, 90px);
+}
+.fx-intro__over {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls);
+  text-transform: uppercase;
+  color: var(--ds-text-muted);
+}
+.fx-intro__title {
+  font-family: var(--ds-font-display);
+  font-weight: var(--ds-w-display);
+  font-size: var(--ds-h1-size);
+  line-height: var(--ds-h1-lh);
+  letter-spacing: var(--ds-h1-ls);
+  max-width: 20ch;
+}
+.fx-intro__body {
+  font-size: var(--ds-body-lg-size);
+  line-height: var(--ds-body-lh);
+  color: var(--ds-text-secondary);
+  max-width: 56ch;
+}
+
+/* ============================================================================
+   01 — LIQUID HOVER  (WebGL displacement work index)
+   ============================================================================ */
+.fx-liquid {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-content: center;
+  padding: clamp(72px, 12vh, 160px) clamp(20px, 6vw, 90px) clamp(48px, 8vh, 120px);
+}
+.fx-liquid__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.fx-liquid__list {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  max-width: var(--ds-content-max);
+  margin: 0 auto;
+  width: 100%;
+  pointer-events: auto;
+}
+.fx-liquid__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ds-space-5);
+  padding: clamp(14px, 2.4vh, 30px) 0;
+  border-top: 1px solid var(--ds-border);
+  cursor: pointer;
+  color: var(--ds-text);
+  transition: color var(--ds-dur-hover) var(--ds-ease-out),
+    opacity var(--ds-dur-hover) var(--ds-ease-out);
+}
+.fx-liquid__list:hover .fx-liquid__row { opacity: 0.42; }
+.fx-liquid__list .fx-liquid__row:hover { opacity: 1; }
+.fx-liquid__row:last-child { border-bottom: 1px solid var(--ds-border); }
+.fx-liquid__name {
+  font-family: var(--ds-font-display);
+  font-weight: var(--ds-w-display);
+  font-size: clamp(2.4rem, 1.4rem + 5vw, 5.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  transition: transform var(--ds-dur-hover) var(--ds-ease-out);
+  transform: translateX(0);
+  will-change: transform;
+}
+.fx-liquid__row:hover .fx-liquid__name { transform: translateX(clamp(8px, 1.4vw, 22px)); }
+.fx-liquid__meta {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-label-size);
+  letter-spacing: var(--ds-label-ls);
+  text-transform: uppercase;
+  color: var(--ds-text-muted);
+  white-space: nowrap;
+}
+.fx-liquid__row-idx {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size);
+  color: var(--ds-accent);
+  margin-right: 10px;
+  vertical-align: super;
+}
+
+/* reduced-motion / no-webgl fallback: composed static thumbnail grid */
+.fx-liquid__static {
+  position: relative;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(12px, 2vw, 28px);
+  max-width: var(--ds-content-max);
+  margin: 0 auto;
+  width: 100%;
+}
+.fx-liquid__card {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--ds-radius-lg);
+  overflow: hidden;
+  box-shadow: var(--ds-elev-1);
+  background: var(--ds-surface);
+}
+.fx-liquid__card img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: saturate(0.92) contrast(1.02);
+}
+.fx-liquid__card figcaption {
+  position: absolute;
+  left: 16px; bottom: 14px;
+  font-family: var(--ds-font-display);
+  font-size: var(--ds-h3-size);
+  color: var(--ds-warm-cream);
+  text-shadow: 0 1px 12px rgba(0,0,0,0.4);
+}
+
+/* ============================================================================
+   02 — LUMINOUS PORTAL  (organic mask reveal + persistent orb)
+   ============================================================================ */
+.fx-portal { position: relative; }
+.fx-portal__pin {
+  position: relative;
+  height: 100svh;
+  width: 100%;
+  overflow: hidden;
+}
+.fx-portal__world {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+/* World A — warm cream daylight */
+.fx-portal__world--a {
+  background:
+    radial-gradient(120% 90% at 50% 118%, var(--ds-soft-parchment) 0%, var(--ds-warm-cream) 55%, #FBF7F0 100%);
+  z-index: 1;
+}
+/* World B — forest dusk, revealed through the blob mask */
+.fx-portal__world--b {
+  background:
+    radial-gradient(120% 100% at 50% 10%, #47543F 0%, var(--ds-forest-green) 42%, #23301F 100%);
+  color: var(--ds-warm-cream);
+  z-index: 2;
+  -webkit-clip-path: url(#fx-portal-clip);
+  clip-path: url(#fx-portal-clip);
+}
+.fx-portal__grain {
+  position: absolute; inset: -20%;
+  opacity: 0.5; mix-blend-mode: soft-light; pointer-events: none;
+}
+.fx-portal__caption {
+  position: relative;
+  z-index: 3;
+  text-align: center;
+  padding: 0 var(--ds-space-6);
+  max-width: 24ch;
+}
+.fx-portal__world--b .fx-portal__caption { color: var(--ds-warm-cream); }
+.fx-portal__eyebrow {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls);
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-bottom: var(--ds-space-4);
+}
+.fx-portal__line {
+  font-family: var(--ds-font-display);
+  font-weight: var(--ds-w-display);
+  font-size: var(--ds-h1-size);
+  line-height: var(--ds-h1-lh);
+  letter-spacing: var(--ds-h1-ls);
+}
+/* the persistent luminous orb — sits ABOVE both worlds, carries the seam */
+.fx-portal__orb {
+  position: absolute;
+  z-index: 6;
+  top: 50%; left: 50%;
+  width: clamp(150px, 22vw, 300px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 42% 38%,
+      #FFFDF7 0%,
+      #FDF3DC 22%,
+      #F1D9A6 46%,
+      rgba(228, 200, 150, 0.35) 66%,
+      rgba(228, 200, 150, 0) 74%);
+  box-shadow:
+    0 0 60px 12px rgba(247, 231, 195, 0.55),
+    0 0 160px 40px rgba(233, 205, 150, 0.35);
+  will-change: transform, filter;
+}
+.fx-portal__orb::after {
+  content: "";
+  position: absolute; inset: -60%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(247, 231, 195, 0.22) 0%, rgba(247,231,195,0) 60%);
+}
+
+/* ============================================================================
+   03 — LIVING CAUSTICS GROUND  (warm mist / caustics shader behind a line)
+   ============================================================================ */
+.fx-caustics {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: clamp(48px, 10vh, 140px) clamp(20px, 6vw, 90px);
+}
+.fx-caustics__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+/* soft cream vignette so the shader never fights the type */
+.fx-caustics__veil {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background: radial-gradient(120% 100% at 50% 50%, rgba(245,240,232,0) 30%, rgba(245,240,232,0.55) 100%);
+}
+.fx-caustics__inner {
+  position: relative;
+  z-index: 3;
+  max-width: 22ch;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-5);
+  align-items: center;
+}
+.fx-caustics__eyebrow {
+  font-family: var(--ds-font-mono);
+  font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls);
+  text-transform: uppercase;
+  color: var(--ds-text-muted);
+}
+.fx-caustics__line {
+  font-family: var(--ds-font-display);
+  font-weight: var(--ds-w-display);
+  font-size: clamp(2.2rem, 1.3rem + 4.4vw, 4.4rem);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  color: var(--ds-text);
+}
+.fx-caustics__line em {
+  font-style: italic;
+  color: var(--ds-accent);
+}
+
+/* ---- reduced motion: kill all effect motion, keep everything composed ----- */
+@media (prefers-reduced-motion: reduce) {
+  .fx-portal__orb { box-shadow: 0 0 40px 8px rgba(247,231,195,0.4); }
+}

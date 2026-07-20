@@ -1,0 +1,250 @@
+/* ===========================================================================
+   HERO LAB — isolated comparison route (/v2/hero-lab)
+   ---------------------------------------------------------------------------
+   Three candidate treatments for the HERO -> CHAPTER ONE seam. Nothing here
+   touches the live hero/story (hero.tsx / story.tsx / v2.css are untouched).
+   Everything is scoped under `.ds .hl-root` with an `hl-` prefix so no class
+   can collide with the `v2-` layer. All color is derived from ds tokens via
+   color-mix; the only image asset reused is her existing landscape + textures.
+   =========================================================================== */
+
+.hl-root {
+  /* champagne / amber HAZE pulled from the landscape's own horizon light, so
+     the bleed veil is the world's color, not a generic cream. */
+  --hl-haze:  color-mix(in srgb, var(--ds-muted-terracotta) 62%, var(--ds-warm-cream));
+  --hl-glow:  color-mix(in srgb, var(--ds-focus-ring) 46%, var(--ds-warm-cream));
+  --hl-sage:  color-mix(in srgb, var(--ds-sage-green) 40%, var(--ds-warm-cream));
+  background: var(--ds-bg);
+  color: var(--ds-text);
+}
+
+/* ---- TOP INDEX ------------------------------------------------------------ */
+.hl-index { min-height: 62svh; display: flex; flex-direction: column;
+  justify-content: center; gap: var(--ds-space-6);
+  padding: var(--ds-space-10) var(--ds-space-7); max-width: 980px; margin: 0 auto; }
+.hl-index__over { color: var(--ds-text-muted); }
+.hl-index__title { max-width: 20ch; }
+.hl-index__lead { color: var(--ds-text-secondary); max-width: 58ch; }
+.hl-index__rows { display: flex; flex-direction: column; margin-top: var(--ds-space-4);
+  border-top: 1px solid var(--ds-border); }
+.hl-index__row { display: grid; grid-template-columns: 4.5rem 1fr;
+  gap: var(--ds-space-5); align-items: baseline; padding: var(--ds-space-5) 0;
+  border-bottom: 1px solid var(--ds-border); }
+.hl-index__tag { font-family: var(--ds-font-mono); font-size: var(--ds-label-size);
+  letter-spacing: var(--ds-label-ls); color: var(--ds-accent); }
+.hl-index__name { font-family: var(--ds-font-display); font-weight: var(--ds-w-display);
+  font-size: var(--ds-h3-size); line-height: 1.25; }
+.hl-index__desc { color: var(--ds-text-secondary); font-size: var(--ds-body-sm-size);
+  margin-top: var(--ds-space-2); max-width: 62ch; }
+
+/* ---- PER-VERSION FRAME + LABEL -------------------------------------------- */
+.hl-ver { position: relative; }
+.hl-verlabel { position: sticky; top: 0; z-index: 50; pointer-events: none;
+  display: flex; justify-content: center; }
+.hl-verlabel__chip { margin-top: var(--ds-space-4);
+  font-family: var(--ds-font-mono); font-size: var(--ds-overline-size);
+  letter-spacing: var(--ds-overline-ls); text-transform: uppercase;
+  color: var(--ds-text); background: color-mix(in srgb, var(--ds-warm-cream) 82%, transparent);
+  border: 1px solid var(--ds-border); border-radius: 999px;
+  padding: var(--ds-space-2) var(--ds-space-4);
+  backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+.hl-verlabel__chip[data-dark="true"] { color: var(--ds-warm-cream);
+  background: color-mix(in srgb, var(--ds-near-black) 42%, transparent);
+  border-color: var(--ds-hairline-light); }
+
+/* ===========================================================================
+   SHARED HERO SHELL (copied from the live hero markup, re-scoped hl-)
+   =========================================================================== */
+.hl-hero { position: relative; min-height: 100svh; display: flex;
+  flex-direction: column; }
+.hl-hero__bg { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+.hl-hero__bg img { width: 100%; height: 100%; object-fit: cover; object-position: center;
+  display: block; animation: hl-zoom 1600ms var(--ds-ease-out) both; will-change: transform; }
+@keyframes hl-zoom { from { transform: scale(1.06); } to { transform: scale(1); } }
+
+.hl-hero__scrim { position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--ds-warm-cream) 50%, transparent) 0%,
+    color-mix(in srgb, var(--ds-warm-cream) 12%, transparent) 34%,
+    transparent 56%); }
+
+.hl-hero__navwrap { position: absolute; top: var(--ds-space-5); left: 0; right: 0; z-index: 4; }
+.hl-nav__brand { text-decoration: none; color: inherit; display: inline-flex; }
+@media (max-width: 720px) { .hl-nav .ds-nav__links { display: none; } }
+
+.hl-hero__content { position: relative; z-index: 3; flex: 1; display: flex;
+  flex-direction: column; align-items: center; justify-content: center; text-align: center;
+  gap: var(--ds-space-5); padding: var(--ds-space-10) var(--ds-space-5) var(--ds-space-9); }
+.hl-hero__content > * { animation: hl-fade-up var(--ds-dur-reveal) var(--ds-ease-out) both; }
+.hl-hero__content > :nth-child(2) { animation-delay: 120ms; }
+.hl-hero__content > :nth-child(3) { animation-delay: 240ms; }
+.hl-hero__content > :nth-child(4) { animation-delay: 360ms; }
+@keyframes hl-fade-up { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+.hl-hero__overline { color: var(--ds-text-secondary); }
+.hl-hero__title { display: flex; flex-direction: column; align-items: center;
+  font-size: calc(var(--ds-h1-size) * 1.45); line-height: 1.04; }
+.hl-hero__sub { color: var(--ds-text-secondary); max-width: 44ch; }
+.hl-hero__cta { margin-top: var(--ds-space-2); }
+
+/* the one meaningful moment: "then built." arrives and stays */
+.hl-arrive { opacity: 0; transform: translateY(0.18em);
+  transition: opacity 700ms var(--ds-ease-standard), transform 700ms var(--ds-ease-standard); }
+.hl-arrive.is-in { opacity: 1; transform: none; }
+
+/* ===========================================================================
+   SHARED CHAPTER ONE (mock) — thesis line + floema pile
+   =========================================================================== */
+.hl-chapter { position: relative; min-height: 128svh; display: flex;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--ds-space-8); padding: var(--ds-space-10) var(--ds-space-5);
+  text-align: center; }
+.hl-thesis { position: relative; z-index: 2; display: flex; flex-direction: column;
+  align-items: center; gap: var(--ds-space-6); max-width: 900px; }
+.hl-thesis__over { color: var(--ds-text-muted); }
+.hl-thesis__line { font-family: var(--ds-font-display); font-weight: var(--ds-w-display);
+  font-size: clamp(2.25rem, 1.6rem + 3vw, 3.75rem); line-height: 1.08;
+  letter-spacing: -0.02em; max-width: 18ch; }
+.hl-thesis__note { color: var(--ds-text-secondary); max-width: 52ch; }
+
+/* floema pile — three overlapping crops as one intentional cluster */
+.hl-pile { position: relative; z-index: 2; width: min(420px, 78vw); aspect-ratio: 4 / 3; }
+.hl-pile__item { position: absolute; border-radius: var(--ds-radius-md, 12px);
+  overflow: hidden; box-shadow: 0 24px 60px -28px rgba(45,45,45,0.42),
+    0 2px 8px -4px rgba(45,45,45,0.24);
+  border: 1px solid color-mix(in srgb, var(--ds-warm-cream) 60%, transparent); }
+.hl-pile__item img { display: block; width: 100%; height: auto; }
+.hl-pile__item--a { left: 2%; top: 0; width: 64%; transform: rotate(-4deg); }
+.hl-pile__item--b { left: 36%; top: 26%; width: 60%; transform: rotate(3deg); }
+.hl-pile__item--c { left: 8%; top: 54%; width: 46%; transform: rotate(-2deg); }
+
+/* ===========================================================================
+   V1 — ATMOSPHERE BLEED
+   The landscape exhales into paper: its green foot dissolves up into a
+   champagne-haze veil (the world's own light), chapter one's ground carries a
+   soft echo of that haze, and one blurred landscape strip whispers back at the
+   chapter's end. Borrows bymonolog's continuous tonal field + a soft light
+   bloom that leaks past the fold.
+   =========================================================================== */
+/* grass -> paper dissolve at the hero foot (over the image, under content) */
+.hl-v1__grassfade { position: absolute; left: 0; right: 0; bottom: 0; height: 62%;
+  z-index: 2; pointer-events: none;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--hl-haze) 42%, transparent) 46%,
+    color-mix(in srgb, var(--ds-warm-cream) 78%, var(--hl-haze)) 82%,
+    var(--ds-warm-cream) 100%); }
+
+.hl-v1 .hl-chapter { background: var(--ds-warm-cream); overflow: hidden; }
+/* soft blurred echo of the landscape palette tinting the chapter ground */
+.hl-v1__groundveil { position: absolute; left: 50%; top: -8%; z-index: 0;
+  width: 150%; height: 78%; transform: translateX(-50%); pointer-events: none;
+  background: radial-gradient(60% 70% at 50% 0%,
+    color-mix(in srgb, var(--hl-haze) 46%, transparent) 0%,
+    color-mix(in srgb, var(--hl-glow) 22%, transparent) 34%,
+    transparent 72%);
+  filter: blur(8px); }
+/* the world whispers back — a thin blurred landscape strip at chapter's end */
+.hl-v1__return { position: relative; height: 40svh; overflow: hidden;
+  background: var(--ds-warm-cream); }
+.hl-v1__return img { position: absolute; inset: -12% 0; width: 100%; height: 124%;
+  object-fit: cover; object-position: center 62%;
+  filter: blur(20px) saturate(0.86); transform: scale(1.05); }
+.hl-v1__return-veil { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg,
+    var(--ds-warm-cream) 0%,
+    color-mix(in srgb, var(--ds-warm-cream) 74%, transparent) 24%,
+    color-mix(in srgb, var(--hl-haze) 34%, transparent) 62%,
+    color-mix(in srgb, var(--hl-haze) 48%, transparent) 100%); }
+.hl-v1__return-cap { position: absolute; left: 0; right: 0; bottom: var(--ds-space-6);
+  text-align: center; color: var(--ds-text-secondary); z-index: 2;
+  text-shadow: 0 1px 12px color-mix(in srgb, var(--ds-warm-cream) 70%, transparent); }
+
+/* ===========================================================================
+   V2 — HANDMADE GROUND
+   No photo. One authored warm field carried unbroken behind BOTH hero and
+   chapter one, so there is no seam at all: layered token gradients (dawn glow,
+   sage horizon, terracotta whisper) + paper + linen texture. Borrows floema's
+   light continuous ground; The Row / Aesop material restraint.
+   =========================================================================== */
+.hl-v2 { position: relative; isolation: isolate; }
+.hl-v2__field { position: absolute; inset: 0; z-index: 0; overflow: hidden;
+  background:
+    radial-gradient(120% 62% at 50% -6%, var(--hl-glow) 0%,
+      color-mix(in srgb, var(--hl-glow) 30%, transparent) 26%, transparent 54%),
+    radial-gradient(90% 48% at 14% 118%, color-mix(in srgb, var(--hl-sage) 70%, transparent) 0%,
+      transparent 60%),
+    radial-gradient(80% 42% at 92% 108%, color-mix(in srgb, var(--hl-haze) 52%, transparent) 0%,
+      transparent 58%),
+    radial-gradient(70% 40% at 50% 46%, color-mix(in srgb, var(--hl-glow) 16%, transparent) 0%,
+      transparent 68%),
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--ds-warm-cream) 74%, var(--hl-glow)) 0%,
+      color-mix(in srgb, var(--ds-warm-cream) 92%, var(--hl-haze)) 34%,
+      color-mix(in srgb, var(--ds-warm-cream) 88%, var(--hl-sage)) 64%,
+      color-mix(in srgb, var(--ds-warm-cream) 80%, var(--hl-sage)) 100%); }
+/* a soft, shapeless horizon band — hills implied, never drawn */
+.hl-v2__horizon { position: absolute; left: -10%; right: -10%; top: 58%; height: 34%;
+  z-index: 0; pointer-events: none;
+  background: radial-gradient(70% 100% at 50% 100%,
+    color-mix(in srgb, var(--hl-sage) 62%, transparent) 0%, transparent 70%);
+  filter: blur(28px); opacity: 0.7; }
+.hl-v2__grain { position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  mix-blend-mode: multiply; opacity: 0.32;
+  background-image: url("/ds/textures/paper-fiber.png");
+  background-size: 680px 680px; background-repeat: repeat; }
+.hl-v2__linen { position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  mix-blend-mode: multiply; opacity: 0.08;
+  background-image: url("/ds/textures/linen-weave.png");
+  background-size: 840px 840px; background-repeat: repeat; }
+/* the hero + chapter both sit above the single field */
+.hl-v2 .hl-hero, .hl-v2 .hl-chapter { position: relative; z-index: 1; }
+.hl-v2 .hl-hero__scrim { display: none; }
+.hl-v2 .hl-chapter { background: transparent; }
+
+/* ===========================================================================
+   V3 — CONTINUOUS WORLD
+   The landscape persists as a sticky backdrop under the whole block, frosting
+   deeper as you scroll (mist deepening), so it reads as ONE place seen through
+   glass, not two pages. Borrows RabenRifaie's single scrolled-through world.
+   =========================================================================== */
+.hl-v3 { position: relative; background: var(--ds-warm-cream); }
+.hl-v3__world { position: sticky; top: 0; height: 100svh; z-index: 0; overflow: hidden; }
+.hl-v3__world img { position: absolute; inset: -8% 0; width: 100%; height: 116%;
+  object-fit: cover; object-position: center;
+  filter: blur(var(--hl-frost-blur, 4px)) saturate(0.9);
+  transition: filter 500ms var(--ds-ease-out); will-change: filter; }
+.hl-v3__veil { position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--ds-warm-cream) 34%, transparent) 0%,
+    color-mix(in srgb, var(--ds-warm-cream) 20%, transparent) 30%,
+    color-mix(in srgb, var(--ds-warm-cream) 52%, transparent) 100%);
+  opacity: var(--hl-frost-veil, 0.4); transition: opacity 200ms linear; }
+/* stepped blur (2 threshold crossings, not per-frame) for honest perf */
+.hl-v3__world[data-frost="0"] { --hl-frost-blur: 3px; }
+.hl-v3__world[data-frost="1"] { --hl-frost-blur: 9px; }
+.hl-v3__world[data-frost="2"] { --hl-frost-blur: 16px; }
+
+.hl-v3__flow { position: relative; z-index: 1; margin-top: -100svh; }
+.hl-v3__flow .hl-hero__bg, .hl-v3__flow .hl-hero__scrim { display: none; }
+.hl-v3__flow .hl-hero { min-height: 100svh; }
+/* chapter one rides a frosted cream panel so the mist reads as depth behind it */
+.hl-v3 .hl-chapter { background: transparent; }
+.hl-v3__panel { position: relative; z-index: 2;
+  background: color-mix(in srgb, var(--ds-warm-cream) 78%, transparent);
+  backdrop-filter: blur(10px) saturate(1.05); -webkit-backdrop-filter: blur(10px) saturate(1.05);
+  border: 1px solid color-mix(in srgb, var(--ds-warm-cream) 55%, transparent);
+  border-radius: var(--ds-radius-lg, 20px);
+  box-shadow: 0 40px 100px -50px rgba(45,45,45,0.5);
+  padding: var(--ds-space-9) var(--ds-space-7);
+  display: flex; flex-direction: column; align-items: center; gap: var(--ds-space-8);
+  max-width: 1000px; width: calc(100% - var(--ds-space-7)); margin: 0 auto; }
+
+/* ---- REDUCED MOTION ------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .hl-hero__bg img { animation: none; }
+  .hl-hero__content > * { animation: none; }
+  .hl-arrive { transition: none; opacity: 1; transform: none; }
+  .hl-v3__world img { transition: none; }
+  .hl-v3__veil { transition: none; }
+}

@@ -1,0 +1,69 @@
+/* LIVE HERO demo (lh- namespace) — the generated valley under her hero copy */
+.lh-stage { position: relative; height: 100svh; overflow: clip;
+  /* the sky is CSS: cream zenith warming to a gold horizon (her palette) */
+  background: linear-gradient(
+    180deg,
+    #f4eee2 0%,
+    #f3e9d6 38%,
+    #f3ddb4 58%,
+    #eed9ae 66%,
+    #e8d9b8 74%,
+    #e4d7ba 100%
+  ); }
+.lh-scene { position: absolute; inset: 0; }
+.lh-scene canvas { width: 100% !important; height: 100% !important; }
+.lh-scene--poster { background:
+  radial-gradient(80% 40% at 50% 66%, rgba(238, 217, 174, 0.9), transparent 75%); }
+
+/* her existing hero voice, laid over the living world for the comparison */
+.lh-copy { position: absolute; inset: 0; z-index: 3; display: grid;
+  place-content: center; text-align: center; pointer-events: none;
+  padding-inline: 24px; }
+.lh-copy h1 { margin: 0; font-family: var(--font-ds-display), "Cormorant", serif;
+  font-weight: 500; font-size: clamp(3rem, 9vw, 8rem); line-height: 1.06;
+  color: #2d2d2d; }
+.lh-copy h1 em { font-style: italic; }
+.lh-copy p { margin: 26px auto 0; max-width: 44ch;
+  font-family: var(--font-ds-hanken), sans-serif;
+  font-size: clamp(0.95rem, 1.1vw, 1.1rem); line-height: 1.6;
+  color: rgba(45, 45, 45, 0.78); }
+
+.lh-note { position: absolute; z-index: 4; left: 50%; bottom: 22px;
+  transform: translateX(-50%); margin: 0; white-space: nowrap;
+  font-family: var(--font-ds-plex-mono), monospace; font-size: 11px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: rgba(45, 45, 45, 0.55);
+  background: rgba(245, 240, 232, 0.6); backdrop-filter: blur(6px);
+  padding: 8px 14px; border-radius: 8px; }
+
+/* slow cloud banks behind the terrain (the canvas paints hills OVER these) */
+.lh-stage::before,
+.lh-stage::after {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(42px);
+}
+.lh-stage::before {
+  width: 60vw; height: 9vh; left: -6vw; top: 21%;
+  background: rgba(255, 252, 243, 0.6);
+  animation: lh-cloud-a 110s ease-in-out infinite alternate;
+}
+.lh-stage::after {
+  width: 46vw; height: 7vh; right: -6vw; top: 32%;
+  background: rgba(255, 249, 236, 0.45);
+  animation: lh-cloud-b 140s ease-in-out infinite alternate;
+}
+@keyframes lh-cloud-a { from { transform: translateX(0); } to { transform: translateX(14vw); } }
+@keyframes lh-cloud-b { from { transform: translateX(0); } to { transform: translateX(-16vw); } }
+@media (prefers-reduced-motion: reduce) {
+  .lh-stage::before, .lh-stage::after { animation: none; }
+}
+
+/* the original still render below, for side-by-side judgement */
+.lh-original { position: relative; height: 100svh; overflow: clip; }
+.lh-original img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lh-note--dark { color: rgba(245, 240, 232, 0.9);
+  background: rgba(45, 45, 45, 0.45); }

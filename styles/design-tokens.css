@@ -1,0 +1,229 @@
+/* ============================================================================
+   AIJIA FANG — DESIGN SYSTEM TOKENS  (single source of truth)
+   "The Row × Aesop × Aimé Leon Dore" quiet luxury — Timeless · Refined · Natural
+   ----------------------------------------------------------------------------
+   SCOPING: every token lives under `.ds` so it CANNOT collide with the live
+   dark theme in app/globals.css (:root). Anything that renders inside a `.ds`
+   wrapper gets this whole system. Dark component context = add `.ds-dark`
+   (or data-ds-theme="dark") on an inner wrapper — it remaps the SEMANTIC
+   tokens only, so every component flips automatically.
+
+   RULE: components reference ONLY these variables. No hardcoded hex / px.
+   To swap the substitute fonts (Fraunces/Hanken/IBM Plex Mono) for the
+   licensed originals (Canela/Söhne) later, change ONLY --ds-font-* below.
+   ============================================================================ */
+
+.ds {
+  /* ---- 1. RAW PALETTE (her 色彩系统 sheet — never used directly by components) */
+  --ds-warm-cream:        #F5F0E8;
+  --ds-soft-parchment:    #E8E0D5;
+  --ds-warm-taupe:        #B8A99A;
+  --ds-taupe-ghost:       #C7B8A4;   /* monument type on cream — barely-there, ~1.4:1 */
+  --ds-deep-charcoal:     #2D2D2D;
+  --ds-forest-green:      #3D4A3A;
+  --ds-amber-brown:       #8B7355;
+  --ds-sage-green:        #9CAF88;
+  --ds-muted-terracotta:  #C4A484;
+  --ds-stone-gray:        #D1CDC6;
+
+  /* derived neutrals (kept in the token layer so nothing is hardcoded downstream) */
+  --ds-charcoal-80:       #4A4A47;   /* secondary text on cream */
+  --ds-charcoal-55:       #6E675C;   /* muted / caption on cream */
+  --ds-cream-72:          rgba(245, 240, 232, 0.72); /* secondary text on dark */
+  --ds-cream-55:          rgba(245, 240, 232, 0.55); /* muted on dark */
+  --ds-near-black:        #1C1B19;   /* deepest dark surface */
+  --ds-hairline-dark:     rgba(45, 45, 45, 0.14);
+  --ds-hairline-light:    rgba(245, 240, 232, 0.14);
+
+  /* ---- 2. SEMANTIC ROLES — LIGHT (default) --------------------------------- */
+  --ds-bg:                var(--ds-warm-cream);        /* page background        */
+  --ds-surface:           var(--ds-soft-parchment);    /* raised card / input    */
+  --ds-surface-2:         #EFEAE0;                      /* subtle alt fill        */
+  --ds-text:              var(--ds-deep-charcoal);      /* primary text           */
+  --ds-text-secondary:    var(--ds-charcoal-80);
+  --ds-text-muted:        var(--ds-charcoal-55);
+  --ds-border:            var(--ds-hairline-dark);      /* hairline dividers      */
+  --ds-border-strong:     rgba(45, 45, 45, 0.28);
+
+  --ds-accent:            var(--ds-forest-green);       /* primary brand accent   */
+  --ds-accent-soft:       var(--ds-sage-green);         /* secondary accent       */
+  --ds-accent-warm:       var(--ds-muted-terracotta);   /* warm accent            */
+  --ds-accent-earth:      var(--ds-amber-brown);        /* earthy accent          */
+  --ds-focus-ring:        #C29A5B;                      /* input focus — warm gold (her sheet) */
+  --ds-focus-ring-soft:   rgba(194, 154, 91, 0.22);     /* focus glow             */
+
+  /* ---- SOFT-RAISED (neumorphic) SURFACES -----------------------------------
+     Buttons / cards / nav are the SAME COLOR as their background; a soft warm
+     drop shadow (single top-light source) + a faint top highlight makes them
+     read as gently RAISED. They are NOT a different fill. Only the SOLID CTA
+     uses the contrast color. */
+  /* PRIMARY = raised warm-cream pill, same tone as its ground */
+  --ds-btn-primary-bg:    var(--ds-bg);                 /* same color as background */
+  --ds-btn-primary-fg:    var(--ds-deep-charcoal);
+  --ds-btn-primary-hover: #EDE4D4;                      /* gentle amber warm-shift */
+  /* SECONDARY = raised pill, a hair lighter + hairline (the "outline" hint) */
+  --ds-btn-secondary-bg:  #FBF9F4;
+  --ds-btn-secondary-fg:  var(--ds-deep-charcoal);
+  --ds-btn-secondary-border: rgba(45, 45, 45, 0.14);
+  --ds-btn-secondary-hover-bg: #F4EAD9;                 /* warm shift on hover */
+  /* SOLID button = contrasting fill (nav CTA "Book a call") — flips in dark */
+  --ds-btn-solid-bg:      var(--ds-deep-charcoal);
+  --ds-btn-solid-fg:      var(--ds-warm-cream);
+  --ds-btn-solid-hover:   #1C1B19;
+
+  /* raised card / nav surface = same color as ground */
+  --ds-raised-bg:         var(--ds-bg);
+
+  /* input field fill — her UI 组件库 sheet: near-white, a touch LIGHTER than
+     the cream ground, with a hairline border (not the darker parchment) */
+  --ds-input-bg:          #FBF9F4;
+
+  /* ---- 3. TYPOGRAPHY (her 字体系统 sheet) ---------------------------------- */
+  /* Fonts — SUBSTITUTES. Swap these two lines for licensed Canela/Söhne later. */
+  --ds-font-display: var(--font-ds-display), "Cormorant", Georgia, "Times New Roman", serif;
+  --ds-w-display: 500;   /* Cormorant is light-strokes; 500 holds at display sizes */
+  --ds-font-body:    var(--font-ds-hanken), "Hanken Grotesk", -apple-system, "Segoe UI", sans-serif;
+  --ds-font-mono:    var(--font-ds-plex-mono), "IBM Plex Mono", ui-monospace, "SF Mono", monospace;
+
+  /* sizes — clamp(min → fluid → max) mapped 1:1 to her px ranges */
+  /* Authoritative scale = her 字体系统 sheet (H1 max 64, not the 96 baseline-demo) */
+  --ds-h1-size: clamp(3rem, 2.4rem + 2.2vw, 4rem);         /* 48 → 64 (her sheet) */
+  --ds-h2-size: clamp(2rem, 1.5rem + 1.6vw, 2.5rem);       /* 32 → 40 */
+  --ds-h3-size: clamp(1.375rem, 1.2rem + 0.55vw, 1.75rem); /* 22 → 28 */
+  --ds-body-lg-size: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);  /* 16 → 18 */
+  --ds-body-size:    1rem;      /* 16 */
+  --ds-body-sm-size: 0.875rem;  /* 14 */
+  --ds-label-size:   0.8125rem; /* 13 (12–14) */
+  --ds-overline-size:0.6875rem; /* 11 (11–12) */
+
+  --ds-h1-lh: 1.1;   --ds-h1-ls: -0.02em;
+  --ds-h2-lh: 1.2;   --ds-h2-ls: -0.01em;
+  --ds-h3-lh: 1.3;   --ds-h3-ls: 0em;
+  --ds-body-lh: 1.6; --ds-body-ls: 0em;
+  --ds-body-sm-lh: 1.5;
+  --ds-label-lh: 1.4;    --ds-label-ls: 0.08em;
+  --ds-overline-lh: 1.4; --ds-overline-ls: 0.36em;
+
+  --ds-w-light: 300;
+  --ds-w-regular: 400;
+  --ds-w-medium: 500;
+
+  /* ---- 4. SPACING (4px base — her 间距与网格 sheet) ------------------------ */
+  --ds-space-1: 4px;
+  --ds-space-2: 8px;
+  --ds-space-3: 12px;
+  --ds-space-4: 16px;
+  --ds-space-5: 24px;
+  --ds-space-6: 32px;
+  --ds-space-7: 48px;
+  --ds-space-8: 64px;
+  --ds-space-9: 96px;
+  --ds-space-10: 120px;
+  --ds-space-11: 160px;
+
+  /* ---- 5. GRID / LAYOUT --------------------------------------------------- */
+  --ds-container-max: 1440px;   /* full frame        */
+  --ds-content-max:   1200px;   /* content column    */
+  --ds-grid-cols: 12;
+  --ds-gutter: 24px;
+  --ds-margin-desktop: 80px;
+
+  /* section padding presets (top / bottom) — her 间距 sheet */
+  --ds-section-lg-top: 128px;   --ds-section-lg-bottom: 128px;
+  --ds-section-md-top: 64px;    --ds-section-md-bottom: 64px;
+  --ds-section-sm-top: 32px;    --ds-section-sm-bottom: 32px;
+  --ds-section-none-top: 0px;   --ds-section-none-bottom: 0px;
+
+  /* ---- 6. RADII (soft, few values — her component sheet) ------------------ */
+  --ds-radius-sm: 4px;
+  --ds-radius-md: 8px;
+  --ds-radius-lg: 16px;
+  --ds-radius-pill: 999px;
+
+  /* ---- 7. SHADOWS + ELEVATION (soft, warm-tinted, single top light) ------
+     Warm umber shadow (not neutral grey) + a faint upper highlight = the soft
+     "raised" luxury look. --ds-elev-1 = resting, --ds-elev-2 = hover/lifted. */
+  --ds-shadow-umbra:      62, 50, 38;                   /* warm umber (light ctx) */
+  --ds-raise-highlight:   rgba(255, 253, 248, 0.72);    /* top light edge */
+
+  --ds-shadow-sm: 0 1px 2px rgba(45, 45, 45, 0.05), 0 1px 3px rgba(45, 45, 45, 0.06);
+  --ds-shadow-md: 0 4px 12px rgba(45, 45, 45, 0.07), 0 2px 4px rgba(45, 45, 45, 0.05);
+  --ds-shadow-lg: 0 12px 32px rgba(45, 45, 45, 0.10), 0 4px 8px rgba(45, 45, 45, 0.05);
+
+  --ds-elev-1:
+    0 1px 2px rgba(var(--ds-shadow-umbra), 0.05),
+    0 8px 18px -8px rgba(var(--ds-shadow-umbra), 0.18),
+    inset 0 1px 0 var(--ds-raise-highlight);
+  --ds-elev-2:
+    0 2px 5px rgba(var(--ds-shadow-umbra), 0.06),
+    0 18px 34px -10px rgba(var(--ds-shadow-umbra), 0.26),
+    inset 0 1px 0 var(--ds-raise-highlight);
+
+  /* ---- 8. MOTION (her 动效与交互 sheet) ---------------------------------- */
+  --ds-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ds-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ds-dur-hover: 320ms;   /* hover states 300–400ms  */
+  --ds-dur-base: 450ms;    /* page / fade 300–600ms   */
+  --ds-dur-reveal: 550ms;  /* scroll reveal 400–600ms */
+  --ds-dur-loader: 1000ms; /* loading 800–1200ms      */
+
+  /* base type application */
+  color: var(--ds-text);
+  background-color: var(--ds-bg);
+  font-family: var(--ds-font-body);
+  font-size: var(--ds-body-size);
+  line-height: var(--ds-body-lh);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ============================================================================
+   DARK CONTEXT — remaps SEMANTIC tokens only (raw palette untouched).
+   Usage: <div class="ds-dark"> … </div>  or  data-ds-theme="dark"
+   ============================================================================ */
+.ds .ds-dark,
+.ds.ds-dark,
+.ds [data-ds-theme="dark"] {
+  --ds-bg:             var(--ds-deep-charcoal);
+  --ds-surface:        #363634;
+  --ds-surface-2:      #2A2A28;
+  --ds-text:           var(--ds-warm-cream);
+  --ds-text-secondary: var(--ds-cream-72);
+  --ds-text-muted:     var(--ds-cream-55);
+  --ds-border:         var(--ds-hairline-light);
+  --ds-border-strong:  rgba(245, 240, 232, 0.28);
+
+  --ds-focus-ring:     #C9A76A;
+  --ds-focus-ring-soft: rgba(201, 167, 106, 0.28);
+
+  --ds-input-bg:       #363634;
+
+  /* raised charcoal surfaces (same color as the dark ground) */
+  --ds-raised-bg:         var(--ds-bg);
+  --ds-btn-primary-bg:    var(--ds-bg);                 /* raised charcoal pill */
+  --ds-btn-primary-fg:    var(--ds-warm-cream);
+  --ds-btn-primary-hover: #3A3A37;                      /* gentle lift on hover */
+  --ds-btn-secondary-bg:  #383836;                      /* a hair lighter charcoal */
+  --ds-btn-secondary-fg:  var(--ds-warm-cream);
+  --ds-btn-secondary-border: rgba(245, 240, 232, 0.14);
+  --ds-btn-secondary-hover-bg: #434340;
+  /* solid CTA flips: cream fill, charcoal text */
+  --ds-btn-solid-bg:      var(--ds-warm-cream);
+  --ds-btn-solid-fg:      var(--ds-deep-charcoal);
+  --ds-btn-solid-hover:   #FFFFFF;
+
+  /* deeper, cooler shadow stack on dark; faint highlight */
+  --ds-shadow-umbra:    0, 0, 0;
+  --ds-raise-highlight: rgba(255, 252, 245, 0.05);
+  --ds-elev-1:
+    0 1px 2px rgba(0, 0, 0, 0.22),
+    0 10px 22px -8px rgba(0, 0, 0, 0.46),
+    inset 0 1px 0 var(--ds-raise-highlight);
+  --ds-elev-2:
+    0 2px 5px rgba(0, 0, 0, 0.26),
+    0 20px 36px -10px rgba(0, 0, 0, 0.56),
+    inset 0 1px 0 var(--ds-raise-highlight);
+
+  color: var(--ds-text);
+  background-color: var(--ds-bg);
+}
