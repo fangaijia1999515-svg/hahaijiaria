@@ -503,20 +503,18 @@ const Death = (id: string) => (
 const Temperance = (id: string) => (
   <Card id={id} n="XIV" name="Temperance">
     <circle cx={W / 2} cy={430} r={160} fill={`url(#halo-${id})`} />
-    {/* two cups, tipped toward each other */}
-    <g transform="translate(178,296) rotate(34)">
-      <path d="M-34,-14 C -34,26 34,26 34,-14 Z" fill={P.cream} stroke={P.tealDeep} strokeWidth={2.8} />
-      <ellipse cx={0} cy={-14} rx={34} ry={7.5} fill={P.mist} stroke={P.tealDeep} strokeWidth={2.2} opacity={0.95} />
-      <path d="M-10,26 L 10,26 L 14,38 L -14,38 Z" fill={P.cream} stroke={P.tealDeep} strokeWidth={2} />
-    </g>
-    <g transform={`translate(${W - 178},296) rotate(-34)`}>
-      <path d="M-34,-14 C -34,26 34,26 34,-14 Z" fill={P.cream} stroke={P.tealDeep} strokeWidth={2.8} />
-      <ellipse cx={0} cy={-14} rx={34} ry={7.5} fill={P.mist} stroke={P.tealDeep} strokeWidth={2.2} opacity={0.95} />
-      <path d="M-10,26 L 10,26 L 14,38 L -14,38 Z" fill={P.cream} stroke={P.tealDeep} strokeWidth={2} />
-    </g>
-    {/* two waters spilling from the lips, finding each other */}
-    <path d={`M206,278 C 244,340 272,404 296,460`} stroke={P.teal} strokeWidth={8} fill="none" strokeLinecap="round" opacity={0.9} />
-    <path d={`M${W - 206},278 C ${W - 244},340 ${W - 272},404 ${W - 296},460`} stroke={P.teal} strokeWidth={8} fill="none" strokeLinecap="round" opacity={0.9} />
+    {/* two slender moons, each letting down a thread of water */}
+    <circle cx={176} cy={268} r={26} fill={`url(#moonface-${id})`} />
+    <circle cx={189} cy={258} r={23} fill={P.paper} opacity={0.97} />
+    <circle cx={W - 176} cy={268} r={26} fill={`url(#moonface-${id})`} />
+    <circle cx={W - 189} cy={258} r={23} fill={P.paper} opacity={0.97} />
+    <circle cx={176} cy={268} r={44} fill={`url(#halo-${id})`} opacity={0.7} />
+    <circle cx={W - 176} cy={268} r={44} fill={`url(#halo-${id})`} opacity={0.7} />
+    {/* two waters, moonlight made liquid, finding each other */}
+    <path d={`M184,292 C 232,352 270,406 296,460`} stroke={P.teal} strokeWidth={8} fill="none" strokeLinecap="round" opacity={0.9} />
+    <path d={`M${W - 184},292 C ${W - 232},352 ${W - 270},406 ${W - 296},460`} stroke={P.teal} strokeWidth={8} fill="none" strokeLinecap="round" opacity={0.9} />
+    <path d={`M184,292 C 232,352 270,406 296,460`} stroke={P.cream} strokeWidth={2} fill="none" strokeLinecap="round" opacity={0.6} />
+    <path d={`M${W - 184},292 C ${W - 232},352 ${W - 270},406 ${W - 296},460`} stroke={P.cream} strokeWidth={2} fill="none" strokeLinecap="round" opacity={0.6} />
     {/* braided into one band of light */}
     <path d={`M${W / 2},470 C ${W / 2 - 30},540 ${W / 2 + 30},600 ${W / 2},660`} stroke={P.glow} strokeWidth={16} fill="none" strokeLinecap="round" opacity={0.95} />
     <path d={`M${W / 2},470 C ${W / 2 + 30},540 ${W / 2 - 30},600 ${W / 2},660`} stroke={P.gold} strokeWidth={3} fill="none" strokeLinecap="round" opacity={0.85} />
@@ -864,7 +862,7 @@ const PIP_SCENES: Record<Suit, { zh: string; render: (id: string) => React.React
       <Axis ys={[700, 728]} />
     </g>) },
     { zh: "圆满的一家", render: (id) => (<g>
-      {[[132, 544], [158, 452], [200, 376], [252, 326], [287, 306], [313, 306], [348, 326], [400, 376], [442, 452], [468, 544]].map(([x, y], i) => (
+      {[[132, 548], [156, 458], [192, 380], [238, 324], [276, 296], [324, 296], [362, 324], [408, 380], [444, 458], [468, 548]].map(([x, y], i) => (
         <Glyph key={i} suit="cups" x={x} y={y} s={0.78} />
       ))}
       <circle cx={300} cy={466} r={110} fill={`url(#halo-${id})`} />
@@ -1230,61 +1228,242 @@ function PipCard({ suit, count }: { suit: (typeof SUITS)[number]; count: number 
   )
 }
 
-const COURTS = [
-  { rank: "Page", zh: "侍从", motif: "幼芽" },
-  { rank: "Knight", zh: "骑士", motif: "掠过的风" },
-  { rank: "Queen", zh: "王后", motif: "盛放的花" },
-  { rank: "King", zh: "国王", motif: "沉稳的老树" },
-]
+const COURTS = ["Page", "Knight", "Queen", "King"] as const
+type Rank = (typeof COURTS)[number]
+const COURT_ZH: Record<Rank, string> = { Page: "侍从", Knight: "骑士", Queen: "王后", King: "国王" }
 
-function CourtCard({ suit, rank }: { suit: (typeof SUITS)[number]; rank: string }) {
+/**
+ * 16 court cards — each its OWN scene (her law 2026-07-21: courts must not be
+ * the same picture with a swapped symbol; each expresses suit-nature × rank).
+ * Page=初学之芽 Knight=行动之风 Queen=滋养之花 King=沉稳之树, told through
+ * each suit's element.
+ */
+const COURT_SCENES: Record<Suit, Record<Rank, { zh: string; render: (id: string) => React.ReactNode }>> = {
+  cups: {
+    Page: { zh: "杯里盛着月亮", render: (id) => (<g>
+      <ellipse cx={300} cy={636} rx={214} ry={30} fill={`url(#waterfade-${id})`} />
+      <Ripples cx={352} cy={628} base={40} n={2} squash={0.16} step={22} />
+      <Hill y={660} h={40} tone={P.mist} o={0.5} />
+      {/* a seedling by the shore, and a cup that caught the moon */}
+      <path d="M230,626 C 228,588 229,560 230,534" fill="none" stroke={P.ink} strokeWidth={2.6} strokeLinecap="round" />
+      <ellipse cx={216} cy={556} rx={9} ry={14} fill={P.teal} transform="rotate(-26 216 556)" />
+      <ellipse cx={244} cy={546} rx={9} ry={14} fill={P.teal} transform="rotate(26 244 546)" />
+      <circle cx={230} cy={528} r={4.8} fill={P.gold} />
+      <circle cx={352} cy={548} r={92} fill={`url(#halo-${id})`} />
+      <Glyph suit="cups" x={352} y={576} s={1.3} />
+      <circle cx={352} cy={556} r={10} fill={`url(#moonface-${id})`} />
+      <Axis ys={[176, 204]} />
+    </g>) },
+    Knight: { zh: "渡湖的风", render: (id) => (<g>
+      <ellipse cx={300} cy={600} rx={230} ry={34} fill={`url(#waterfade-${id})`} />
+      <path d="M120,320 C 230,298 380,336 490,310 M140,400 C 250,380 380,412 478,390" fill="none" stroke={P.tealDeep} strokeWidth={2.6} opacity={0.45} strokeLinecap="round" />
+      <circle cx={396} cy={478} r={96} fill={`url(#halo-${id})`} />
+      <Glyph suit="cups" x={330} y={532} s={1.2} r={-10} />
+      {/* the wake it leaves behind */}
+      <path d="M310,556 C 268,566 226,570 178,564 M318,570 C 282,582 244,586 202,582" fill="none" stroke={P.tealDeep} strokeWidth={2.2} opacity={0.5} strokeLinecap="round" />
+      {/* petals carried along */}
+      <path d="M262,470 C 268,478 266,486 258,490 C 252,484 254,474 262,470 Z" fill={P.gold} opacity={0.85} />
+      <path d="M224,438 C 230,446 228,454 220,458 C 214,452 216,442 224,438 Z" fill={P.gold} opacity={0.7} />
+      <path d="M192,414 C 198,422 196,430 188,434 C 182,428 184,418 192,414 Z" fill={P.gold} opacity={0.55} />
+      <Axis ys={[688, 716]} />
+    </g>) },
+    Queen: { zh: "湖心莲座", render: (id) => (<g>
+      <circle cx={300} cy={240} r={22} fill={`url(#moonface-${id})`} opacity={0.85} />
+      <circle cx={300} cy={460} r={120} fill={`url(#halo-${id})`} />
+      <ellipse cx={300} cy={560} rx={205} ry={28} fill={`url(#waterfade-${id})`} />
+      <ellipse cx={218} cy={556} rx={42} ry={10} fill={P.teal} opacity={0.7} />
+      <ellipse cx={386} cy={562} rx={34} ry={9} fill={P.teal} opacity={0.6} />
+      <Ripples cx={300} cy={566} base={56} n={2} squash={0.14} step={26} />
+      {/* the lily that holds a cup at its heart */}
+      <Bloom x={300} y={522} s={2.4} tone={P.glow} />
+      <Glyph suit="cups" x={300} y={436} s={0.9} />
+      <Axis ys={[688, 716]} />
+    </g>) },
+    King: { zh: "静水深流", render: (id) => (<g>
+      <circle cx={250} cy={430} r={110} fill={`url(#halo-${id})`} />
+      <ellipse cx={300} cy={610} rx={220} ry={26} fill={`url(#waterfade-${id})`} />
+      <g opacity={0.25} transform="translate(0,1150) scale(1,-1)">
+        <Tree x={250} y={540} s={1.5} tone={P.tealDeep} />
+      </g>
+      <Ripples cx={250} cy={614} base={48} n={2} squash={0.13} step={28} />
+      <Hill y={620} h={44} tone={P.mist} o={0.45} />
+      <Tree x={250} y={540} s={1.5} tone={P.tealDeep} />
+      <Glyph suit="cups" x={366} y={560} s={0.85} />
+      <Axis ys={[176, 204]} />
+    </g>) },
+  },
+  wands: {
+    Page: { zh: "新芽初生", render: (id) => (<g>
+      <circle cx={300} cy={440} r={120} fill={`url(#halo-${id})`} />
+      <Hill y={600} h={70} tone={P.teal} o={0.45} />
+      <Hill y={650} h={36} tone={P.mist} o={0.5} />
+      <Glyph suit="wands" x={300} y={500} s={1.5} />
+      {/* the brand-new shoot it just grew */}
+      <path d="M302,470 C 318,458 328,444 332,428" fill="none" stroke={P.goldDeep} strokeWidth={2.4} strokeLinecap="round" />
+      <ellipse cx={336} cy={424} rx={9} ry={4.4} fill={P.gold} transform="rotate(-28 336 424)" />
+      <g fill={P.goldDeep}>
+        <circle cx={322} cy={398} r={2.4} opacity={0.85} />
+        <circle cx={336} cy={370} r={2} opacity={0.7} />
+        <circle cx={348} cy={342} r={1.7} opacity={0.55} />
+      </g>
+      <Axis ys={[176, 204]} />
+    </g>) },
+    Knight: { zh: "一往无前", render: (id) => (<g>
+      <circle cx={352} cy={378} r={100} fill={`url(#halo-${id})`} />
+      {/* the comet-tail it draws across the slope */}
+      <path d="M186,568 C 232,520 278,472 310,438" stroke={P.glow} strokeWidth={11} fill="none" strokeLinecap="round" opacity={0.95} />
+      <path d="M186,568 C 232,520 278,472 310,438" stroke={P.goldDeep} strokeWidth={2.2} fill="none" strokeLinecap="round" opacity={0.7} />
+      <Glyph suit="wands" x={330} y={414} s={1.5} r={-42} />
+      <g fill={P.goldDeep}>
+        <circle cx={252} cy={520} r={2.6} opacity={0.8} />
+        <circle cx={218} cy={552} r={2.2} opacity={0.65} />
+        <circle cx={286} cy={484} r={2.4} opacity={0.75} />
+      </g>
+      <path d="M120,384 C 210,364 330,396 448,368" fill="none" stroke={P.tealDeep} strokeWidth={2.2} opacity={0.35} strokeLinecap="round" />
+      <Hill y={656} h={48} tone={P.teal} o={0.4} />
+      <Hill y={692} h={24} tone={P.mist} o={0.45} />
+      <Axis ys={[176, 204]} />
+    </g>) },
+    Queen: { zh: "满枝盛放", render: (id) => (<g>
+      <circle cx={300} cy={420} r={130} fill={`url(#halo-${id})`} />
+      {/* one branch, flowered all the way */}
+      <path d="M300,640 C 296,560 298,480 300,420 C 301,392 302,368 304,346" fill="none" stroke={P.goldDeep} strokeWidth={3.4} strokeLinecap="round" />
+      <Bloom x={322} y={392} s={0.78} tone={P.glow} />
+      <Bloom x={274} y={444} s={0.62} />
+      <Bloom x={320} y={492} s={0.56} tone={P.glow} />
+      <ellipse cx={276} cy={532} rx={12} ry={5.5} fill={P.gold} transform="rotate(22 276 532)" />
+      <ellipse cx={322} cy={560} rx={11} ry={5} fill={P.gold} transform="rotate(-20 322 560)" />
+      <circle cx={306} cy={338} r={4.4} fill={P.goldDeep} />
+      {/* the tended bed it grows from */}
+      <path d="M210,610 C 270,596 330,596 390,610 M228,648 C 282,636 318,636 372,648" fill="none" stroke={P.ink} strokeWidth={2} opacity={0.45} strokeLinecap="round" />
+      <Hill y={676} h={30} tone={P.mist} o={0.5} />
+      <Axis ys={[176, 204]} />
+    </g>) },
+    King: { zh: "根深叶茂", render: (id) => (<g>
+      <circle cx={300} cy={410} r={120} fill={`url(#halo-${id})`} />
+      <Hill y={624} h={62} tone={P.teal} o={0.45} />
+      {/* the old branch that became a tree */}
+      <path d="M300,600 C 296,540 298,500 300,464" fill="none" stroke={P.goldDeep} strokeWidth={9} strokeLinecap="round" opacity={0.9} />
+      <ellipse cx={300} cy={420} rx={62} ry={44} fill={P.tealDeep} opacity={0.9} />
+      <ellipse cx={252} cy={446} rx={30} ry={22} fill={P.tealDeep} opacity={0.75} />
+      <ellipse cx={348} cy={446} rx={30} ry={22} fill={P.tealDeep} opacity={0.75} />
+      <ellipse cx={338} cy={390} rx={13} ry={6} fill={P.gold} transform="rotate(-24 338 390)" />
+      <ellipse cx={262} cy={402} rx={12} ry={5.5} fill={P.gold} transform="rotate(20 262 402)" />
+      {/* roots you can trust */}
+      <path d="M300,600 C 280,620 260,630 238,636 M300,600 C 320,620 340,630 362,636 M300,600 L 300,644" fill="none" stroke={P.goldDeep} strokeWidth={2.4} opacity={0.7} strokeLinecap="round" />
+      <Axis ys={[176, 204]} />
+    </g>) },
+  },
+  pentacles: {
+    Page: { zh: "顶起一颗种子", render: (id) => (<g>
+      <circle cx={300} cy={470} r={110} fill={`url(#halo-${id})`} />
+      <Hill y={600} h={64} tone={P.gold} o={0.5} />
+      <Hill y={648} h={36} tone={P.gold} o={0.3} />
+      {/* the sprout lifting its coin like a seed-shell */}
+      <path d="M300,586 C 299,556 300,532 300,510" fill="none" stroke={P.ink} strokeWidth={2.8} strokeLinecap="round" />
+      <ellipse cx={284} cy={540} rx={9} ry={14} fill={P.teal} transform="rotate(-26 284 540)" />
+      <ellipse cx={316} cy={530} rx={9} ry={14} fill={P.teal} transform="rotate(26 316 530)" />
+      <Glyph suit="pentacles" x={300} y={488} s={0.62} />
+      <g fill={P.goldDeep}>
+        <circle cx={318} cy={432} r={2.2} opacity={0.8} />
+        <circle cx={290} cy={404} r={1.8} opacity={0.6} />
+      </g>
+      <Axis ys={[176, 204]} />
+    </g>) },
+    Knight: { zh: "稳稳向前", render: (id) => (<g>
+      <circle cx={330} cy={460} r={96} fill={`url(#halo-${id})`} />
+      <Hill y={584} h={46} tone={P.gold} o={0.45} />
+      <Hill y={634} h={30} tone={P.gold} o={0.3} />
+      {/* the long road, and the coin that never hurries */}
+      <path d="M150,556 C 220,546 380,546 452,538" fill="none" stroke={P.goldDeep} strokeWidth={2} strokeDasharray="2 12" strokeLinecap="round" opacity={0.8} />
+      <Glyph suit="pentacles" x={330} y={524} s={1.1} />
+      <g stroke={P.goldDeep} strokeWidth={2} opacity={0.6} strokeLinecap="round">
+        <path d="M186,556 L 196,550 M236,554 L 246,548 M284,552 L 294,546" />
+      </g>
+      <circle cx={452} cy={276} r={16} fill={`url(#moonface-${id})`} opacity={0.7} />
+      <Axis ys={[176, 204]} />
+    </g>) },
+    Queen: { zh: "金心之花", render: (id) => (<g>
+      <circle cx={300} cy={440} r={130} fill={`url(#halo-${id})`} />
+      {/* the bloom whose heart is gold */}
+      <path d="M300,644 C 297,584 299,528 300,500" fill="none" stroke={P.ink} strokeWidth={2.8} strokeLinecap="round" />
+      <ellipse cx={278} cy={572} rx={14} ry={6.5} fill={P.teal} transform="rotate(-22 278 572)" />
+      <ellipse cx={324} cy={540} rx={14} ry={6.5} fill={P.teal} transform="rotate(22 324 540)" />
+      <Bloom x={300} y={448} s={2.3} tone={P.glow} />
+      <Glyph suit="pentacles" x={300} y={448} s={0.56} />
+      <Bloom x={388} y={572} s={0.66} />
+      <Hill y={664} h={42} tone={P.gold} o={0.4} />
+      <Axis ys={[180, 208]} />
+    </g>) },
+    King: { zh: "树下有靠", render: (id) => (<g>
+      <circle cx={300} cy={420} r={120} fill={`url(#halo-${id})`} />
+      <Hill y={624} h={58} tone={P.gold} o={0.45} />
+      <Hill y={668} h={30} tone={P.mist} o={0.4} />
+      <Tree x={290} y={548} s={1.5} tone={P.tealDeep} />
+      {/* the big coin resting against its trunk */}
+      <Glyph suit="pentacles" x={356} y={566} s={1.25} />
+      <Glyph suit="pentacles" x={262} y={470} s={0.6} />
+      <Glyph suit="pentacles" x={324} y={458} s={0.6} />
+      <path d="M290,588 C 274,606 258,614 240,620 M290,588 C 306,606 322,614 340,620" fill="none" stroke={P.goldDeep} strokeWidth={2.2} opacity={0.6} strokeLinecap="round" />
+      <Axis ys={[176, 204]} />
+    </g>) },
+  },
+  swords: {
+    Page: { zh: "初次起飞", render: (id) => (<g>
+      <ellipse cx={300} cy={648} rx={210} ry={24} fill={P.mist} opacity={0.5} />
+      <Hill y={632} h={38} tone={P.mist} o={0.5} />
+      {/* the sprout watches its first feather lift */}
+      <path d="M256,612 C 254,580 255,556 256,534" fill="none" stroke={P.ink} strokeWidth={2.6} strokeLinecap="round" />
+      <ellipse cx={242} cy={558} rx={9} ry={14} fill={P.teal} transform="rotate(-26 242 558)" />
+      <ellipse cx={270} cy={548} rx={9} ry={14} fill={P.teal} transform="rotate(26 270 548)" />
+      <circle cx={330} cy={470} r={96} fill={`url(#halo-${id})`} />
+      <Glyph suit="swords" x={330} y={470} s={1.05} r={-12} />
+      <path d="M312,522 C 320,516 328,514 336,516 M346,520 C 352,514 360,512 368,514" fill="none" stroke={P.tealDeep} strokeWidth={1.8} opacity={0.5} strokeLinecap="round" />
+      <Star8 cx={392} cy={330} r={7} tone={P.goldDeep} o={0.6} />
+      <Axis ys={[176, 204]} />
+    </g>) },
+    Knight: { zh: "破雾而行", render: (id) => (<g>
+      <ellipse cx={300} cy={370} rx={190} ry={24} fill={P.mist} opacity={0.55} />
+      <ellipse cx={300} cy={470} rx={215} ry={26} fill={P.mist} opacity={0.4} />
+      {/* the dive */}
+      <path d="M430,220 C 384,300 330,392 282,468 M462,258 C 420,326 372,404 330,472" fill="none" stroke={P.tealDeep} strokeWidth={2} opacity={0.45} strokeLinecap="round" />
+      <circle cx={272} cy={496} r={90} fill={`url(#halo-${id})`} opacity={0.8} />
+      <Glyph suit="swords" x={300} y={430} s={1.5} r={148} />
+      <g fill={P.goldDeep}>
+        <circle cx={382} cy={300} r={2.2} opacity={0.7} />
+        <circle cx={352} cy={352} r={1.9} opacity={0.6} />
+      </g>
+      <ellipse cx={300} cy={640} rx={190} ry={20} fill={P.mist} opacity={0.35} />
+      <Axis ys={[700, 728]} />
+    </g>) },
+    Queen: { zh: "清明的温柔", render: (id) => (<g>
+      <circle cx={300} cy={244} r={20} fill={`url(#moonface-${id})`} opacity={0.75} />
+      <circle cx={306} cy={428} r={120} fill={`url(#halo-${id})`} />
+      {/* a flower and a feather, side by side in clear air */}
+      <Bloom x={268} y={428} s={1.15} tone={P.glow} />
+      <Glyph suit="swords" x={352} y={434} s={1.05} r={4} />
+      <ellipse cx={300} cy={560} rx={170} ry={16} fill={P.mist} opacity={0.45} />
+      <ellipse cx={300} cy={636} rx={210} ry={20} fill={P.mist} opacity={0.3} />
+      <Axis ys={[688, 716]} />
+    </g>) },
+    King: { zh: "风止月明", render: (id) => (<g>
+      <circle cx={300} cy={330} r={150} fill={`url(#halo-${id})`} />
+      <circle cx={300} cy={330} r={62} fill={`url(#moonface-${id})`} opacity={0.95} />
+      {/* one feather, perfectly still */}
+      <Glyph suit="swords" x={300} y={520} s={1.25} r={-9} />
+      <ellipse cx={300} cy={630} rx={220} ry={18} fill={P.mist} opacity={0.55} />
+      <ellipse cx={300} cy={664} rx={170} ry={13} fill={P.mist} opacity={0.35} />
+      <Axis ys={[700, 728]} />
+    </g>) },
+  },
+}
+
+function CourtCard({ suit, rank }: { suit: (typeof SUITS)[number]; rank: Rank }) {
   const id = `${suit.key}-${rank.toLowerCase()}`
   return (
     <Card id={id} n={suit.en.toUpperCase()} name={`${rank} of ${suit.en}`}>
-      {rank === "Page" && (
-        <g>
-          <circle cx={300} cy={340} r={104} fill={`url(#halo-${id})`} />
-          <Glyph suit={suit.key} x={300} y={330} s={1.25} />
-          <Hill y={620} h={70} tone={P.mist} o={0.6} />
-          {/* the seedling just breaking ground */}
-          <path d="M300,614 C 298,570 299,538 300,506" fill="none" stroke={P.ink} strokeWidth={2.8} strokeLinecap="round" />
-          <ellipse cx={283} cy={528} rx={10} ry={15} fill={P.teal} transform="rotate(-26 283 528)" />
-          <ellipse cx={317} cy={516} rx={10} ry={15} fill={P.teal} transform="rotate(26 317 516)" />
-          <circle cx={300} cy={500} r={5.2} fill={P.gold} />
-        </g>
-      )}
-      {rank === "Knight" && (
-        <g>
-          <circle cx={330} cy={400} r={120} fill={`url(#halo-${id})`} />
-          {/* wind passing through */}
-          <path d="M104,318 C 210,296 390,338 496,310 M96,412 C 220,388 400,436 504,404 M116,506 C 224,484 384,522 488,498" fill="none" stroke={P.tealDeep} strokeWidth={3} opacity={0.5} strokeLinecap="round" />
-          <g transform="translate(330,404) rotate(16)">
-            <Glyph suit={suit.key} x={0} y={0} s={1.3} />
-          </g>
-          <Dust pts={[[210, 372], [252, 430], [172, 396]]} />
-        </g>
-      )}
-      {rank === "Queen" && (
-        <g>
-          <circle cx={300} cy={410} r={130} fill={`url(#halo-${id})`} />
-          {/* in full bloom */}
-          <path d="M300,652 C 297,590 298,530 300,472" fill="none" stroke={P.ink} strokeWidth={2.8} strokeLinecap="round" />
-          <ellipse cx={278} cy={560} rx={15} ry={7} fill={P.teal} transform="rotate(-22 278 560)" />
-          <ellipse cx={322} cy={528} rx={15} ry={7} fill={P.teal} transform="rotate(22 322 528)" />
-          <Bloom x={300} y={412} s={3.1} tone={P.glow} />
-          <Glyph suit={suit.key} x={300} y={252} s={0.98} />
-        </g>
-      )}
-      {rank === "King" && (
-        <g>
-          <circle cx={300} cy={380} r={112} fill={`url(#halo-${id})`} />
-          <Hill y={610} h={78} tone={P.teal} o={0.5} />
-          {/* the old tree, unhurried */}
-          <Tree x={300} y={560} s={1.62} tone={P.tealDeep} />
-          <Glyph suit={suit.key} x={300} y={330} s={1.08} />
-        </g>
-      )}
-      <Dust pts={[[160, 216], [440, 212], [160, 700], [440, 696]]} />
+      {COURT_SCENES[suit.key][rank].render(id)}
+      <Dust pts={[[160, 216], [440, 212]]} />
     </Card>
   )
 }
@@ -1354,11 +1533,11 @@ export default function TarotLab() {
                 </figcaption>
               </figure>
             ))}
-            {COURTS.map(({ rank, zh, motif }) => (
+            {COURTS.map((rank) => (
               <figure key={rank} style={{ margin: 0 }}>
                 <CourtCard suit={suit} rank={rank} />
                 <figcaption style={{ fontSize: 12.5, marginTop: 8, opacity: 0.7, textAlign: "center" }}>
-                  {suit.zh}{zh} · {motif}
+                  {suit.zh}{COURT_ZH[rank]} · {COURT_SCENES[suit.key][rank].zh}
                 </figcaption>
               </figure>
             ))}
