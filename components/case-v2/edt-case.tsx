@@ -38,7 +38,7 @@ import {
 import { gsap, useGSAP, V2_EASE } from "@/lib/gsap"
 import { getNextProject } from "@/lib/projects"
 
-const BACK_HREF = "/v2#work"
+const BACK_HREF = "/#work"
 const MOTION = "(prefers-reduced-motion: no-preference)"
 
 /* the four research pain points (verbatim from the previous Problem section) */
@@ -327,7 +327,7 @@ export function EdtCase() {
 
   return (
     <div className="cv2-stage ds-dark">
-      <CaseTop homeHref="/v2" />
+      <CaseTop homeHref="/" />
 
       <CaseFrame
         title="Eau de Toi"

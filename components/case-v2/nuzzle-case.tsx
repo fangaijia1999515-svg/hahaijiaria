@@ -31,7 +31,7 @@ import {
 } from "@/components/case-v2/case-frame"
 import { getNextProject } from "@/lib/projects"
 
-const BACK_HREF = "/v2#work"
+const BACK_HREF = "/#work"
 
 /* the four companion features (verbatim from the previous Intelligent
    Companion module); each ships as a phone-portrait screen recording */
@@ -184,7 +184,7 @@ export function NuzzleCase() {
 
   return (
     <div className="cv2-stage ds-dark">
-      <CaseTop homeHref="/v2" />
+      <CaseTop homeHref="/" />
 
       <CaseFrame
         title="Nuzzle"

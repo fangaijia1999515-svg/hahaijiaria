@@ -66,7 +66,7 @@ export function Navigation() {
   /* the HOMEPAGE is /v2 (2026-07-19 fix: these used to send her back to the
      retired old site at "/"). On the homepage the links glide in place; from
      any other page they navigate home first, then land on the anchor. */
-  const HOME = "/v2"
+  const HOME = "/"
   const isHome = pathname === HOME || pathname === `${HOME}/`
 
   const handleContactClick = (e: React.MouseEvent) => {
@@ -153,7 +153,7 @@ export function Navigation() {
 
           <div className="hidden md:flex items-center gap-10">
             <Link
-              href="/v2#work"
+              href="/#work"
               onClick={handleWorkClick}
               className={linkCls}
               onMouseEnter={onEnter}
@@ -164,7 +164,7 @@ export function Navigation() {
               Work
             </Link>
             <Link
-              href="/v2#about"
+              href="/#about"
               onClick={handleAboutClick}
               className={linkCls}
               onMouseEnter={onEnter}
@@ -222,7 +222,7 @@ export function Navigation() {
 
               <nav className="flex flex-col gap-8 mt-20">
                 <Link
-                  href="/v2#work"
+                  href="/#work"
                   onClick={(e) => {
                     setIsMobileMenuOpen(false)
                     handleWorkClick(e)
@@ -233,7 +233,7 @@ export function Navigation() {
                   Work
                 </Link>
                 <Link
-                  href="/v2#about"
+                  href="/#about"
                   onClick={(e) => {
                     setIsMobileMenuOpen(false)
                     handleAboutClick(e)

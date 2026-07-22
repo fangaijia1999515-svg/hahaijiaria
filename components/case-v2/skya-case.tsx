@@ -32,7 +32,7 @@ import {
 } from "@/components/case-v2/case-frame"
 import { getNextProject } from "@/lib/projects"
 
-const BACK_HREF = "/v2#work"
+const BACK_HREF = "/#work"
 
 /* the five service moments (verbatim from the previous How-It-Works module).
    Steps 1-4 ship alpha-channel renders: Safari decodes HEVC (.mov, hvc1),
@@ -150,7 +150,7 @@ export function SkyaCase({ stage = "dark" }: { stage?: "dark" | "cream" }) {
 
   return (
     <div className={`cv2-stage${stage === "cream" ? "" : " ds-dark"}`}>
-      <CaseTop homeHref="/v2" />
+      <CaseTop homeHref="/" />
 
       <CaseFrame
         title="Skya"
