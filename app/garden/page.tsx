@@ -127,6 +127,20 @@ export default function GardenToday() {
           <span className="mg-dots"><i /><i /><i /></span>
         )}
         {drawn?.reading && <p className="mg-reading">{drawn.reading}</p>}
+        {drawn && !loading && (
+          <button
+            type="button"
+            className="mg-reset"
+            onClick={() => {
+              try {
+                window.localStorage.removeItem("mg.today.v1")
+              } catch {}
+              window.location.reload()
+            }}
+          >
+            测试期 · 重新洗一次
+          </button>
+        )}
       </div>
       <div className="mg-links">
         <Link className="mg-linkcard" href="/garden/ask">

@@ -44,6 +44,9 @@
 .mg-btn:hover { background: #f3e4bd; }
 .mg-btn[disabled] { opacity: 0.45; cursor: default; }
 
+.mg-reset { border: 0; background: none; padding: 6px 10px; font-size: 12px; letter-spacing: 0.08em; color: #b79e6f; opacity: 0.75; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-family: inherit; }
+.mg-reset:hover { opacity: 1; }
+
 .mg-dots { display: inline-flex; gap: 7px; padding: 12px 0; }
 .mg-dots i { width: 7px; height: 7px; border-radius: 50%; background: #cdb68c; animation: mgDot 1.2s ease-in-out infinite; }
 .mg-dots i:nth-child(2) { animation-delay: 0.18s; }
