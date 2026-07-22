@@ -57,16 +57,30 @@ const CLOSINGS = [
   "允许自己,就是答案的开始。",
 ]
 
-/** 无 API key 或调用失败时的本地四段模板 — 同一天同一组牌输出恒定。 */
+/** 每个族群一句"这类牌在讲什么",让没接触过塔罗的人也看得懂。 */
+function familyLine(cardId: string): string {
+  if (cardId.startsWith("major-")) return "这是一张大牌,说的是你人生此刻的大方向,不是小事"
+  if (cardId.startsWith("cups-")) return "圣杯讲的是感受和关系:心里的水位"
+  if (cardId.startsWith("wands-")) return "权杖讲的是行动和热情:你想做的那件事"
+  if (cardId.startsWith("pentacles-")) return "星币讲的是现实层面:工作、金钱、身体和日常"
+  return "宝剑讲的是脑子里的念头:想法、决定和心里打的结"
+}
+
+/** 无 API key 或调用失败时的本地模板 — 说人话版(她 2026-07-22 的意见:之前太空、看不懂)。 */
 export function fallbackReading({ spread, question, cards, dateStr }: { spread: SpreadId; question?: string; cards: DrawnCard[]; dateStr: string }) {
   const s = SPREADS[spread]
   const seed = (dateStr + cards.map((c) => c.cardId).join("")).length
+  const where = question ? "放在你问的这件事上" : "放在今天"
   const parts = cards.map((c, i) => {
     const card = cardById(c.cardId)
     const m = MEANINGS[c.cardId]
-    const words = c.reversed ? m.shadow : m.light
-    const pos = s.positions[i] ?? ""
-    return `${pos}是${c.reversed ? "逆位的" : ""}${card.zh}:${m.imagery[0]},${m.imagery[1] ?? m.imagery[0]}。它在${question ? "你问的这件事里" : "今天"}提醒你留意"${words[0]}",也照看"${words[1] ?? words[0]}"的那一面。`
+    const pos = cards.length > 1 ? `「${s.positions[i] ?? `第${i + 1}张`}」的位置上,` : ""
+    const intro = `${pos}你抽到的是《${card.zh} · ${card.line}》${c.reversed ? ",而且它是倒过来的(影面)" : ""}。牌面上画的是:${m.imagery.slice(0, 3).join("、")}。`
+    const explain = c.reversed
+      ? `这张牌本来讲「${m.light[0]}」;倒过来时,它轻声提醒你:最近可能有点${m.shadow[0]},或是在${m.shadow[1] ?? m.shadow[0]}。这不是做错了什么,只是这股能量暂时堵住了,松一松就好。`
+      : `它带来的是「${m.light[0]}」的能量,也在支持你${m.light[1] ?? m.light[0]}。`
+    return intro + explain
   })
-  return `${parts.join("")}它最想让你看见的是:${cardById(cards[0].cardId).line}。今天可以试试:${ACTIONS[seed % ACTIONS.length]}。${CLOSINGS[seed % CLOSINGS.length]}`
+  const family = familyLine(cards[0].cardId)
+  return `${parts.join("\n\n")}\n\n${family}。${where},它的意思是:${cardById(cards[0].cardId).line},${cards[0].reversed ? "只是此刻先别用力,先照顾好自己" : "顺着它走就好"}。今天可以试试:${ACTIONS[seed % ACTIONS.length]}。${CLOSINGS[seed % CLOSINGS.length]}`
 }

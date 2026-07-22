@@ -2,15 +2,21 @@
 import { useCallback, useEffect, useState } from "react"
 import Link from "next/link"
 import { cardById } from "@/components/tarot/deck"
-import { todayCard, localDateStr } from "@/lib/tarot/draw"
+import { drawUnique, localDateStr } from "@/lib/tarot/draw"
 import { getToday, setToday, addEntry } from "@/lib/tarot/journal"
 import { CardFlip } from "@/components/tarot/card-flip"
 import type { DrawnCard } from "@/lib/tarot/types"
 
 type TodayState = DrawnCard & { reading?: string; source?: string }
 
+/**
+ * 今日屏的仪式(她 2026-07-22 的意见:不能点一下直接翻,要有"抽"的感觉):
+ * 静静一叠牌背 → 点一下,展开一扇 → 凭直觉挑一张 → 那张才翻开。
+ * 挑中哪张就是哪张(真随机),当天存下,不重抽。
+ */
 export default function GardenToday() {
   const [mounted, setMounted] = useState(false)
+  const [fanOpen, setFanOpen] = useState(false)
   const [drawn, setDrawn] = useState<TodayState | null>(null)
   const [flipped, setFlipped] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -24,12 +30,12 @@ export default function GardenToday() {
     }
   }, [])
 
-  const flip = useCallback(async () => {
+  const pick = useCallback(async () => {
     if (drawn) return
     const dateStr = localDateStr()
-    const d = todayCard(dateStr)
+    const d = drawUnique(1)[0]
     setDrawn(d)
-    setFlipped(true)
+    setTimeout(() => setFlipped(true), 80)
     setLoading(true)
     setToday({ ...d, dateStr })
     try {
@@ -55,16 +61,38 @@ export default function GardenToday() {
   const hour = new Date().getHours()
   const hello = hour < 5 ? "夜深了" : hour < 11 ? "早上好" : hour < 18 ? "下午好" : "晚上好"
   const card = drawn ? cardById(drawn.cardId) : null
+  const sub = card ? "今天陪着你的是" : fanOpen ? "凭直觉,选一张" : "来抽一张今天的牌吧,轻轻点一下"
 
   return (
     <main className="mg-main">
       <h1 className="mg-h1">{mounted ? hello : "月光庭园"}</h1>
-      <p className="mg-sub">{card ? "今天陪着你的是" : "来抽一张今天的牌吧,轻轻点一下"}</p>
+      <p className="mg-sub">{sub}</p>
       <div className="mg-center">
-        {mounted && (
-          <CardFlip card={card ?? cardById("major-0")} reversed={drawn?.reversed ?? false} flipped={flipped} onFlip={flip} size={250} uid="today" />
+        {mounted && !drawn && (
+          <div className="mg-fan" role="group" aria-label="牌堆">
+            {[0, 1, 2, 3, 4].map((i) => (
+              <button
+                key={i}
+                type="button"
+                className={`mg-fanback${fanOpen ? "" : " mg-breathe"}`}
+                aria-label={fanOpen ? `选第 ${i + 1} 张` : "展开牌堆"}
+                style={{
+                  transform: fanOpen
+                    ? `translateX(${(i - 2) * 56}px) translateY(${Math.abs(i - 2) * 10}px) rotate(${(i - 2) * 9}deg)`
+                    : `translateX(0px) translateY(${i * -1.5}px) rotate(0deg)`,
+                  zIndex: 10 + i,
+                }}
+                onClick={() => (fanOpen ? pick() : setFanOpen(true))}
+              >
+                <img src="/image/cards/moonlit-cover.png" alt="" draggable={false} />
+              </button>
+            ))}
+          </div>
         )}
-        {card && (
+        {mounted && drawn && card && (
+          <CardFlip card={card} reversed={drawn.reversed} flipped={flipped} size={250} uid="today" />
+        )}
+        {card && flipped && (
           <div className="mg-cardname">
             {card.zh} · {card.line}
             <span className="mg-face-tag">{drawn?.reversed ? "影面" : "光面"}</span>
