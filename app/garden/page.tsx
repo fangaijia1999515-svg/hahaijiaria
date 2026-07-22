@@ -1,7 +1,7 @@
 "use client"
 import { useCallback, useEffect, useState } from "react"
 import Link from "next/link"
-import { DECK, cardById } from "@/components/tarot/deck"
+import { DECK, cardById, displayName } from "@/components/tarot/deck"
 import { localDateStr } from "@/lib/tarot/draw"
 import { getToday, setToday, addEntry } from "@/lib/tarot/journal"
 import { CardFlip } from "@/components/tarot/card-flip"
@@ -118,9 +118,12 @@ export default function GardenToday() {
           <CardFlip card={card} reversed={drawn.reversed} flipped={flipped} size={250} uid="today" />
         )}
         {card && flipped && (
-          <div className="mg-cardname">
-            {card.zh} · {card.line}
-            <span className="mg-face-tag">{drawn?.reversed ? "影面" : "光面"}</span>
+          <div>
+            <div className="mg-cardname">
+              {displayName(card)}
+              <span className="mg-face-tag">{drawn?.reversed ? "逆位" : "正位"}</span>
+            </div>
+            <div className="mg-keyword">{card.line}</div>
           </div>
         )}
         {loading && (

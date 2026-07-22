@@ -1532,6 +1532,15 @@ export const DECK: TarotCard[] = [
   ]),
 ]
 
+const ZH_NUM = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"]
+
+/** 给用户看的牌名,按常识叫法(她 2026-07-22 的 law):大牌"愚人"、数字牌"权杖八"、宫廷"圣杯国王"。 */
+export function displayName(card: TarotCard): string {
+  if (card.arcana === "major" || card.rank) return card.zh
+  const suit = SUITS.find((s) => s.key === card.suit)
+  return `${suit ? suit.zh : ""}${ZH_NUM[card.number!] ?? card.number}`
+}
+
 export function cardById(id: string): TarotCard {
   const c = DECK.find((x) => x.id === id)
   if (!c) throw new Error(`unknown card: ${id}`)

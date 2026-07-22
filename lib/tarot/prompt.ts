@@ -5,7 +5,7 @@
  */
 import type { DrawnCard, SpreadId } from "./types"
 import { MEANINGS, SPREADS } from "./meanings"
-import { cardById } from "@/components/tarot/deck"
+import { cardById, displayName } from "@/components/tarot/deck"
 
 const CRISIS = /自杀|自残|不想活|活不下去|结束生命|伤害自己|想死|轻生|活着没有意义|了结自己/
 
@@ -19,9 +19,9 @@ export const CRISIS_REPLY =
 function cardBlock(c: DrawnCard, pos: string) {
   const card = cardById(c.cardId)
   const m = MEANINGS[c.cardId]
-  const face = c.reversed ? "影面(逆位)" : "光面(正位)"
+  const face = c.reversed ? "逆位" : "正位"
   const words = c.reversed ? m.shadow : m.light
-  return `【${pos}】${card.zh}(${card.name})· ${face}\n牌面意象(只能引用这些,不许编造):${m.imagery.join("、")}\n关键词:${words.join("、")}`
+  return `【${pos}】${displayName(card)}(${card.name})· ${face} · 主题词:${card.line}\n牌面意象(只能引用这些,不许编造):${m.imagery.join("、")}\n关键词:${words.join("、")}`
 }
 
 export function buildPrompt({ spread, question, cards }: { spread: SpreadId; question?: string; cards: DrawnCard[] }) {
@@ -30,7 +30,7 @@ export function buildPrompt({ spread, question, cards }: { spread: SpreadId; que
 写作铁律:
 1. 固定四段,总长 150 到 260 字,直接输出正文,不加标题不加序号:第一段"映照",说这张牌的画面此刻映出用户处境的什么,必须扣住用户的问题;第二段"看见",牌想让用户看见的一件事,只说一件;第三段"小行动",今天就能做的一个具体小动作,门槛要低;第四段"收尾",一句不超过二十个字的轻轻的陪伴语。三张牌时,把前两段改为每张牌两三句(映照加看见),最后合写小行动与收尾。
 2. 提到画面细节时,只能使用我提供的"牌面意象",一个字都不能编。
-3. 逆位用"影面"语言:这股能量此刻受阻、内收或过度,语气依然温柔,绝不恐吓。
+3. 逆位解释为这股能量此刻受阻、内收或过度,语气依然温柔,绝不恐吓;称呼就用"正位""逆位",不要使用"光面""影面"这类自造词。同一个词(尤其牌的主题词)在全文最多出现一次,不许翻来覆去地念。
 4. 禁止:预言生死、疾病、官司、怀孕、投资结果;"一定""必然""注定"式断言;制造焦虑;医疗、法律、金融建议;评判和说教。
 5. 中文,第二人称"你",不用破折号,不堆玄学术语,神秘感来自画面而不是黑话。`
   const user = `${question ? `用户想问:${question}` : "用户没有具体问题,想要今天的陪伴与提醒。"}\n牌阵:${s.zh}\n\n${cards
@@ -66,7 +66,10 @@ function familyLine(cardId: string): string {
   return "宝剑讲的是脑子里的念头:想法、决定和心里打的结"
 }
 
-/** 无 API key 或调用失败时的本地模板 — 说人话版(她 2026-07-22 的意见:之前太空、看不懂)。 */
+/**
+ * 无 API key 或调用失败时的本地模板 — 说人话、零重复版(她 2026-07-22 两轮意见:
+ * ①太空看不懂;②主题词翻来覆去念了三遍)。牌名与主题词由界面展示,正文不再重复报名。
+ */
 export function fallbackReading({ spread, question, cards, dateStr }: { spread: SpreadId; question?: string; cards: DrawnCard[]; dateStr: string }) {
   const s = SPREADS[spread]
   const seed = (dateStr + cards.map((c) => c.cardId).join("")).length
@@ -74,13 +77,14 @@ export function fallbackReading({ spread, question, cards, dateStr }: { spread: 
   const parts = cards.map((c, i) => {
     const card = cardById(c.cardId)
     const m = MEANINGS[c.cardId]
-    const pos = cards.length > 1 ? `「${s.positions[i] ?? `第${i + 1}张`}」的位置上,` : ""
-    const intro = `${pos}你抽到的是《${card.zh} · ${card.line}》${c.reversed ? ",而且它是倒过来的(影面)" : ""}。牌面上画的是:${m.imagery.slice(0, 3).join("、")}。`
-    const explain = c.reversed
-      ? `这张牌本来讲「${m.light[0]}」;倒过来时,它轻声提醒你:最近可能有点${m.shadow[0]},或是在${m.shadow[1] ?? m.shadow[0]}。这不是做错了什么,只是这股能量暂时堵住了,松一松就好。`
-      : `它带来的是「${m.light[0]}」的能量,也在支持你${m.light[1] ?? m.light[0]}。`
-    return intro + explain
+    const pos = cards.length > 1 ? `「${s.positions[i] ?? `第${i + 1}张`}」是《${displayName(card)}》,${c.reversed ? "逆位" : "正位"}。` : ""
+    const scene = `牌面上是:${m.imagery.slice(0, 3).join("、")}。`
+    const meaning = c.reversed
+      ? `这张牌此刻是逆位,它想轻声提醒的是:留意「${m.shadow[0]}」和「${m.shadow[1] ?? m.shadow[0]}」的影子。这不是做错了什么,只是这股能量暂时堵住了,松一松就好。`
+      : `此刻它是正位:「${m.light[1] ?? m.light[0]}」和「${m.light[2] ?? m.light[0]}」,都是它想借给你的力气。`
+    return pos + scene + meaning
   })
   const family = familyLine(cards[0].cardId)
-  return `${parts.join("\n\n")}\n\n${family}。${where},它的意思是:${cardById(cards[0].cardId).line},${cards[0].reversed ? "只是此刻先别用力,先照顾好自己" : "顺着它走就好"}。今天可以试试:${ACTIONS[seed % ACTIONS.length]}。${CLOSINGS[seed % CLOSINGS.length]}`
+  const m0 = MEANINGS[cards[0].cardId]
+  return `${parts.join("\n\n")}\n\n${family}。${where},如果只记住一个画面,就记住:${m0.imagery[0]}。今天可以试试:${ACTIONS[seed % ACTIONS.length]}。${CLOSINGS[seed % CLOSINGS.length]}`
 }
