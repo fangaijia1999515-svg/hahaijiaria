@@ -1,31 +1,27 @@
 "use client"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useRef, useState } from "react"
 import Link from "next/link"
-import { DECK, cardById, displayName } from "@/components/tarot/deck"
+import { cardById, displayName } from "@/components/tarot/deck"
 import { SPREADS } from "@/lib/tarot/meanings"
 import { crisisCheck, CRISIS_REPLY } from "@/lib/tarot/prompt"
 import { localDateStr } from "@/lib/tarot/draw"
 import { addEntry } from "@/lib/tarot/journal"
 import { CardFlip } from "@/components/tarot/card-flip"
+import { DrawBoard } from "@/components/tarot/draw-board"
 import type { DrawnCard, SpreadId } from "@/lib/tarot/types"
 
-const BACK_SRC = "/image/cards/moonlit-cover-md.jpg"
-const RING_N = 18
 const ASK_SPREADS: SpreadId[] = ["single", "triad-sab", "triad-ppf"]
 
 /**
- * 问事流程,按她给的参照录屏(存 .claude/skills/moonlit-tarot/reference/):
- * 写下问题(带示例)→ 环形牌阵缓缓旋转、心里默念 → 从环上亲手抽出 1/3 张
- * → 逐张翻开 → 解读(问题一直陪在旁边)。去宗教感,保留郑重感。
+ * 问事仪式(她 2026-07-23 定稿):写问题 → 问题居中陪着,手持大牌扇抽出 N 张
+ * 扣进槽 → 她自己一张一张点开 → 全部翻开后解读浮现。
  */
 export default function GardenAsk() {
-  const [phase, setPhase] = useState<"form" | "ring" | "reveal" | "safety">("form")
+  const [phase, setPhase] = useState<"form" | "draw" | "reveal" | "safety">("form")
   const [question, setQuestion] = useState("")
   const [spreadId, setSpreadId] = useState<SpreadId>("single")
-  const [order, setOrder] = useState<number[]>([])
   const [picked, setPicked] = useState<DrawnCard[]>([])
-  const [pickedIdx, setPickedIdx] = useState<Set<number>>(new Set())
-  const [flippedN, setFlippedN] = useState(0)
+  const [flippedSet, setFlippedSet] = useState<Set<number>>(new Set())
   const [reading, setReading] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const savedRef = useRef(false)
@@ -38,20 +34,11 @@ export default function GardenAsk() {
       setPhase("safety")
       return
     }
-    const a = Array.from({ length: DECK.length }, (_, i) => i)
-    const buf = new Uint32Array(1)
-    for (let i = a.length - 1; i > 0; i--) {
-      crypto.getRandomValues(buf)
-      const j = buf[0] % (i + 1)
-      ;[a[i], a[j]] = [a[j], a[i]]
-    }
-    setOrder(a)
     setPicked([])
-    setPickedIdx(new Set())
-    setFlippedN(0)
+    setFlippedSet(new Set())
     setReading(null)
     savedRef.current = false
-    setPhase("ring")
+    setPhase("draw")
   }, [question])
 
   const fetchReading = useCallback(
@@ -78,41 +65,28 @@ export default function GardenAsk() {
     [question, spreadId],
   )
 
-  const pickFromRing = useCallback(
+  const onPicked = useCallback((cards: DrawnCard[]) => {
+    setPicked(cards)
+    setPhase("reveal")
+  }, [])
+
+  const flipOne = useCallback(
     (i: number) => {
-      if (phase !== "ring" || pickedIdx.has(i) || picked.length >= need) return
-      const buf = new Uint32Array(1)
-      crypto.getRandomValues(buf)
-      const d: DrawnCard = { cardId: DECK[order[i]].id, reversed: buf[0] % 2 === 0 }
-      const nextPicked = [...picked, d]
-      const nextIdx = new Set(pickedIdx)
-      nextIdx.add(i)
-      setPicked(nextPicked)
-      setPickedIdx(nextIdx)
-      if (nextPicked.length === need) {
-        setTimeout(() => setPhase("reveal"), 350)
-        nextPicked.forEach((_, j) => setTimeout(() => setFlippedN(j + 1), 700 + j * 650))
-        setTimeout(() => fetchReading(nextPicked), 700 + need * 650)
-      }
+      if (flippedSet.has(i)) return
+      const next = new Set(flippedSet)
+      next.add(i)
+      setFlippedSet(next)
+      if (next.size === picked.length) setTimeout(() => fetchReading(picked), 600)
     },
-    [phase, pickedIdx, picked, need, order, fetchReading],
+    [flippedSet, picked, fetchReading],
   )
 
   const reset = useCallback(() => {
     setPhase("form")
     setPicked([])
-    setPickedIdx(new Set())
-    setFlippedN(0)
+    setFlippedSet(new Set())
     setReading(null)
   }, [])
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && phase === "form") start()
-    }
-    window.addEventListener("keydown", onKey)
-    return () => window.removeEventListener("keydown", onKey)
-  }, [phase, start])
 
   return (
     <main className="mg-main">
@@ -127,6 +101,9 @@ export default function GardenAsk() {
               maxLength={60}
               placeholder="例:我该如何看待现在这段关系?"
               onChange={(e) => setQuestion(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") start()
+              }}
             />
             <div className="mg-spreads">
               {ASK_SPREADS.map((id) => (
@@ -142,47 +119,29 @@ export default function GardenAsk() {
         </>
       )}
 
-      {phase === "ring" && (
+      {phase === "draw" && (
         <>
-          <h1 className="mg-h1">{question ? "心里默念你的问题" : "静一静,想着今天"}</h1>
-          <p className="mg-sub">
-            牌环转起来了。凭直觉,从环上抽出 {need} 张{picked.length > 0 ? ` · 还差 ${need - picked.length} 张` : ""}
-          </p>
-          <div className="mg-ringwrap">
-            <div className="mg-ringshadow" />
-            <div className="mg-ringscale">
-              <div className="mg-ring">
-                {Array.from({ length: RING_N }, (_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    className={`mg-ringcard${pickedIdx.has(i) ? " is-picked" : ""}`}
-                    style={{ transform: `rotateY(${(i * 360) / RING_N}deg) translateZ(228px)` }}
-                    aria-label={`抽第 ${i + 1} 张`}
-                    onClick={() => pickFromRing(i)}
-                  >
-                    <img src={BACK_SRC} alt="" draggable={false} />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-          {question && <p className="mg-qecho">「{question}」</p>}
+          <h1 className="mg-h1">心里默念它</h1>
+          <p className="mg-sub">左右滑动牌扇,凭直觉抽出 {need} 张</p>
+          <p className="mg-qfocus">{question ? `「${question}」` : "「今天想对我说什么?」"}</p>
+          <DrawBoard need={need} onPicked={onPicked} />
         </>
       )}
 
       {phase === "reveal" && (
         <>
-          <h1 className="mg-h1">牌意浮现</h1>
+          <h1 className="mg-h1">{flippedSet.size < picked.length ? "一张一张,亲手打开" : "牌意浮现"}</h1>
           {question && <p className="mg-qecho">「{question}」</p>}
+          {flippedSet.size < picked.length && <p className="mg-hintline">还有 {picked.length - flippedSet.size} 张没翻开</p>}
           <div className="mg-slots">
             {picked.map((d, i) => {
               const card = cardById(d.cardId)
+              const on = flippedSet.has(i)
               return (
-                <figure key={d.cardId} className="mg-slot">
+                <figure key={`${d.cardId}-${i}`} className="mg-slot">
                   {need > 1 && <figcaption className="mg-slotlabel">{spread.positions[i]}</figcaption>}
-                  <CardFlip card={card} reversed={d.reversed} flipped={flippedN > i} size={need === 1 ? 240 : 156} uid={`ask-${i}`} />
-                  {flippedN > i && (
+                  <CardFlip card={card} reversed={d.reversed} flipped={on} onFlip={() => flipOne(i)} size={need === 1 ? 262 : 168} uid={`ask-${i}`} />
+                  {on && (
                     <figcaption className="mg-slotname">
                       {displayName(card)} <span className="mg-face-tag">{d.reversed ? "逆位" : "正位"}</span>
                       <span className="mg-slotline">{card.line}</span>
