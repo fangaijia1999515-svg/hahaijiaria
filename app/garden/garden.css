@@ -63,3 +63,61 @@
 .mg-linkcard b { font-family: var(--font-ds-display), serif; font-weight: 500; font-size: 16.5px; color: #43524d; display: block; margin-bottom: 3px; }
 .mg-linkcard span { font-size: 12.5px; opacity: 0.6; }
 @media (max-width: 480px) { .mg-links { grid-template-columns: 1fr; } }
+
+/* ---- ask flow: form / ring / reveal -------------------------------------- */
+.mg-form { display: flex; flex-direction: column; gap: 18px; margin-top: 30px; max-width: 460px; }
+.mg-input { padding: 14px 16px; border-radius: 14px; border: 1px solid rgba(127, 167, 158, 0.4); background: rgba(250, 244, 230, 0.9); font-size: 15px; color: #4a463c; font-family: inherit; outline: none; }
+.mg-input:focus { border-color: #b79e6f; }
+.mg-spreads { display: flex; flex-wrap: wrap; gap: 8px; }
+.mg-pill { padding: 9px 15px; border-radius: 999px; border: 1px solid rgba(127, 167, 158, 0.4); background: transparent; color: #5e7d76; font-size: 13.5px; cursor: pointer; font-family: inherit; }
+.mg-pill.is-on { background: #f3e4bd; border-color: rgba(183, 158, 111, 0.6); color: #43524d; }
+.mg-ringwrap { position: relative; width: 100%; height: 380px; display: flex; align-items: center; justify-content: center; perspective: 680px; overflow: hidden; margin-top: 8px; }
+.mg-ringscale { transform: scale(1) rotateX(16deg); transform-style: preserve-3d; }
+.mg-ring { position: relative; width: 0; height: 0; transform-style: preserve-3d; animation: mgSpin 34s linear infinite; }
+.mg-ringcard { position: absolute; left: -28px; top: -43px; width: 56px; height: 86px; border-radius: 6px; overflow: hidden; border: 0; padding: 0; background: #efe3ca; box-shadow: 0 6px 14px rgba(94, 80, 56, 0.25); cursor: pointer; transition: opacity 0.3s; }
+.mg-ringcard img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+.mg-ringcard.is-picked { opacity: 0.18; pointer-events: none; }
+.mg-ringshadow { position: absolute; left: 50%; bottom: 54px; width: 340px; height: 44px; margin-left: -170px; border-radius: 50%; background: radial-gradient(ellipse at center, rgba(127, 167, 158, 0.22) 0%, rgba(127, 167, 158, 0) 70%); }
+@keyframes mgSpin { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+@media (max-width: 480px) { .mg-ringwrap { height: 310px; } .mg-ringscale { transform: scale(0.72) rotateX(16deg); } .mg-ringshadow { width: 260px; margin-left: -130px; bottom: 44px; } }
+.mg-qecho { margin: 14px 0 0; text-align: center; font-size: 14px; color: #8a6f42; opacity: 0.85; }
+.mg-slots { display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; margin-top: 26px; }
+.mg-slot { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.mg-slotlabel { font-family: var(--font-ds-plex-mono), ui-monospace; font-size: 11.5px; letter-spacing: 0.22em; color: #7fa79e; }
+.mg-slotname { font-family: var(--font-ds-display), serif; font-size: 15.5px; color: #43524d; text-align: center; }
+.mg-slotline { display: block; font-size: 11.5px; letter-spacing: 0.14em; color: #b79e6f; margin-top: 3px; font-family: var(--font-ds-hanken), sans-serif; }
+.mg-row { display: flex; gap: 12px; }
+
+/* ---- journal -------------------------------------------------------------- */
+.mg-entries { display: flex; flex-direction: column; gap: 18px; margin-top: 28px; }
+.mg-entry { background: rgba(250, 244, 230, 0.85); border: 1px solid rgba(127, 167, 158, 0.25); border-radius: 18px; padding: 18px 18px 14px; }
+.mg-entryhead { display: flex; align-items: center; gap: 10px; }
+.mg-entrydate { font-family: var(--font-ds-plex-mono), ui-monospace; font-size: 11.5px; letter-spacing: 0.1em; color: #7fa79e; }
+.mg-entryspread { font-size: 12px; color: #8a6f42; background: #f3e4bd; border-radius: 999px; padding: 3px 10px; }
+.mg-entrydel { margin-left: auto; border: 0; background: none; color: #b79e6f; font-size: 18px; cursor: pointer; opacity: 0.6; padding: 2px 6px; }
+.mg-entrydel:hover { opacity: 1; }
+.mg-entrycards { display: flex; gap: 12px; margin-top: 12px; }
+.mg-mini { margin: 0; width: 64px; }
+.mg-mini figcaption { font-size: 10.5px; text-align: center; margin-top: 4px; opacity: 0.75; }
+.mg-mini figcaption i { font-style: normal; color: #b79e6f; margin-left: 4px; }
+.mg-entrytext { font-size: 13.5px; line-height: 1.9; opacity: 0.82; margin: 12px 0 0; white-space: pre-wrap; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
+.mg-entrytext.is-open { display: block; -webkit-line-clamp: unset; }
+.mg-note { width: 100%; margin-top: 12px; border: 0; border-top: 1px dashed rgba(183, 158, 111, 0.4); background: none; padding: 10px 2px 4px; font-size: 13.5px; color: #6b5e46; font-family: inherit; resize: vertical; outline: none; }
+
+/* ---- deck gallery --------------------------------------------------------- */
+.mg-main--wide { max-width: 1080px; }
+.mg-g2 { font-family: var(--font-ds-display), serif; font-weight: 500; font-size: 21px; color: #43524d; margin: 40px 0 0; }
+.mg-gsub { margin: 4px 0 0; font-size: 12.5px; opacity: 0.6; }
+.mg-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(108px, 1fr)); gap: 14px; margin-top: 16px; }
+.mg-gcard { border: 0; background: none; padding: 0; cursor: pointer; font-family: inherit; }
+.mg-gcard span { display: block; font-size: 11px; margin-top: 5px; opacity: 0.7; text-align: center; }
+.mg-gcard:hover span { opacity: 1; }
+.mg-overlay { position: fixed; inset: 0; background: rgba(40, 35, 25, 0.45); z-index: 90; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.mg-ovpanel { background: #f7f0e0; border-radius: 20px; padding: 22px; max-width: 640px; width: 100%; max-height: 88svh; overflow-y: auto; display: flex; gap: 22px; align-items: flex-start; box-shadow: 0 30px 70px rgba(40, 35, 25, 0.35); }
+.mg-ovcard { flex: 0 0 240px; }
+.mg-ovinfo { flex: 1; min-width: 0; }
+.mg-ovrow { font-size: 13.5px; line-height: 1.8; margin: 12px 0 0; }
+.mg-ovrow b { font-weight: 500; color: #8a6f42; margin-right: 10px; font-size: 12px; letter-spacing: 0.12em; }
+.mg-ovimg { opacity: 0.7; }
+.mg-ovinfo .mg-btn { margin-top: 16px; }
+@media (max-width: 560px) { .mg-ovpanel { flex-direction: column; align-items: center; } .mg-ovcard { flex: 0 0 auto; width: min(62vw, 250px); } }
