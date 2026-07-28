@@ -68,7 +68,7 @@ export default function GardenToday() {
   const hello = hour < 5 ? "夜深了" : hour < 11 ? "早上好" : hour < 18 ? "下午好" : "晚上好"
   const card = drawn ? cardById(drawn.cardId) : null
   const sub =
-    phase === "idle" ? "月亮升起来了。点一下牌堆,开始今天的一张" : phase === "draw" ? "左右滑动牌扇,凭直觉抽出一张" : flipped ? "今天陪着你的是" : "它已经在你手里了"
+    phase === "idle" ? "月亮升起来了。点一下牌堆,开始今天的一张" : phase === "draw" ? "整面牌墙,一起滑动。凭直觉点一张" : flipped ? "今天陪着你的是" : "它已经在你手里了"
 
   return (
     <main className="mg-main">

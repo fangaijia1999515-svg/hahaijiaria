@@ -37,19 +37,20 @@
 .mg-stack-under { position: absolute; inset: 0; border-radius: 12px; background: rgba(239, 231, 214, 0.14); transform: rotate(-3deg) translateY(5px); }
 .mg-stack-under2 { background: rgba(239, 231, 214, 0.2); transform: rotate(2.4deg) translateY(2px); }
 
-/* ---- 手持牌扇 + 落牌槽(抽牌的主舞台) ---- */
-.mg-board { width: 100%; display: flex; flex-direction: column; gap: 24px; align-items: center; position: relative; z-index: 1; }
-.mg-fanstrip { width: 100%; display: flex; align-items: flex-start; overflow-x: auto; padding: 40px 0 52px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
-.mg-fanpad { flex: 0 0 50%; }
-.mg-fancard { flex: 0 0 auto; width: 98px; height: 147px; border-radius: 10px; overflow: hidden; border: 0; padding: 0; background: #efe3ca; box-shadow: 0 12px 30px rgba(0, 0, 0, 0.42); cursor: pointer; will-change: transform; transition: opacity 0.35s; }
-.mg-fancard + .mg-fancard { margin-left: -60px; }
-.mg-fancard img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
-.mg-fancard.is-taken { opacity: 0.1; pointer-events: none; }
+/* ---- 整面牌墙 + 落牌槽(抽牌的主舞台) ---- */
+.mg-board { width: 100%; display: flex; flex-direction: column; gap: 22px; align-items: center; position: relative; z-index: 1; }
+.mg-wallscroll { width: 100vw; margin-left: calc(50% - 50vw); overflow-x: auto; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 30px 0 14px; }
+.mg-wall { display: flex; flex-direction: column; width: max-content; padding: 0 26px; }
+.mg-wallrow { display: flex; position: relative; }
+.mg-wallrow + .mg-wallrow { margin-top: -46px; }
+.mg-wallcard { flex: 0 0 auto; width: 92px; height: 138px; border-radius: 10px; overflow: hidden; border: 0; padding: 0; background: #efe3ca; box-shadow: 0 10px 26px rgba(0, 0, 0, 0.42); cursor: pointer; will-change: transform; transition: opacity 0.3s; }
+.mg-wallcard + .mg-wallcard { margin-left: -34px; }
+.mg-wallcard img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+.mg-wallcard.is-taken { opacity: 0.07; pointer-events: none; }
 .mg-slotsrow { display: flex; gap: 18px; justify-content: center; }
 .mg-slotback { width: 78px; height: 117px; border-radius: 9px; border: 1.5px dashed rgba(205, 182, 140, 0.4); overflow: hidden; }
-.mg-slotback.is-filled { border-style: solid; border-color: rgba(205, 182, 140, 0.7); animation: mgPop 0.5s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.mg-slotback.is-filled { border-style: solid; border-color: rgba(205, 182, 140, 0.7); }
 .mg-slotback img { width: 100%; height: 100%; object-fit: cover; display: block; }
-@keyframes mgPop { from { transform: translateY(-28px) scale(0.55); opacity: 0; } to { transform: none; opacity: 1; } }
 
 .mg-btn { display: inline-block; padding: 11px 22px; border-radius: 999px; background: rgba(239, 231, 214, 0.08); border: 1px solid rgba(205, 182, 140, 0.5); color: #e9d9b0; font-size: 14.5px; letter-spacing: 0.05em; text-decoration: none; cursor: pointer; font-family: inherit; }
 .mg-btn:hover { background: rgba(205, 182, 140, 0.18); }

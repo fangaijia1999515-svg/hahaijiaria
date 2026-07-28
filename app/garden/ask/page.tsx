@@ -122,7 +122,7 @@ export default function GardenAsk() {
       {phase === "draw" && (
         <>
           <h1 className="mg-h1">心里默念它</h1>
-          <p className="mg-sub">左右滑动牌扇,凭直觉抽出 {need} 张</p>
+          <p className="mg-sub">整面牌墙,一起滑动。凭直觉点出 {need} 张</p>
           <p className="mg-qfocus">{question ? `「${question}」` : "「今天想对我说什么?」"}</p>
           <DrawBoard need={need} onPicked={onPicked} />
         </>
