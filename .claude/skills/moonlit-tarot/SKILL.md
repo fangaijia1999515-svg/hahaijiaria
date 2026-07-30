@@ -55,19 +55,32 @@ description: Moonlit Garden 塔罗产品的完整交接与工作规程 — 78 �
 4. browse CLI(`~/.claude/skills/gstack/browse/dist/browse`)1512×982 截图,**逐张用眼睛看**,不许"编译过了就算过"。我这轮 22 张里第一版有 10 张构图不成立(魔术师元素太散/女皇的花像泡泡/力量像鸭子/节制像鱼钩…),全部是截图肉眼发现的,tsc 和 hook 都不会报这种错。
 5. 汇报:结论先行 + 完整链接 + 让她"逐张挑毛病" + 结尾状态行。
 
-## 6. 当前状态(2026-07-19 夜)
+## 6. 当前状态(2026-07-30 记录,她送修电脑前的完整快照)
 
-- ✅ 78/78 张全部完成并逐张目检过:22 大牌场景 + 40 数字牌 + 16 宫廷牌,全在 `/lab/tarot` 一页。
-- ✅ 她的三条修改意见已全套执行(字小放低/去枝条/线加粗)。
-- ⏳ **等她对 78 张逐张挑毛病** — 她的反馈就是下一轮工作清单。
-- 牌背 = 她选定的封面图 `public/image/cards/moonlit-cover.png`(md 版 moonlit-cover-md.jpg 用于首页 work 卡)。
+**牌(全部完成,她已多轮审过):**
+- ✅ 78/78 张:22 大牌场景 + 40 数字牌(含义构图+花色家园氛围)+ 16 宫廷牌(张张独立小戏),唯一渲染源 `components/tarot/deck.tsx`,审稿页 `/lab/tarot`。
+- 她历轮意见全部执行:字小放低/去角枝/线加粗/数字牌要有含义/小牌要有氛围/宫廷不许换皮/节制去杯化(两弯月垂水)/圣杯十匀距/宝剑=真羽毛。
 
-## 7. 下一步队列(按顺序)
+**App(Moonlit Garden 网页版 v1,五屏全部上线):**
+- 路由:`/garden`(今日) `/garden/ask`(问事) `/garden/journal`(手记) `/garden/deck`(牌库),线上 hahaijia.com/garden 全部 200,noindex。
+- 文件:`app/garden/*`(页面+garden.css)、`components/tarot/{deck,card-flip,draw-board,garden-nav}.tsx`、`lib/tarot/{types,meanings,draw,journal,prompt}.ts`、`app/api/garden/reading/route.ts`。
+- **仪式定稿(她四轮实测打磨)**:深夜庭园背景(.mg-sky 墨绿夜空+月晕+星点,绝不能和奶油牌背糊住)→ 牌堆 → **整面牌墙**(78 张 4 排砖缝错位,同一滚动层整片左右滑,GSAP 波浪进场)→ 点中的牌 **GSAP 真实轨迹翻着跟头飞进下方虚线槽**(扣面)→ **她自己一张一张点开**(绝不自动翻)→ 全开后解读浮现。问事流:问题写完居中陪伴(mg-qfocus)。被否决的方案别回头:五张扇形、单排手持扇、3D 环形(能点到背面)。
+- 文案 law:牌名=常识叫法 `displayName()`(权杖八/愚人/圣杯国王);只说**正位/逆位**(光面/影面被否);主题词是牌名下的小副标题;解读正文同一个词不许重复。
+- 解读管线:`/api/garden/reading` POST {spread,question?,cards} → 有 ANTHROPIC_API_KEY 走 claude-sonnet-5(四段结构+意象纪律+禁令,system prompt 在 lib/tarot/prompt.ts)→ 无钥匙走 fallbackReading 说人话模板;危机词直接返回转介文案(source:"safety")。**钥匙还没配**(.env.local 无此项)——她拿到后:本地加 `ANTHROPIC_API_KEY=...` 一行 + `npx vercel env add ANTHROPIC_API_KEY production`,再空提交触发构建。
+- 数据:localStorage `mg.today.v1`(当日一张,当天不重抽)/ `mg.journal.v1`(手记)。测试期"重新洗一次"按钮在今日屏,正式发布前删。
+- 牌背图:必须用 `/image/cards/moonlit-cover-md.jpg`(master png 被 .vercelignore 排除,线上 404,她见过碎图)。
+- 参照资料:她给的占卜流程录屏关键帧在本目录 `reference/grid-{a,b,c}.jpg`(写问题→环形默念→点封印→翻牌→分块解读);她的卡片交互参照(阵型变换/全屏卡剧场)帧在 scratchpad(vid2/,会丢)——精神已落地为牌墙+飞行。
 
-1. **她的 78 张审阅意见** → 参数级修改。
-2. **导出管线**:SVG → 高清 PNG(建议:puppeteer/browse 对每张卡截 2×,或写个小脚本把每个 `<svg>` serialize 后用 resvg/sharp 转 1200×1800)。导出物放 `public/image/cards/deck/`。
-3. **产品本体**(抽卡 + AI 解读 App):任务 #20 还挂着 brainstorm(逐轮提问→方案→设计文档→她审→writing-plans→再写码)。**不要跳过她的审批直接写 app 代码。**解读文案的语气锚定 §0 那句话。
-4. 首页 work 区的 Moonlit Garden 卡片后续接到真实 case study / demo。
+**部署管线(不变):**改码 → `git add … && git commit` → `timeout 90 git push origin 'ship:refs/heads/main'` → Vercel 云构建 ~60s → 域名自动跟随(apex+www 都在 aijia-portfolio 项目名下,2026-07-20 已根治摇摆)。
+
+## 7. 下一步队列(她修完电脑回来,从这里继续)
+
+1. **等她验收牌墙抽牌手感**(2026-07-28 上线后她还没给反馈)+ 可能的下一轮交互打磨:她 demo 里"同一批卡在阵型间变阵"的大编排(叠→墙的炸开变阵)、抽牌页背景光晕随牌呼吸。
+2. **API 钥匙**(console.anthropic.com → API Keys;配法见 §6)→ 真 AI 解读上线。
+3. **导出管线**:SVG → 高清 PNG(78 张,browse/resvg 均可),放 `public/image/cards/deck/`。
+4. **常驻形态**:Chrome 新标签页插件(她自用"抬眼可见")→ Mac 菜单栏 → iOS WidgetKit。
+5. **作品集 case study 页**:讲过程、放牌、链到 /garden;首页 work 区 Moonlit Garden 卡接过去。
+6. 正式发布前:删"重新洗一次"、考虑放开 noindex。
 
 ## 8. 老坑清单(踩过的,别再踩)
 

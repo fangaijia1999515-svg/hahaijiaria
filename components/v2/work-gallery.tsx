@@ -47,7 +47,7 @@ type GalleryEntry = {
 const GALLERY: GalleryEntry[] = [
   {
     name: "Nuzzle",
-    line: "A cat care companion that matches adopters with the right cat, then supports the fragile first month.",
+    line: "A shelter-integrated companion for the hard first 30 days after adoption, when half of all returns happen.",
     tags: ["Product Design", "UX/UI Design", "Service Design"],
     img: "/image/Nuzzle/hero2.webp",
     alt: "Nuzzle adoption service ecosystem",

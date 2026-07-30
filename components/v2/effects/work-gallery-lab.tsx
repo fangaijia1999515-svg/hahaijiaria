@@ -47,7 +47,7 @@ const ENTRIES: Entry[] = [
   },
   {
     name: "Nuzzle",
-    line: "A cat care companion that matches adopters with the right cat, then supports the fragile first month.",
+    line: "A shelter-integrated companion for the hard first 30 days after adoption, when half of all returns happen.",
     stat: "50%", cap: "Of adopted cats are returned within 30 days",
     img: "/image/Nuzzle/hero2.webp", kind: "img",
   },
