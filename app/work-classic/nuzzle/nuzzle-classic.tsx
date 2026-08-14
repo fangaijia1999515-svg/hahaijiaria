@@ -321,7 +321,7 @@ export default function NuzzleClassicPage({ stage = "light" }: { stage?: Classic
                   <div className="lg:col-span-4">
                     <NarrativeBlock
                       title="The Challenge"
-                      content="Nearly 50% of adopted cats are returned within the first 30 days. Through my research, I discovered this isn't due to 'bad cats,' but a systemic failure driven by an 'Expectation Gap.' New owners are often unprepared for the reality of animal adaptation, causing emotional distress that spirals into regret."
+                      content="Half of all cat returns to shelters happen within the first 30 days of adoption. Through my research, I discovered this isn't due to 'bad cats,' but a systemic failure driven by an 'Expectation Gap.' New owners are often unprepared for the reality of animal adaptation, causing emotional distress that spirals into regret."
                       accentColor={accentColor}
                     />
                   </div>
@@ -377,7 +377,7 @@ export default function NuzzleClassicPage({ stage = "light" }: { stage?: Classic
                       $32M
                     </div>
                     <div className="classic-label text-sm uppercase tracking-[0.15em] text-[var(--cl-text-muted)]">Annual Re-intake Burden</div>
-                    <div className="text-sm text-[var(--cl-text-muted)] mt-1">Per year (~127,000 cats returned)</div>
+                    <div className="text-sm text-[var(--cl-text-muted)] mt-1">Per year (~127,000 returned in the first 30 days)</div>
                   </div>
                 </motion.div>
 
