@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react"
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { Navigation } from "@/components/navigation"
-import { CaseStudyHeader } from "@/components/case-study/case-study-header"
 import { ContextSidebar } from "@/components/case-study/context-sidebar"
 import { ImpactDashboard } from "@/components/case-study/impact-dashboard"
 import { NarrativeBlock } from "@/components/case-study/narrative-block"
@@ -243,13 +242,51 @@ export default function NuzzleClassicPage({ stage = "light" }: { stage?: Classic
       <main style={{ opacity: 1, visibility: 'visible' }}>
         <Navigation />
 
-        {/* Global Header: Title + One-Liner */}
+        {/* Global Header: Title + One-Liner (left) + Award (right) — EdT's
+            grammar. IDEA 2026 Finalist verified against the IDSA certificate. */}
         <div id="overview" className="scroll-mt-32">
-          <CaseStudyHeader
-            title="Nuzzle"
-            oneLiner="From Breakdown to Bond｜Bridging the critical 'Expectation Gap' for new cat adopters through a shelter-integrated companion service."
-            accentColor={accentColor}
-          />
+          <header className="pt-32 pb-2 px-6 md:px-12 lg:px-24">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-end">
+              <div className="lg:col-span-8">
+                <motion.h1
+                  initial={{ opacity: 1, y: 0 }}
+                  className="classic-display text-5xl md:text-6xl lg:text-7xl tracking-tight leading-[0.95] mb-3 text-[var(--cl-ink)]"
+                >
+                  Nuzzle
+                </motion.h1>
+                <motion.p
+                  initial={{ opacity: 1, y: 0 }}
+                  className="text-base md:text-lg lg:text-xl leading-tight max-w-3xl text-[var(--cl-text-muted)]"
+                >
+                  From Breakdown to Bond｜Bridging the critical 'Expectation Gap' for new cat adopters through a shelter-integrated companion service.
+                </motion.p>
+              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15, duration: 0.5 }}
+                className="lg:col-span-4 flex flex-col items-start lg:items-end gap-3"
+              >
+                {/* official IDEA Finalist mark (mono black, per IDSA guidelines)
+                    above the text lines — the award slot, EdT's grammar */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/image/awards/idea26-finalist.svg"
+                  alt="IDEA 2026 Finalist mark, International Design Excellence Awards"
+                  className="h-16 w-auto"
+                />
+                <p
+                  className="font-mono text-[10px] uppercase tracking-[0.25em]"
+                  style={{ color: accentColor }}
+                >
+                  2026 International Design Excellence Awards
+                </p>
+                <p className="font-mono text-[10px] uppercase tracking-[0.25em] text-[var(--cl-text-muted)]">
+                  IDEA Finalist · Student
+                </p>
+              </motion.div>
+            </div>
+          </header>
         </div>
 
         {/* Hero Image */}
@@ -321,7 +358,7 @@ export default function NuzzleClassicPage({ stage = "light" }: { stage?: Classic
                   <div className="lg:col-span-4">
                     <NarrativeBlock
                       title="The Challenge"
-                      content="Nearly 50% of adopted cats are returned within the first 30 days. Through my research, I discovered this isn't due to 'bad cats,' but a systemic failure driven by an 'Expectation Gap.' New owners are often unprepared for the reality of animal adaptation, causing emotional distress that spirals into regret."
+                      content="Half of all cat returns to shelters happen within the first 30 days of adoption. Through my research, I discovered this isn't due to 'bad cats,' but a systemic failure driven by an 'Expectation Gap.' New owners are often unprepared for the reality of animal adaptation, causing emotional distress that spirals into regret."
                       accentColor={accentColor}
                     />
                   </div>
@@ -377,7 +414,7 @@ export default function NuzzleClassicPage({ stage = "light" }: { stage?: Classic
                       $32M
                     </div>
                     <div className="classic-label text-sm uppercase tracking-[0.15em] text-[var(--cl-text-muted)]">Annual Re-intake Burden</div>
-                    <div className="text-sm text-[var(--cl-text-muted)] mt-1">Per year (~127,000 cats returned)</div>
+                    <div className="text-sm text-[var(--cl-text-muted)] mt-1">Per year (~127,000 returned in the first 30 days)</div>
                   </div>
                 </motion.div>
 

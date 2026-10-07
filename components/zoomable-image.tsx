@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, type ReactNode } from "react"
+import { createPortal } from "react-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Maximize2 } from "lucide-react"
 
@@ -51,7 +52,16 @@ export function ImageLightbox({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen])
 
-  return (
+  // Portal to <body>: any transformed/filtered ancestor (framer-motion leaves
+  // transforms behind, the glass layers use backdrop-filter) becomes the
+  // containing block for position:fixed and TRAPS the lightbox inside the
+  // card it was opened from (her bug report, 2026-08-21). Rendering at the
+  // body level escapes every containing block.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  if (!mounted) return null
+
+  return createPortal(
     <AnimatePresence>
       {isOpen && src && (
         <motion.div
@@ -93,7 +103,8 @@ export function ImageLightbox({
           </div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   )
 }
 

@@ -1,5 +1,14 @@
-@import "tailwindcss";
+/* source() pins Tailwind's class scanner to THIS repo (2026-08-20): with no
+   .git dir the auto-detected base escaped to the filesystem root, and the
+   postcss worker walked the whole disk — every compile hung forever. */
+@import "tailwindcss" source("../");
 @import "tw-animate-css";
+@source not "../public";
+@source not "../ffmpeg";
+@source not "../reference-analysis";
+@source not "../_prototypes";
+@source not "../docs";
+@source not "../node_modules";
 
 
 @custom-variant dark (&:is(.dark *));

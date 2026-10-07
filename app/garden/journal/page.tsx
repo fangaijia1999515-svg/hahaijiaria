@@ -1,10 +1,23 @@
 "use client"
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { cardById, CardArt, displayName } from "@/components/tarot/deck"
+import { cardById, CardArt } from "@/components/tarot/deck"
 import { SPREADS } from "@/lib/tarot/meanings"
 import { listEntries, updateNote, removeEntry } from "@/lib/tarot/journal"
 import type { JournalEntry } from "@/lib/tarot/types"
+
+const SPREAD_EN: Record<string, string> = {
+  daily: "Daily card",
+  single: "One card",
+  "triad-ppf": "Past · Present · Future",
+  "triad-sab": "Situation · Obstacle · Advice",
+}
+
+const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+function fmtDate(dateStr: string) {
+  const [, m, d] = dateStr.split("-").map(Number)
+  return m && d ? `${MON[m - 1]} ${d}` : dateStr
+}
 
 function fmtTime(ts: number) {
   const d = new Date(ts)
@@ -20,21 +33,21 @@ export default function GardenJournal() {
   }, [])
 
   const del = (id: string) => {
-    if (!window.confirm("删除这一条手记?")) return
+    if (!window.confirm("Delete this entry?")) return
     removeEntry(id)
     setEntries(listEntries())
   }
 
   return (
     <main className="mg-main">
-      <h1 className="mg-h1">手记</h1>
-      <p className="mg-sub">月光替你记住的每一次抽牌,可以补写两句当时的感受</p>
+      <h1 className="mg-h1">Journal</h1>
+      <p className="mg-sub">Every draw, kept in moonlight. Add a line about how it felt.</p>
 
       {entries && entries.length === 0 && (
         <div className="mg-center">
-          <p className="mg-reading" style={{ textAlign: "center" }}>还没有手记。抽一张牌,月光会替你记住今天。</p>
+          <p className="mg-reading" style={{ textAlign: "center" }}>Nothing here yet. Today’s first card is waiting on Home.</p>
           <Link className="mg-btn" href="/garden">
-            去抽一张
+            Draw today’s card
           </Link>
         </div>
       )}
@@ -43,9 +56,9 @@ export default function GardenJournal() {
         {(entries ?? []).map((e) => (
           <article key={e.id} className="mg-entry">
             <header className="mg-entryhead">
-              <span className="mg-entrydate">{e.dateStr} · {fmtTime(e.ts)}</span>
-              <span className="mg-entryspread">{SPREADS[e.spread]?.zh ?? e.spread}</span>
-              <button type="button" className="mg-entrydel" aria-label="删除" onClick={() => del(e.id)}>
+              <span className="mg-entrydate">{fmtDate(e.dateStr)} · {fmtTime(e.ts)}</span>
+              <span className="mg-entryspread">{SPREAD_EN[e.spread] ?? SPREADS[e.spread]?.zh ?? e.spread}</span>
+              <button type="button" className="mg-entrydel" aria-label="Delete" onClick={() => del(e.id)}>
                 ×
               </button>
             </header>
@@ -58,25 +71,25 @@ export default function GardenJournal() {
                       <CardArt card={card} uid={`j-${e.id}-${i}`} />
                     </div>
                     <figcaption>
-                      {displayName(card)}
-                      <i>{c.reversed ? "逆位" : "正位"}</i>
+                      {card.name}
+                      <i>{c.reversed ? "reversed" : "upright"}</i>
                     </figcaption>
                   </figure>
                 )
               })}
             </div>
-            {e.question && <p className="mg-qecho" style={{ textAlign: "left" }}>「{e.question}」</p>}
+            {e.question && <p className="mg-qecho" style={{ textAlign: "left" }}>“{e.question}”</p>}
             <p
               className={`mg-entrytext${open === e.id ? " is-open" : ""}`}
               onClick={() => setOpen(open === e.id ? null : e.id)}
-              title={open === e.id ? "收起" : "展开全文"}
+              title={open === e.id ? "Show less" : "Show more"}
             >
               {e.reading}
             </p>
             <textarea
               className="mg-note"
               defaultValue={e.note ?? ""}
-              placeholder="写两句此刻的感受…"
+              placeholder="A line or two about how it felt"
               rows={1}
               onBlur={(ev) => {
                 updateNote(e.id, ev.target.value)

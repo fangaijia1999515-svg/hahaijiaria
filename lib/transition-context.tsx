@@ -244,6 +244,9 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
     const onClick = (e: MouseEvent) => {
       if (e.defaultPrevented || e.button !== 0) return
       if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+      /* 路由白名单:/garden(Moonlit Garden app)不走网站沙帘转场 ——
+         app 有自己的入夜/破晓转场,沙帘会打断它;进出 garden 一律原生路由 */
+      if (window.location.pathname.startsWith("/garden")) return
       const a = (e.target as Element | null)?.closest?.("a")
       if (!a) return
       if (a.target && a.target !== "_self") return
@@ -252,6 +255,8 @@ export function TransitionProvider({ children }: { children: React.ReactNode }) 
       if (!href || href.startsWith("mailto:") || href.startsWith("tel:")) return
       const url = new URL(a.href, window.location.href)
       if (url.origin !== window.location.origin) return
+      /* 白名单另一半:目标是 /garden 也不走沙帘(原生路由进 app) */
+      if (url.pathname.startsWith("/garden")) return
       const anchor = url.hash ? url.hash.slice(1) : undefined
       if (url.pathname === window.location.pathname) {
         if (anchor) {

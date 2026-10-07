@@ -3,7 +3,7 @@ import type { DrawnCard, JournalEntry } from "./types"
 const TODAY_KEY = "mg.today.v1"
 const JOURNAL_KEY = "mg.journal.v1"
 
-type TodayRecord = DrawnCard & { dateStr: string; reading?: string; source?: string }
+type TodayRecord = DrawnCard & { dateStr: string; reading?: string; source?: string; question?: string }
 
 function safeGet<T>(key: string): T | null {
   if (typeof window === "undefined") return null

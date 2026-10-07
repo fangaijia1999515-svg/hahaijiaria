@@ -1,0 +1,254 @@
+/* 花锚点第一期 · 开屏(/garden/welcome = mgw-)与晨纸首页(/garden = mgh-)。
+   只用普通 class 规则(repo 管线会吃 @layer/伪元素/backdrop-filter);
+   纸纹一律走 <PaperGrain> 真元素;必须渲染的 mask 等特殊样式走内联。
+   色值全部来自花锚点活体系统页实测 token。 */
+
+/* ================= 开屏 mgw ================= */
+.mgw-page { position: relative; z-index: 1; min-height: 100svh; }
+.mgw-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden;
+  background: linear-gradient(180deg, #F1BCBA 0%, #ECC6CA 30%, #D1C4DB 58%, #ABBED7 100%); }
+.mgw-petal { position: absolute; border-radius: 74% 26% 60% 40% / 64% 56% 44% 36%; background: #E8C0C6; pointer-events: none; }
+.mgw-dot { position: absolute; border-radius: 999px; background: #FCF4DC; box-shadow: 0 0 7px 2px rgba(252, 244, 220, 0.5); pointer-events: none; }
+.mgw-art { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: min(186vw, 1060px); z-index: 0; pointer-events: none; display: block; user-select: none; }
+/* 按钮落位(她 2026-09 返工拍板):上方粉天空空白区,花整朵完整不被挡 */
+.mgw-content { position: relative; z-index: 2; min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; padding: 24svh 24px 24px; }
+/* 细框文字钮(组件图版"次按钮"几何:1px 细描边 + 方圆角 + 透明底,天空从框后透出) */
+.mgw-ghost { display: block; text-align: center; text-decoration: none;
+  font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 500; letter-spacing: 0.12em; color: #1A3F36;
+  background: transparent; border: 1px solid rgba(26, 63, 54, 0.5); border-radius: 12px; padding: 12px 34px 13px; }
+.mgw-tag { margin: 20px 0 0; display: flex; align-items: center; justify-content: center; gap: 12px;
+  font-family: 'Noto Serif SC', 'Songti SC', serif; font-size: 13px; letter-spacing: 0.3em; text-indent: 0.3em; color: rgba(26, 63, 54, 0.72); }
+.mgw-tag i { width: 5px; height: 5px; border-radius: 999px; background: #E8C0C6; opacity: 0.85; }
+/* EN tagline:衬线斜体,字距回收(0.3em 是为汉字设计的) */
+.mgw-tag--en { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 15.5px; letter-spacing: 0.05em; text-indent: 0.05em; }
+
+/* ================= 晨纸首页 mgh ================= */
+.mgh-page { position: relative; z-index: 1; min-height: 100svh; font-family: 'Noto Serif SC', 'Songti SC', serif; color: #35403E; }
+.mgh-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; background: linear-gradient(180deg, #FDF7EF 0%, #FDF9F4 100%); }
+.mgh-bg svg { display: block; }
+.mgh-petalfall { position: absolute; border-radius: 74% 26% 60% 40% / 64% 56% 44% 36%; background: #E8C0C6; pointer-events: none; }
+.mgh-wrap { position: relative; z-index: 1; max-width: 460px; margin: 0 auto; padding: 26px 20px 16px; }
+
+.mgh-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+.mgh-hello { margin: 0; font-weight: 500; font-size: 17.5px; letter-spacing: 0.1em; color: #1A3F36; }
+.mgh-avatar { flex: none; width: 44px; height: 44px; border-radius: 999px; background: #2C574F; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(26, 63, 54, 0.18); }
+
+.mgh-fcard { position: relative; overflow: hidden; margin-top: 26px; border-radius: 26px; background: #FEFAF4; border: 1px solid #F0E8DB;
+  box-shadow: 0 14px 36px rgba(26, 63, 54, 0.08); padding: 30px 22px 116px; text-align: center; }
+.mgh-fbody { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.mgh-ftitle { display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 600; font-size: 21px; letter-spacing: 0.22em; text-indent: 0.22em; color: #1A3F36; }
+.mgh-fline { margin: -2px 0 0; font-size: 14px; letter-spacing: 0.08em; color: #35403E; }
+.mgh-hint { margin: 2px 0 0; font-size: 13px; letter-spacing: 0.22em; text-indent: 0.22em; color: #6E7A72; }
+
+@keyframes mghBreathe {
+  0%, 100% { box-shadow: 0 16px 32px rgba(26, 63, 54, 0.2), 0 0 0 rgba(240, 220, 164, 0); transform: scale(1); }
+  50% { box-shadow: 0 16px 32px rgba(26, 63, 54, 0.2), 0 0 30px rgba(240, 220, 164, 0.55); transform: scale(1.012); }
+}
+.mgh-flipwrap { margin-top: 6px; }
+.mgh-flipwrap .mg-face { box-shadow: 0 16px 32px rgba(26, 63, 54, 0.2); }
+.mgh-back { border: 0; padding: 0; cursor: pointer; background: #2C574F; animation: mghBreathe 4.2s ease-in-out infinite; }
+.mgh-back img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mg-flip.is-flipped .mgh-back { animation: none; }
+
+/* 问题输入(组件图版"表单/输入框"几何:细描边 + 方圆角 + 纸面底) */
+.mgh-ask { position: relative; overflow: hidden; width: 100%; max-width: 320px; margin-top: 4px;
+  background: #FBF5EB; border: 1px solid #E7DFD2; border-radius: 16px; }
+.mgh-input { position: relative; z-index: 2; display: block; width: 100%; border: 0; background: transparent; outline: none;
+  padding: 12px 16px 13px; text-align: center; font-family: 'Noto Serif SC', 'Songti SC', serif;
+  font-size: 13px; letter-spacing: 0.05em; color: #35403E; }
+.mgh-input::placeholder { color: #A8A79B; }
+.mgh-qecho { margin: -4px 0 0; font-size: 13px; letter-spacing: 0.08em; color: #6E7A72; }
+
+/* 牌河:破卡出血到全屏宽,横向漂移 + 拖拽;纵向仍交给页面滚动 */
+.mgh-river { position: relative; width: 100vw; margin: 10px 0 0 calc(50% - 50vw); overflow: hidden;
+  padding: 20px 0 14px; touch-action: pan-y; cursor: grab; }
+.mgh-river:active { cursor: grabbing; }
+.mgh-rtrack { display: flex; gap: 16px; width: max-content; padding: 0 8px; will-change: transform; }
+.mgh-rcard { position: relative; overflow: hidden; flex: none; width: 104px; height: 156px; border-radius: 10px;
+  border: 0; padding: 0; cursor: pointer; background: #2C574F; box-shadow: 0 10px 22px rgba(26, 63, 54, 0.2); }
+.mgh-rcard img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mgh-riverhint { margin: 10px 0 0; text-align: center; font-size: 12.5px; letter-spacing: 0.2em; text-indent: 0.2em; color: #6E7A72; }
+
+.mgh-cardname { font-weight: 500; font-size: 20px; color: #1A3F36; letter-spacing: 0.04em; }
+.mgh-facetag { display: inline-block; margin-left: 8px; font-size: 11.5px; letter-spacing: 0.14em; color: #B79E6F; font-family: var(--font-ds-plex-mono), ui-monospace; vertical-align: 2px; }
+.mgh-keyword { margin-top: 4px; font-size: 12.5px; letter-spacing: 0.16em; color: #6E7A72; }
+
+.mgh-rtitle { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 8px; font-weight: 600; font-size: 15px; letter-spacing: 0.18em; text-indent: 0.18em; color: #1A3F36; }
+.mgh-rtitle i { width: 7px; height: 9px; border-radius: 74% 26% 60% 40% / 64% 56% 44% 36%; background: #E8C0C6; }
+.mgh-reading { margin: 0; max-width: 34em; font-size: 14px; line-height: 2.05; color: #35403E; white-space: pre-wrap; text-align: left; }
+.mgh-dots { display: inline-flex; gap: 7px; padding: 8px 0; }
+.mgh-dots i { width: 7px; height: 7px; border-radius: 50%; background: #B79E6F; animation: mgDot 1.2s ease-in-out infinite; }
+.mgh-dots i:nth-child(2) { animation-delay: 0.18s; }
+.mgh-dots i:nth-child(3) { animation-delay: 0.36s; }
+.mgh-reset { border: 0; background: none; padding: 4px 10px; font-size: 12px; letter-spacing: 0.08em; color: #B79E6F; opacity: 0.75; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-family: inherit; }
+.mgh-reset:hover { opacity: 1; }
+.mgh-fmtn { position: absolute; left: 0; right: 0; bottom: -1px; height: 100px; pointer-events: none; z-index: 1; }
+.mgh-fmtn svg { display: block; width: 100%; height: 100%; }
+.mgh-fflower { position: absolute; top: 18px; right: 16px; z-index: 1; pointer-events: none; }
+
+/* 晨纸底栏(只在 /garden 首页出现) */
+.mgh-nav { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(14px + env(safe-area-inset-bottom, 0px)); z-index: 50;
+  width: min(92vw, 430px); background: #FDFBF9; border: 1px solid #EFE7DB; border-radius: 22px;
+  box-shadow: 0 8px 24px rgba(26, 63, 54, 0.1); display: flex; justify-content: space-around; padding: 12px 10px 9px; }
+.mgh-nav a { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 64px; text-decoration: none;
+  font-family: 'PingFang SC', 'Hiragino Sans GB', sans-serif; font-size: 11.5px; color: #A8A79B; }
+.mgh-nav a.is-on { color: #1A3F36; }
+.mgh-navdot { width: 5px; height: 5px; border-radius: 999px; background: #E5C56A; }
+.mgh-navdot--off { width: 5px; height: 5px; border-radius: 999px; background: transparent; }
+
+@media (max-width: 400px) {
+  .mgh-flipwrap { transform-origin: top center; }
+  .mgh-fcard { padding-left: 16px; padding-right: 16px; }
+}
+
+/* ================= 三屏 hi-fi 落地(2026-09-03 app-phase2) =================
+   屏1 晨纸问题页 mgp- / 屏2 夜幕抽牌空间 mgn- / 屏3 揭晓 mgr-。
+   规则全部普通 class;发光、薄纱、纸纹一律真元素;backdrop-filter 内联。
+   色值与几何照抄 hi-fi(scratchpad/hifi-3screens.html)。 */
+
+/* ---------- 屏1 · 晨纸 ---------- */
+.mgp-page { position: relative; z-index: 1; min-height: 100svh; font-family: 'Noto Serif SC', 'Songti SC', serif; color: #35403E; }
+.mgp-bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; background:
+  radial-gradient(60% 42% at 24% 16%, rgba(231, 196, 182, 0.14) 0%, rgba(231, 196, 182, 0) 70%),
+  radial-gradient(52% 38% at 80% 30%, rgba(244, 232, 214, 0.5) 0%, rgba(244, 232, 214, 0) 72%),
+  radial-gradient(46% 30% at 68% 74%, rgba(223, 156, 152, 0.07) 0%, rgba(223, 156, 152, 0) 70%),
+  radial-gradient(40% 26% at 18% 60%, rgba(214, 208, 189, 0.16) 0%, rgba(214, 208, 189, 0) 72%),
+  linear-gradient(180deg, #FDF7EF 0%, #FDF9F4 52%, #FBF3E9 100%); }
+.mgp-ground { position: fixed; left: 0; right: 0; bottom: 0; height: 340px; z-index: 0; pointer-events: none; }
+.mgp-ground svg { display: block; width: 100%; height: 100%; }
+.mgp-petal { position: absolute; z-index: 1; pointer-events: none; }
+.mgp-col { position: relative; z-index: 2; max-width: 430px; margin: 0 auto; height: 100svh; min-height: 620px; }
+.mgp-date { position: absolute; top: 92px; left: 0; right: 0; text-align: center; font-size: 11.5px;
+  letter-spacing: 0.18em; text-indent: 0.18em; color: #6E7A72; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; }
+.mgp-hero { position: absolute; top: 204px; left: 44px; right: 44px; }
+.mgp-hero-q { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 33px; font-weight: 500; line-height: 1.22; letter-spacing: 0.01em; color: #1A3F36; }
+.mgp-hero-greet { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 16px; color: #6E7A72; margin-top: 14px; letter-spacing: 0.04em; }
+.mgp-ask { position: absolute; top: 440px; left: 44px; right: 44px; }
+.mgp-input { display: block; width: 100%; border: 0; background: transparent; outline: none; text-align: center;
+  font-family: 'Noto Serif SC', 'Songti SC', serif; font-size: 15.5px; letter-spacing: 0.02em; color: #35403E; padding: 0 0 2px; }
+.mgp-input::placeholder { color: #9AA69E; }
+/* 输入线定案(她 2026-09-03):静止 = 暖墨细线(墨青 40%,安静属于纸);focus 才泛金光(金 = 光) */
+.mgp-goldline { position: relative; height: 2px; margin-top: 16px; border-radius: 2px;
+  background: linear-gradient(90deg, rgba(26, 63, 54, 0) 0%, rgba(26, 63, 54, 0.4) 14%, rgba(26, 63, 54, 0.4) 86%, rgba(26, 63, 54, 0) 100%) bottom / 100% 1px no-repeat; }
+.mgp-ask:focus-within .mgp-goldline {
+  background: linear-gradient(90deg, rgba(214, 184, 118, 0) 0%, rgba(214, 184, 118, 0.9) 16%, #E8CE92 50%, rgba(214, 184, 118, 0.9) 84%, rgba(214, 184, 118, 0) 100%); }
+.mgp-goldglow { position: absolute; left: 12%; right: 12%; top: -3px; height: 8px; border-radius: 8px; pointer-events: none; opacity: 0; transition: opacity 0.35s ease;
+  background: linear-gradient(90deg, rgba(240, 220, 164, 0), rgba(240, 220, 164, 0.34), rgba(240, 220, 164, 0)); filter: blur(3px); }
+.mgp-ask:focus-within .mgp-goldglow { opacity: 1; }
+.mgp-beads { position: absolute; top: 556px; left: 0; right: 0; display: flex; gap: 13px; justify-content: center; }
+.mgp-bead { position: relative; overflow: hidden; border-radius: 999px; padding: 13px 22px; font-size: 14px;
+  letter-spacing: 0.04em; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 15px; white-space: nowrap; cursor: pointer; }
+.mgp-bead--fill { border: 0; background: linear-gradient(165deg, #155045 0%, #0B4139 78%); color: #F2EDE0;
+  box-shadow: 0 12px 26px -8px rgba(11, 65, 57, 0.21), 0 2px 6px rgba(11, 65, 57, 0.09); }
+.mgp-bead--ghost { color: #1A3F36; border: 1.5px solid rgba(26, 63, 54, 0.45); background: rgba(253, 249, 244, 0.5);
+  box-shadow: 0 8px 20px -10px rgba(26, 63, 54, 0.18); }
+.mgp-dock { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(30px + env(safe-area-inset-bottom, 0px)); z-index: 40;
+  white-space: nowrap; display: flex; gap: 26px; padding: 12px 26px; border-radius: 999px;
+  background: rgba(253, 249, 244, 0.66); border: 1px solid rgba(26, 63, 54, 0.1);
+  box-shadow: 0 10px 26px -12px rgba(26, 63, 54, 0.22); }
+.mgp-dock a, .mgp-dock span { font-size: 12.5px; letter-spacing: 0.08em; color: rgba(110, 122, 114, 0.62);
+  white-space: nowrap; text-decoration: none; font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 14px; }
+.mgp-dock .is-on { color: #1A3F36; font-weight: 600; }
+
+/* 屏1 · 已抽态 + 危机态 + 解读面板(已抽态走文档流:解读长文要能滚动) */
+.mgp-col--flow { height: auto; min-height: 100svh; }
+.mgp-today { padding: 210px 44px calc(120px + env(safe-area-inset-bottom, 0px)); display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.mgp-today-card { width: 150px; border-radius: 10px; overflow: hidden; box-shadow: 0 16px 32px rgba(26, 63, 54, 0.2); }
+.mgp-today-sub { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 16px; color: #6E7A72; }
+.mgp-readlink { border: 0; background: none; padding: 6px 4px; cursor: pointer; font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 500; font-size: 14px; letter-spacing: 0.14em; text-indent: 0.14em; color: #1A3F36; }
+.mgp-readline { width: 52px; height: 1px; margin: 8px auto 0; background: linear-gradient(90deg, rgba(110, 122, 114, 0), rgba(110, 122, 114, 0.55), rgba(110, 122, 114, 0)); }
+.mgp-panel { position: relative; overflow: hidden; width: 100%; border-radius: 20px; background: #FEFAF4; border: 1px solid #F0E8DB;
+  box-shadow: 0 14px 36px rgba(26, 63, 54, 0.08); padding: 22px 20px; text-align: left; }
+.mgp-panel-top { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 12.5px; letter-spacing: 0.2em; text-indent: 0.2em; color: #6E7A72; text-align: center; }
+.mgp-panel-name { margin-top: 10px; text-align: center; font-family: 'Cormorant Garamond', Georgia, serif; font-size: 22px; font-weight: 500; color: #1A3F36; }
+.mgp-panel-face { display: block; margin-top: 4px; text-align: center; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 13.5px; color: #B79E6F; letter-spacing: 0.08em; }
+.mgp-panel-line { margin-top: 6px; text-align: center; font-size: 12.5px; letter-spacing: 0.16em; color: #6E7A72; }
+.mgp-panel-text { margin: 14px 0 0; font-size: 14px; line-height: 2.05; color: #35403E; white-space: pre-wrap; }
+.mgp-safety { position: absolute; top: 204px; left: 44px; right: 44px; }
+.mgp-safety-title { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 26px; font-weight: 500; line-height: 1.3; color: #1A3F36; }
+.mgp-safety-text { margin-top: 16px; font-size: 14px; line-height: 2; color: #35403E; }
+.mgp-safety-back { margin-top: 20px; border: 0; background: none; padding: 4px 0; cursor: pointer;
+  font-family: 'Cormorant Garamond', Georgia, serif; font-size: 14px; letter-spacing: 0.1em; color: #1A3F36; text-decoration: underline; text-underline-offset: 4px; }
+.mgp-reset { border: 0; background: none; padding: 4px 10px; font-size: 12px; letter-spacing: 0.08em; color: #B79E6F; opacity: 0.75; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-family: inherit; }
+.mgp-essence { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 13.5px; letter-spacing: 0.04em; color: #6E7A72; text-align: center; }
+.mgp-panel-close { margin-top: 18px; text-align: center; font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 14.5px; color: #6E7A72; }
+.mgp-backlink { display: block; margin: 12px auto 0; border: 0; background: none; padding: 6px 4px; cursor: pointer; text-align: center;
+  font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 500; font-size: 13.5px; letter-spacing: 0.12em; text-indent: 0.12em; color: #1A3F36; }
+
+/* ---------- 屏2 · 夜幕抽牌空间(全屏沉浸层) ---------- */
+.mgn-veil { position: fixed; inset: 0; z-index: 60; overflow: hidden; transform: translateY(102%);
+  transition: transform 0.5s cubic-bezier(0.3, 0.7, 0.2, 1); color: #EFEAD9; touch-action: none; background:
+  radial-gradient(150% 100% at 50% 118%, rgba(9, 24, 19, 0.62) 0%, rgba(9, 24, 19, 0) 55%),
+  radial-gradient(120% 70% at 50% -12%, rgba(9, 24, 19, 0.5) 0%, rgba(9, 24, 19, 0) 52%),
+  radial-gradient(38% 26% at 22% 24%, rgba(72, 108, 92, 0.12) 0%, rgba(72, 108, 92, 0) 72%),
+  radial-gradient(40% 30% at 78% 62%, rgba(23, 50, 42, 0.3) 0%, rgba(23, 50, 42, 0) 72%),
+  radial-gradient(30% 20% at 64% 8%, rgba(72, 108, 92, 0.09) 0%, rgba(72, 108, 92, 0) 70%),
+  radial-gradient(150% 120% at 50% 50%, #26473D 26%, #1B3B31 68%, #142E26 100%); }
+.mgn-veil.is-up { transform: translateY(0); }
+.mgn-inner { position: absolute; inset: 0; opacity: 0; transition: opacity 0.55s ease 0.3s; }
+.mgn-veil.is-up .mgn-inner { opacity: 1; }
+.mgn-q { position: absolute; top: 112px; left: 36px; right: 36px; text-align: center; z-index: 6; pointer-events: none;
+  font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 19px; font-weight: 500;
+  letter-spacing: 0.01em; line-height: 1.55; color: #EFEAD9;
+  text-shadow: 0 1px 12px rgba(18, 38, 31, 0.85), 0 0 26px rgba(18, 38, 31, 0.65); }
+.mgn-moon { position: absolute; left: 50%; top: 49%; width: 430px; height: 430px; transform: translate(-50%, -50%);
+  z-index: 1; pointer-events: none; border-radius: 999px;
+  background: radial-gradient(closest-side, rgba(252, 244, 220, 0.13) 0%, rgba(252, 244, 220, 0.05) 46%, rgba(252, 244, 220, 0) 72%); }
+.mgn-river { position: absolute; inset: 0; z-index: 2; cursor: grab; }
+.mgn-river:active { cursor: grabbing; }
+.mgn-axis { position: absolute; left: 50%; top: 49%; width: 0; height: 0; transform: rotate(-50deg); }
+.mgn-track { position: absolute; left: 0; top: -127.5px; display: flex; gap: 26px; width: max-content; will-change: transform; }
+.mgn-card { position: relative; overflow: hidden; flex: none; width: 170px; height: 255px; border-radius: 13px;
+  border: 1px solid rgba(239, 234, 217, 0.32); padding: 0; cursor: pointer; background: #12261F;
+  box-shadow: 0 22px 44px -12px rgba(5, 16, 12, 0.6);
+  transition: filter 0.45s ease, transform 0.45s ease, border-color 0.45s ease, box-shadow 0.45s ease; }
+.mgn-card img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
+.mgn-card.is-focus { border-color: rgba(252, 244, 220, 0.6);
+  box-shadow: 0 0 56px rgba(252, 244, 220, 0.26), -20px 0 40px -14px rgba(5, 16, 12, 0.78), 20px 0 40px -14px rgba(5, 16, 12, 0.78), 0 26px 52px -12px rgba(5, 16, 12, 0.62); }
+.mgn-cveil { position: absolute; inset: 0; background: #12261F; pointer-events: none; transition: opacity 0.45s ease; }
+.mgn-hint { position: absolute; bottom: 66px; left: 0; right: 0; text-align: center; z-index: 6; pointer-events: none;
+  font-family: 'Cormorant Garamond', Georgia, serif; font-size: 13px; font-weight: 500; letter-spacing: 0.18em; text-indent: 0.18em; color: #A8A695; }
+.mgn-dot { position: absolute; border-radius: 999px; background: #FCF4DC; z-index: 3; pointer-events: none;
+  box-shadow: 0 0 8px 2px rgba(252, 244, 220, 0.45); }
+
+/* ---------- 屏3 · 揭晓(同层状态) ---------- */
+.mgr-halo { position: absolute; left: 50%; top: 40%; width: 460px; height: 460px; transform: translate(-50%, -50%);
+  z-index: 4; pointer-events: none; opacity: 0; transition: opacity 0.9s ease 0.35s; background:
+  radial-gradient(closest-side, rgba(246, 231, 187, 0.26) 0%, rgba(240, 220, 164, 0.15) 30%, rgba(240, 220, 164, 0.05) 55%, rgba(240, 220, 164, 0) 74%); }
+.mgr-halo.is-on { opacity: 1; }
+.mgr-flywrap { position: fixed; z-index: 65; perspective: 1200px;
+  transition: left 0.85s cubic-bezier(0.2, 0.7, 0.2, 1), top 0.85s cubic-bezier(0.2, 0.7, 0.2, 1),
+    width 0.85s cubic-bezier(0.2, 0.7, 0.2, 1), height 0.85s cubic-bezier(0.2, 0.7, 0.2, 1),
+    transform 0.85s cubic-bezier(0.2, 0.7, 0.2, 1); }
+.mgr-flywrap .mg-face { box-shadow: 0 22px 44px -12px rgba(5, 16, 12, 0.6); }
+.mgr-flywrap.is-lit .mg-face { border: 1px solid rgba(240, 220, 164, 0.5); border-radius: 15px;
+  box-shadow: 0 0 60px 6px rgba(240, 220, 164, 0.26), 0 0 16px rgba(252, 244, 220, 0.24), 0 34px 64px -14px rgba(4, 14, 10, 0.65); }
+.mgr-name { position: absolute; left: 0; right: 0; top: calc(40% + 250px); text-align: center; z-index: 6;
+  opacity: 0; transform: translateY(8px); transition: opacity 0.7s ease 0.5s, transform 0.7s ease 0.5s; }
+.mgr-name.is-on { opacity: 1; transform: translateY(0); }
+.mgr-name-zh { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 29px; font-weight: 500; letter-spacing: 0.04em; color: #EFEAD9; }
+.mgr-name-en { font-family: 'Cormorant Garamond', Georgia, serif; font-style: italic; font-size: 16px; color: #D6D0BD; margin-top: 10px; letter-spacing: 0.06em; }
+.mgr-go { position: absolute; bottom: 58px; left: 0; right: 0; text-align: center; z-index: 6; border: 0; background: none;
+  cursor: pointer; width: 100%; opacity: 0; transition: opacity 0.7s ease 0.85s;
+  font-family: 'Cormorant Garamond', Georgia, serif; font-size: 13px; font-weight: 500; letter-spacing: 0.18em; text-indent: 0.18em; color: #A8A695; }
+.mgr-go.is-on { opacity: 1; }
+.mgr-goline { display: block; width: 52px; height: 1px; margin: 12px auto 0;
+  background: linear-gradient(90deg, rgba(168, 166, 149, 0), rgba(168, 166, 149, 0.55), rgba(168, 166, 149, 0)); }
+/* 破晓修复(2026-09-03 动效组):
+   1) 原来 dawn 层挂载时就带 .is-on,transition 不会从 0 起播 → "晕开"变"闪现";
+      改用 keyframes(对新挂载元素必然生效),合成器上只动 opacity。
+   2) 峰值改为全遮(边缘 ≥0.94):600ms 处夜幕层(156 张卡×纸纹)整体卸载的
+      长帧(实测桌面 31ms,移动端更长)被暖光完全盖住,换景不可见。
+   3) will-change + translateZ 提升为独立合成层,淡入淡出不受主线程长任务拖累。 */
+.mgr-dawn { position: fixed; inset: 0; z-index: 70; pointer-events: none; opacity: 0; transition: opacity 0.6s ease;
+  will-change: opacity; transform: translateZ(0);
+  background: radial-gradient(120% 90% at 50% 60%, #FDF7EF 0%, rgba(253, 247, 239, 0.97) 48%, rgba(247, 233, 196, 0.95) 72%, rgba(250, 241, 226, 0.94) 100%); }
+/* 0.55s + backwards:淡入交给 animation(新挂载元素也必然起播),
+   动画结束后回到 specified opacity:1,600ms 撤类时 transition 正常接手淡出 */
+.mgr-dawn.is-on { opacity: 1; pointer-events: auto; animation: mgrDawnIn 0.55s ease backwards; }
+@keyframes mgrDawnIn { from { opacity: 0; } to { opacity: 1; } }
+
+@media (max-width: 400px) {
+  .mgp-hero, .mgp-ask, .mgp-safety, .mgp-today { left: 32px; right: 32px; }
+}

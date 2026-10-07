@@ -104,6 +104,14 @@ const BG_TABS: readonly { key: string; label: string; entries: readonly BgEntry[
           { medal: "Bronze", cat: "Interactive Design for Digital Design" },
         ],
       },
+      /* verified against the IDSA certificate (Award & Certificate/Nuzzle/
+         Nuzzle Certificate.pdf): IDEA 2026 Finalist, Student, for "Nuzzle:
+         The First 30-Day Cat Adoption Companion". */
+      {
+        kicker: "2026",
+        head: "International Design Excellence Awards",
+        awards: [{ medal: "Finalist", cat: "Student" }],
+      },
       {
         kicker: "2025",
         head: "International Design Awards",
@@ -231,6 +239,7 @@ export function RecordSection() {
   const tabRef = useRef(0)
   const busyRef = useRef(false)
   const pendingRef = useRef(0)
+  const tlRef = useRef<gsap.core.Timeline | null>(null)
   const stRef = useRef<ScrollTrigger | null>(null)
 
   /* trionn's switch: the leaving content softens into a blur as the next one
@@ -253,10 +262,11 @@ export function RecordSection() {
       return
     }
     busyRef.current = true
-    gsap
+    tlRef.current = gsap
       .timeline({
         onComplete: () => {
           busyRef.current = false
+          tlRef.current = null
           runSwitch() // catch up if the scroll has already moved on
         },
       })
@@ -264,31 +274,43 @@ export function RecordSection() {
         autoAlpha: 0,
         y: -10,
         filter: "blur(8px)",
-        duration: 0.26,
+        duration: 0.22,
         ease: "power2.in",
       })
       .fromTo(
         panels[next],
         { autoAlpha: 0, y: 16, filter: "blur(8px)" },
-        { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.5, ease: "power3.out" },
+        { autoAlpha: 1, y: 0, filter: "blur(0px)", duration: 0.4, ease: "power3.out" },
         ">-0.06"
       )
   }
 
-  const switchTo = (next: number) => {
+  /* HER 2026-08-24 stutter report (recording verified): fast scroll queued a
+     second dissolve behind a still-playing first one, so Honors sat blurred
+     for over a second while the pin ran out, then the release read as a jump.
+     Fix: when the scroll demands a different step mid-dissolve, snap the
+     playing timeline to its end (onComplete then catches up immediately) —
+     the language stays a blur dissolve, it just never lags the scroll. */
+  const demand = (next: number) => {
+    if (next === pendingRef.current) return
     pendingRef.current = next
+    if (busyRef.current && tlRef.current) tlRef.current.progress(1)
+    else runSwitch()
+  }
+
+  const switchTo = (next: number) => {
     /* clicking a label while the section is PINNED must also move the scroll
        to that step's zone, or the very next wheel tick would snap the tab
        back to what the scroll position dictates */
     const st = stRef.current
     if (st) {
-      const MID = [0.21, 0.63, 0.92]
+      const MID = [0.18, 0.52, 0.85]
       const y = st.start + (MID[next] ?? 0.5) * (st.end - st.start)
       const lenis = getLenis()
       if (lenis) lenis.scrollTo(y, { duration: 0.7 })
       else window.scrollTo(0, y)
     }
-    runSwitch()
+    demand(next)
   }
 
   useGSAP(
@@ -305,11 +327,13 @@ export function RecordSection() {
          then Honors — before the pin releases toward the dark deck. Desktop
          full-motion only; mobile / reduced-motion keep plain clickable tabs. */
       mm.add("(min-width: 901px) and (prefers-reduced-motion: no-preference)", () => {
-        /* zones are DELIBERATELY uneven (her 2026-07-19 note: after Honors the
-           pin held for several more notches and read like the page had ended):
-           Education and Experience each get a full reading beat; Honors
-           arrives at 84% so only a short breath remains before the pin
-           releases and the page visibly moves on. */
+        /* zones REBALANCED 2026-08-26 (her report, recording verified): with
+           three awards Honors became the heaviest panel but held only the last
+           16% of the pin (~200px of scroll) — reaching it felt like a long
+           slog through Experience, and the dissolve often hadn't finished
+           before the pin ran out ("不展现整个"). Honors now enters at 70%,
+           nearly doubling its window, while the pin length stays 130% so the
+           tail never drags the way the pre-2026-07-19 version did. */
         const st = ScrollTrigger.create({
           trigger: rootRef.current,
           start: "top top",
@@ -318,11 +342,8 @@ export function RecordSection() {
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             const p = self.progress
-            const idx = p < 0.42 ? 0 : p < 0.84 ? 1 : 2
-            if (idx !== pendingRef.current) {
-              pendingRef.current = idx
-              runSwitch()
-            }
+            const idx = p < 0.36 ? 0 : p < 0.7 ? 1 : 2
+            demand(idx)
           },
         })
         stRef.current = st

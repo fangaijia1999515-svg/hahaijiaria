@@ -1,7 +1,7 @@
 "use client"
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import Link from "next/link"
-import { cardById, displayName } from "@/components/tarot/deck"
+import { cardById } from "@/components/tarot/deck"
 import { SPREADS } from "@/lib/tarot/meanings"
 import { crisisCheck, CRISIS_REPLY } from "@/lib/tarot/prompt"
 import { localDateStr } from "@/lib/tarot/draw"
@@ -11,6 +11,14 @@ import { DrawBoard } from "@/components/tarot/draw-board"
 import type { DrawnCard, SpreadId } from "@/lib/tarot/types"
 
 const ASK_SPREADS: SpreadId[] = ["single", "triad-sab", "triad-ppf"]
+
+/* EN 界面串(content-deck-v1 D-D/D-R);解读 prompt 仍走 meanings.ts 中文位名(known gap:内容线) */
+const SPREAD_EN: Record<SpreadId, { chip: string; positions: string[] }> = {
+  daily: { chip: "Daily card", positions: [] },
+  single: { chip: "One card", positions: [] },
+  "triad-ppf": { chip: "Past · Present · Future", positions: ["Past", "Present", "Future"] },
+  "triad-sab": { chip: "Situation · Obstacle · Advice", positions: ["Situation", "Obstacle", "Advice"] },
+}
 
 /**
  * 问事仪式(她 2026-07-23 定稿):写问题 → 问题居中陪着,手持大牌扇抽出 N 张
@@ -25,6 +33,18 @@ export default function GardenAsk() {
   const [reading, setReading] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const savedRef = useRef(false)
+
+  /* 首页阵法入口卡预选(如 三张牌阵 → triad-ppf);仪式流程本身不变。
+     全局转场拦截器(lib/transition-context.tsx)只转发 pathname、会丢 ?spread=,
+     所以走 sessionStorage 通道,?spread= 仅作直开链接的兜底 */
+  useEffect(() => {
+    try {
+      const q = new URLSearchParams(window.location.search).get("spread")
+      const s = q || window.sessionStorage.getItem("mg.ask.spread")
+      window.sessionStorage.removeItem("mg.ask.spread")
+      if (s && (ASK_SPREADS as string[]).includes(s)) setSpreadId(s as SpreadId)
+    } catch {}
+  }, [])
 
   const need = spreadId === "single" ? 1 : 3
   const spread = SPREADS[spreadId]
@@ -57,7 +77,7 @@ export default function GardenAsk() {
           addEntry({ dateStr: localDateStr(), spread: spreadId, question: question || undefined, cards, reading: data.reading, source: data.source })
         }
       } catch {
-        setReading("月光有点害羞,稍等片刻再问一次。")
+        setReading("The moonlight is a little shy. Wait a moment, then ask again.")
       } finally {
         setLoading(false)
       }
@@ -92,14 +112,14 @@ export default function GardenAsk() {
     <main className="mg-main">
       {phase === "form" && (
         <>
-          <h1 className="mg-h1">想问一件事</h1>
-          <p className="mg-sub">把心里的事轻轻放上来,也可以什么都不写</p>
+          <h1 className="mg-h1">What would you like to ask?</h1>
+          <p className="mg-sub">Set it down here, or carry it quietly.</p>
           <div className="mg-form">
             <input
               className="mg-input"
               value={question}
               maxLength={60}
-              placeholder="例:我该如何看待现在这段关系?"
+              placeholder="Your question, in a few words"
               onChange={(e) => setQuestion(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") start()
@@ -108,12 +128,12 @@ export default function GardenAsk() {
             <div className="mg-spreads">
               {ASK_SPREADS.map((id) => (
                 <button key={id} type="button" className={`mg-pill${spreadId === id ? " is-on" : ""}`} onClick={() => setSpreadId(id)}>
-                  {SPREADS[id].zh}
+                  {SPREAD_EN[id].chip}
                 </button>
               ))}
             </div>
             <button type="button" className="mg-btn" onClick={start}>
-              开始抽牌
+              Begin your draw
             </button>
           </div>
         </>
@@ -121,29 +141,29 @@ export default function GardenAsk() {
 
       {phase === "draw" && (
         <>
-          <h1 className="mg-h1">心里默念它</h1>
-          <p className="mg-sub">整面牌墙,一起滑动。凭直觉点出 {need} 张</p>
-          <p className="mg-qfocus">{question ? `「${question}」` : "「今天想对我说什么?」"}</p>
+          <h1 className="mg-h1">Hold it in mind</h1>
+          <p className="mg-sub">Take a breath. Let your hand choose {need === 1 ? "one" : String(need)}.</p>
+          <p className="mg-qfocus">{question ? `\u201c${question}\u201d` : "The garden is listening"}</p>
           <DrawBoard need={need} onPicked={onPicked} />
         </>
       )}
 
       {phase === "reveal" && (
         <>
-          <h1 className="mg-h1">{flippedSet.size < picked.length ? "一张一张,亲手打开" : "牌意浮现"}</h1>
-          {question && <p className="mg-qecho">「{question}」</p>}
-          {flippedSet.size < picked.length && <p className="mg-hintline">还有 {picked.length - flippedSet.size} 张没翻开</p>}
+          <h1 className="mg-h1">{flippedSet.size < picked.length ? "Open them one by one, in your own time." : "Reading"}</h1>
+          {question && <p className="mg-qecho">“{question}”</p>}
+          {flippedSet.size < picked.length && <p className="mg-hintline">{picked.length - flippedSet.size} still face down</p>}
           <div className="mg-slots">
             {picked.map((d, i) => {
               const card = cardById(d.cardId)
               const on = flippedSet.has(i)
               return (
                 <figure key={`${d.cardId}-${i}`} className="mg-slot">
-                  {need > 1 && <figcaption className="mg-slotlabel">{spread.positions[i]}</figcaption>}
+                  {need > 1 && <figcaption className="mg-slotlabel">{SPREAD_EN[spreadId].positions[i] ?? spread.positions[i]}</figcaption>}
                   <CardFlip card={card} reversed={d.reversed} flipped={on} onFlip={() => flipOne(i)} size={need === 1 ? 262 : 168} uid={`ask-${i}`} />
                   {on && (
                     <figcaption className="mg-slotname">
-                      {displayName(card)} <span className="mg-face-tag">{d.reversed ? "逆位" : "正位"}</span>
+                      {card.name} <span className="mg-face-tag">{d.reversed ? "Reversed" : "Upright"}</span>
                       <span className="mg-slotline">{card.line}</span>
                     </figcaption>
                   )}
@@ -159,10 +179,10 @@ export default function GardenAsk() {
             {reading && (
               <div className="mg-row">
                 <button type="button" className="mg-btn" onClick={reset}>
-                  再问一次
+                  Ask another
                 </button>
                 <Link className="mg-btn" href="/garden/journal">
-                  去手记看
+                  Your journal
                 </Link>
               </div>
             )}
@@ -172,11 +192,11 @@ export default function GardenAsk() {
 
       {phase === "safety" && (
         <>
-          <h1 className="mg-h1">先抱抱你</h1>
+          <h1 className="mg-h1">You matter more than any card.</h1>
           <p className="mg-reading" style={{ marginTop: 24 }}>{CRISIS_REPLY}</p>
           <div className="mg-center">
             <button type="button" className="mg-btn" onClick={reset}>
-              回去
+              Go back
             </button>
           </div>
         </>

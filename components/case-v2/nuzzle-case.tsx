@@ -131,8 +131,8 @@ export function NuzzleCase() {
       label: "The Challenge",
       lead: (
         <>
-          Nearly 50% of adopted cats are returned within the first 30 days.
-          Through my research, I discovered this isn&apos;t due to &apos;bad
+          Half of all cat returns to shelters happen within the first 30 days
+          of adoption. Through my research, I discovered this isn&apos;t due to &apos;bad
           cats,&apos; but a systemic failure driven by an &apos;Expectation
           Gap.&apos; New owners are often unprepared for the reality of animal
           adaptation, causing emotional distress that spirals into regret.
@@ -256,7 +256,7 @@ export function NuzzleCase() {
                 {
                   value: "$32M",
                   label: "Annual Re-intake Burden",
-                  detail: "Per year (~127,000 cats returned)",
+                  detail: "Per year (~127,000 returned in the first 30 days)",
                 },
               ]}
             />

@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import "./garden.css"
+import "./huamaodian.css"
 import { GardenNav } from "@/components/tarot/garden-nav"
 
 export const metadata: Metadata = {
@@ -11,6 +12,11 @@ export const metadata: Metadata = {
 export default function GardenLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="mg-shell">
+      {/* 花锚点双衬线:中文 Noto Serif SC · 英文 Cormorant Garamond(加载失败时退 Songti/Georgia) */}
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap"
+      />
       <div className="mg-sky" aria-hidden />
       <span className="mg-star" aria-hidden style={{ left: "16%", top: "14%" }} />
       <span className="mg-star" aria-hidden style={{ left: "78%", top: "9%", width: 2, height: 2 }} />

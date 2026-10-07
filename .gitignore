@@ -19,3 +19,9 @@ _prototypes/
 .cursor/
 .impeccable/
 docs/
+
+# Claude Code working notes — private, never publish
+.claude/
+
+# Build artifact
+tsconfig.tsbuildinfo

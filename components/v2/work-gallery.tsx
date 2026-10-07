@@ -53,6 +53,16 @@ const GALLERY: GalleryEntry[] = [
     alt: "Nuzzle adoption service ecosystem",
     href: "/work-classic/nuzzle", kind: "img",
   },
+  /* the client case sits SECOND, right after Nuzzle (her call, 2026-08-21);
+     the plate is the final presentation's own FINRA × SCADpro cover. */
+  {
+    name: "FINRA × SCADpro",
+    line: "A brand and identity audit for FINRA, the regulator of every U.S. broker-dealer: four shipped deliverables.",
+    tags: ["Client Work · 2025", "Service Design", "Brand Strategy"],
+    img: "/image/finra/deck-cover.webp",
+    alt: "FINRA × SCADpro lockup on deep navy, the final presentation cover",
+    href: "/work-classic/finra", kind: "img",
+  },
   {
     name: "Skya",
     line: "Service design for an autonomous last-mile delivery network, from vehicle to dispatch to doorstep.",

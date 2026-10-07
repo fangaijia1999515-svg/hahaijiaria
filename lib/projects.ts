@@ -63,6 +63,15 @@ export const allProjects: Project[] = [
     year: "2025",
   },
   {
+    id: "finra",
+    title: "FINRA × SCADpro",
+    description: "A brand and identity audit for FINRA, the regulator of every U.S. broker-dealer: four shipped deliverables.",
+    tags: ["Client Work", "Service Design", "Brand Strategy"],
+    image: "/image/finra/deck-cover.webp",
+    year: "2025",
+    client: "FINRA",
+  },
+  {
     id: "equine-therapy",
     title: "Equine Therapy",
     description: "A holistic therapeutic framework connecting patients, therapists, and nature to support mental health recovery.",
@@ -88,8 +97,9 @@ export const allProjects: Project[] = [
   },
 ]
 
-// Featured projects for homepage (only 3)
-export const featuredProjects = allProjects.slice(0, 3)
+// Featured (live) projects — also the NEXT PROJECT cycle:
+// Skya -> Nuzzle -> Eau de Toi -> FINRA -> Skya...
+export const featuredProjects = allProjects.slice(0, 4)
 
 // Helper function to get project URL
 export function getProjectUrl(projectId: string): string {
@@ -97,8 +107,8 @@ export function getProjectUrl(projectId: string): string {
 }
 
 // Helper function to get next project with looping
-// Only cycles through live/featured projects (Skya -> Nuzzle -> Eau de Toi -> Skya...)
-// so we don't surface placeholder/unreleased projects in the "Next" CTA.
+// Only cycles through live/featured projects (Skya -> Nuzzle -> Eau de Toi ->
+// FINRA -> Skya...) so we don't surface placeholder projects in the "Next" CTA.
 export function getNextProject(currentSlug: string): { title: string; href: string; image: string } {
   const list = featuredProjects
   const currentIndex = list.findIndex((p) => p.id === currentSlug)

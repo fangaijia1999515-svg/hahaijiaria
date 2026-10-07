@@ -7,14 +7,17 @@ import type { DrawnCard, SpreadId } from "./types"
 import { MEANINGS, SPREADS } from "./meanings"
 import { cardById, displayName } from "@/components/tarot/deck"
 
-const CRISIS = /自杀|自残|不想活|活不下去|结束生命|伤害自己|想死|轻生|活着没有意义|了结自己/
+const CRISIS =
+  /自杀|自残|不想活|活不下去|结束生命|伤害自己|想死|轻生|活着没有意义|了结自己|suicide|kill myself|end my life|end it all|self[- ]?harm|hurt myself|don'?t want to live|take my (?:own )?life|better off dead/i
 
 export function crisisCheck(text: string): boolean {
   return CRISIS.test(text)
 }
 
+/* EN 版转介(content-deck-v1 D-S,结构复刻中文原文:谢勇气→你比牌重要→
+   该由真人接住→热线 988→花园等你)。中文原句保留在 git-less 备份与 deck 里。 */
 export const CRISIS_REPLY =
-  "谢谢你愿意把这件事说出来,这需要很大的勇气。此刻的你,比任何一张牌都重要。这份沉重不适合由塔罗来接,它值得被真正的人稳稳接住:请联系你信任的家人或朋友,或拨打心理援助热线(中国大陆 12356,24 小时)。月光庭园会一直在这里,等你想回来的时候,再一起抽一张轻一点的牌。"
+  "Thank you for setting this down here. That takes real courage. Right now, you matter more than any card, and a weight like this deserves to be held by a person, not a reading: please reach out to someone you trust, or call or text 988, the Suicide & Crisis Lifeline, free and there all day and night. The garden will be here whenever you want to return, and we can draw something lighter together."
 
 function cardBlock(c: DrawnCard, pos: string) {
   const card = cardById(c.cardId)

@@ -132,7 +132,7 @@ export default function SkyaClassicPage({ stage = "light" }: { stage?: ClassicSt
         <div className="w-full px-6 md:px-12 lg:px-24">
           <motion.div
             initial={{ opacity: 1, y: 0 }}
-            className="w-full aspect-video bg-muted rounded-2xl overflow-hidden mt-8 mb-16 relative cl-hero-media"
+            className="w-full aspect-[21/9] bg-muted rounded-2xl overflow-hidden mt-8 mb-16 relative cl-hero-media"
           >
             <Image
               src="/image/skya/heroshot.webp"
